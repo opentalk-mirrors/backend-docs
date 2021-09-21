@@ -1,0 +1,12 @@
+---
+site_name: K3K
+site_description: K3K Docs
+site_author: opentalk.eu
+dev_addr: 0.0.0.0:8080
+docs_dir: content
+
+# https://squidfunk.github.io/mkdocs-material/
+theme:
+  name: rtd-dropdown
+  language: en
+  include_sidebar: true
