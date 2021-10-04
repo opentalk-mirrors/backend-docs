@@ -7,6 +7,15 @@ docs_dir: content
 
 # https://squidfunk.github.io/mkdocs-material/
 theme:
-  name: rtd-dropdown
-  language: en
-  include_sidebar: true
+  name: readthedocs
+  highlightjs: true
+  hljs_languages:
+    - yaml
+    - rust
+  include_homepage_in_sidebar: true
+  prev_next_buttons_location: bottom
+  navigation_depth: 4
+  collapse_navigation: true
+  titles_only: false
+  sticky_navigation: true
+  locale: en
