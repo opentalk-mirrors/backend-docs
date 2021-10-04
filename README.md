@@ -19,7 +19,7 @@ mkdocs serve
 To build the docs and view them, run:
 
 ```bash
-podman build -t k3k-docs .
+podman build -f ci/Dockerfile -t k3k-docs .
 podman run -p 8080:80 k3k-docs
 ```
 
