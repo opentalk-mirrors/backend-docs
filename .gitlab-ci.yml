@@ -20,7 +20,7 @@ build:test:
   stage: build
   image: python:alpine
   before_script:
-    - pip install mkdocs mkdocs-rtd-dropdown
+    - pip install mkdocs mkdocs-material
   script:
     - mkdocs build -f docs/mkdocs.yml
 

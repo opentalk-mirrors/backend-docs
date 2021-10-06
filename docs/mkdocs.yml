@@ -4,18 +4,9 @@ site_description: K3K Docs
 site_author: opentalk.eu
 dev_addr: 0.0.0.0:8080
 docs_dir: content
+extra_css:
+  - stylesheets/extra.css
 
 # https://squidfunk.github.io/mkdocs-material/
 theme:
-  name: readthedocs
-  highlightjs: true
-  hljs_languages:
-    - yaml
-    - rust
-  include_homepage_in_sidebar: true
-  prev_next_buttons_location: bottom
-  navigation_depth: 4
-  collapse_navigation: true
-  titles_only: false
-  sticky_navigation: true
-  locale: en
+  name: material

@@ -1,7 +1,7 @@
 FROM python:alpine
 WORKDIR /docs
 
-RUN pip install mkdocs mkdocs-rtd-dropdown
+RUN pip install mkdocs mkdocs-material
 COPY ./docs /docs
 RUN mkdocs build
 
