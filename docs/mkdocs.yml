@@ -6,7 +6,8 @@ dev_addr: 0.0.0.0:8080
 docs_dir: content
 extra_css:
   - stylesheets/extra.css
-
+plugins:
+  - render_swagger
 # https://squidfunk.github.io/mkdocs-material/
 theme:
   name: material
