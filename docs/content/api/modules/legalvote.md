@@ -152,6 +152,7 @@ __Fields:__
 | `initiator_id`         | `string`   | yes      | Id of the participant which started the vote.                                            |
 | `vote_id`              | `string`   | yes      | Id of the vote.                                                                          |
 | `start_time`           | `string`   | yes      | RFC 3339 timestamp when the vote started.                                                |
+| `max_votes`            | `int`      | yes      | The maximum number of possible votes.                                                    |
 | `name`                 | `string`   | yes      | General name of the vote.                                                                |
 | `topic`                | `string`   | yes      | Detailed topic that will be voted on.                                                    |
 | `allowed_participants` | `[string]` | yes      | An array of participant ids, where each contained participant is allowed to cast a vote. |
@@ -167,6 +168,7 @@ __Example:__
     "initiator_id": "00000000-0000-0000-0000-000000000004",
     "vote_id": "00000000-0000-0000-0000-000000000123",
     "start_time": "1970-01-01T00:00:00Z",
+    "max_votes": 3,
     "name": "Vote Test",
     "topic": "Yes or No?",
     "allowed_participants": [
