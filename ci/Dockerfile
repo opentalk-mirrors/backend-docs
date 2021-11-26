@@ -1,8 +1,9 @@
 FROM python:alpine
 WORKDIR /docs
 
-RUN pip install mkdocs mkdocs-material
+RUN pip install mkdocs mkdocs-material mkdocs-render-swagger-plugin
 COPY ./docs /docs
+COPY ./api /api
 RUN mkdocs build
 
 FROM nginx:alpine
