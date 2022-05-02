@@ -9,3 +9,4 @@ Documentation of the API.
 ## Signaling v1
 
 * [Legal Vote](modules/legalvote)
+* [Protocol](modules/protocol)
