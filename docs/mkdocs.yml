@@ -8,6 +8,7 @@ extra_css:
   - stylesheets/extra.css
 plugins:
   - render_swagger
+  - mermaid2
 # https://squidfunk.github.io/mkdocs-material/
 theme:
   name: material
