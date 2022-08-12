@@ -1,5 +1,9 @@
 # Enable all rules by default
 all
 
-# 170 chars is about a terminal with 1200px width and font size 9
-rule 'MD013', :line_length => 170
+# Markdown tables cant have breaks in them thus this is set to the largest table.
+rule 'MD013', :line_length => 790
+
+exclude_rule 'MD024'
+
+rule 'MD009', :br_spaces => 2
