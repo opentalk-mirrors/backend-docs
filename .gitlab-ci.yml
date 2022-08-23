@@ -23,7 +23,7 @@ build:test:
   stage: build
   image: python:alpine
   before_script:
-    - pip install mkdocs mkdocs-material mkdocs-render-swagger-plugin
+    - pip install mkdocs mkdocs-material mkdocs-render-swagger-plugin mkdocs-mermaid2-plugin
   script:
     - mkdocs build -f docs/mkdocs.yml
 
