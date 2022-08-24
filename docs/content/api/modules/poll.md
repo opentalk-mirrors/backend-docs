@@ -12,7 +12,7 @@ The `Start` message can be send by a user to start a new poll. New polls can onl
 
 __Response:__
 
-A [Started](#started) message is send to all participants that are currently in the room.
+A [Started](#started) message is sent to all participants that are currently in the room.
 
 Can return [Error](#error) of kind `insufficient_permissions`, `invalid_choice_count`, `invalid_choice_description`, `invalid_topic`, `invalid_duration`, and `still_running`.
 
