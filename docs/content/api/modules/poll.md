@@ -10,23 +10,17 @@ Commands are issued by a participate to start or interact with a poll.
 
 The `Start` message can be send by a user to start a new poll. New polls can only be created if the current one has finished or has been canceled.
 
-__Response:__
-
-A [Started](#started) message is sent to all participants that are currently in the room.
-
-Can return [Error](#error) of kind `insufficient_permissions`, `invalid_choice_count`, `invalid_choice_description`, `invalid_topic`, `invalid_duration`, and `still_running`.
-
-__Fields:__
+#### Fields
 
 | Field      | Type       | Required | Description                                             |
 | ---------- | ---------- | -------- | ------------------------------------------------------- |
 | `action`   | `enum`     | yes      | Must be "start"                                         |
 | `topic`    | `string`   | yes      | Topic of the poll                                       |
 | `live`     | `bool`     | yes      | Enable/Disable live updates on the poll                 |
-| `choices`  | `[string]` | yes      | Non empty array of strings which each describe a choice |
+| `choices`  | `string[]` | yes      | Non empty array of strings which each describe a choice |
 | `duration` | `int`      | no       | Duration of the poll in seconds                         |
 
-__Example:__
+##### Example
 
 ```json
 {
@@ -38,17 +32,20 @@ __Example:__
 }
 ```
 
+#### Response
+
+A [Started](#started) message is sent to all participants that are currently in the room.
+
+Can return [Error](#error) of kind `insufficient_permissions`, `invalid_choice_count`, `invalid_choice_description`, `invalid_topic`, `invalid_duration`, and `still_running`.
+
+---
 ### Vote
 
 Cast your vote for a poll with the specified `poll_id`. Each participant can only vote once per poll.
 
 If a vote is started with the `live` flag set to `true` a [LiveUpdate](#liveupdate) is sent to all participants.
 
-__Response:__
-
-Can return [Error](#error) of kind `invalid_poll_id`, `invalid_choice_id` and `voted_already`.
-
-__Fields:__
+#### Fields
 
 | Field       | Type     | Required | Description      |
 | ----------- | -------- | -------- | ---------------- |
@@ -56,7 +53,7 @@ __Fields:__
 | `poll_id`   | `string` | yes      | ID of the poll   |
 | `choice_id` | `int`    | yes      | ID of the choice |
 
-__Example:__
+##### Example
 
 ```json
 {
@@ -66,24 +63,24 @@ __Example:__
 }
 ```
 
+#### Response
+
+Can return [Error](#error) of kind `invalid_poll_id`, `invalid_choice_id` and `voted_already`.
+
 ### Finish
 
 Finish a poll prematurely.
 
 A [Done](#done) message will be sent to all other participants.
 
-__Response:__
-
-Can return [Error](#error) of kind `insufficient_permissions` and `invalid_poll_id`.
-
-__Fields:__
+#### Fields
 
 | Field    | Type     | Required | Description      |
 | -------- | -------- | -------- | ---------------- |
 | `action` | `enum`   | yes      | Must be "finish" |
 | `id`     | `string` | yes      | ID of the poll   |
 
-__Example:__
+##### Example
 
 ```json
 {
@@ -91,6 +88,12 @@ __Example:__
     "id": "00000000-0000-0000-0000-000000000000"
 }
 ```
+
+#### Response
+
+Can return [Error](#error) of kind `insufficient_permissions` and `invalid_poll_id`.
+
+---
 
 ## Events
 
@@ -100,7 +103,7 @@ Events are received by participants when the poll state has changed.
 
 A poll has been started.
 
-__Fields:__
+#### Fields
 
 | Field      | Type       | Always | Description                                     |
 | ---------- | ---------- | ------ | ----------------------------------------------- |
@@ -108,7 +111,7 @@ __Fields:__
 | `id`       | `string`   | yes    | Id of the poll                                  |
 | `topic`    | `string`   | yes    | Topic of the poll                               |
 | `live`     | `bool`     | yes    | The standings of the poll will be reported live |
-| `choices`  | `[Choice]` | yes    | The available choices to vote on                |
+| `choices`  | `Choice[]` | yes    | The available choices to vote on                |
 | `duration` | `int`      | yes    | Duration of the poll in seconds                 |
 
 __`Choice` Fields:__
@@ -118,7 +121,7 @@ __`Choice` Fields:__
 | `id`      | `int`    | yes    | ID of the choice                  |
 | `content` | `string` | yes    | Content/Description of the choice |
 
-__Example:__
+##### Example
 
 ```json
 {
@@ -139,13 +142,13 @@ __Example:__
 
 A poll has been updated.
 
-__Fields:__
+#### Fields
 
 | Field     | Type       | Always | Description                      |
 | --------- | ---------- | ------ | -------------------------------- |
 | `message` | `enum`     | yes    | Is "live_update"                 |
 | `id`      | `string`   | yes    | Id of the poll                   |
-| `results` | `[Choice]` | yes    | List of choices and their scores |
+| `results` | `Choice[]` | yes    | List of choices and their scores |
 
 __`Choice` Fields:__
 
@@ -154,7 +157,7 @@ __`Choice` Fields:__
 | `id`    | `int` | yes    | ID of the choice               |
 | `count` | `int` | yes    | Count of votes for this choice |
 
-__Example:__
+##### Example
 
 ```json
 {
@@ -172,13 +175,13 @@ __Example:__
 
 A poll has been completed due to expiration or a moderator issuing the [Finish](#finish) command.
 
-__Fields:__
+#### Fields
 
 | Field     | Type       | Always | Description                      |
 | --------- | ---------- | ------ | -------------------------------- |
 | `message` | `enum`     | yes    | Is "live_update"                 |
 | `id`      | `string`   | yes    | Id of the poll                   |
-| `results` | `[Choice]` | yes    | List of choices and their scores |
+| `results` | `Choice[]` | yes    | List of choices and their scores |
 
 __`Choice` Fields:__
 
@@ -187,7 +190,7 @@ __`Choice` Fields:__
 | `id`    | `int` | yes    | ID of the choice               |
 | `count` | `int` | yes    | Count of votes for this choice |
 
-__Example:__
+##### Example
 
 ```json
 {

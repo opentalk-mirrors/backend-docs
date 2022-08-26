@@ -11,18 +11,13 @@ The underlying etherpad state gets lazily initialized when this message is recei
 
 Can return [Error](#error) of kind `insufficient_permissions`, `currently_initializing` `failed_initialization`.
 
-__Response:__
-
-Each participant receives an access url. Depending if they where selected as a writer they will receive
-either a [WriteUrl](#writeurl) or [ReadUrl](#readurl).
-
-__Fields:__
+#### Fields
 
 | Field             | Type       | Required | Description                                                                  |
 | ----------------- | ---------- | -------- | ---------------------------------------------------------------------------- |
-| `participant_ids` | `[string]` | yes      | An array of participant ids that shall get write access to the etherpad pad. |
+| `participant_ids` | `string[]` | yes      | An array of participant ids that shall get write access to the etherpad pad. |
 
-__Examples:__
+##### Example
 
 ```json
 {
@@ -31,19 +26,24 @@ __Examples:__
 }
 ```
 
+#### Response
+
+Each participant receives an access url. Depending if they where selected as a writer they will receive
+either a [WriteUrl](#writeurl) or [ReadUrl](#readurl).
+
 ## Events
 
 ### WriteUrl
 
 Received by participants that got selected as a writer by a moderator. (See [SelectWriter](#selectwriter))
 
-__Fields:__
+#### Fields
 
 | Field | Type       | Required | Description                                       |
 | ----- | ---------- | -------- | ------------------------------------------------- |
-| `url` | `[string]` | yes      | A url to the etherpad that will set  write access |
+| `url` | `string[]` | yes      | A url to the etherpad that will set  write access |
 
-__Examples:__
+##### Example
 
 ```json
 {
@@ -58,13 +58,13 @@ __Examples:__
 
 Received by all participants that did not get selected as a writer by a moderator. (See [SelectWriter](#selectwriter))
 
-__Fields:__
+#### Fields
 
 | Field | Type       | Required | Description                                       |
 | ----- | ---------- | -------- | ------------------------------------------------- |
-| `url` | `[string]` | yes      | A url to the etherpad that will set  write access |
+| `url` | `string[]` | yes      | A url to the etherpad that will set  write access |
 
-__Examples:__
+##### Example
 
 ```json
 {
@@ -79,15 +79,15 @@ __Examples:__
 
 An error has occurred while issuing a command.
 
-__Fields:__
+#### Fields
 
 | Field                     | Type       | Required | Description                                                                                          |
 | ------------------------- | ---------- | -------- | ---------------------------------------------------------------------------------------------------- |
-| `InsufficientPermissions` | `[string]` | yes      | The requesting user has insufficient permissions for the operation                                   |
-| `CurrentlyInitializing`   | `[string]` | yes      | A moderator just send a [SelectWriter](#selectwriter) message and the etherpad is still initializing |
-| `FailedInitialization`    | `[string]` | yes      | The etherpad initialization failed                                                                   |
+| `InsufficientPermissions` | `string[]` | yes      | The requesting user has insufficient permissions for the operation                                   |
+| `CurrentlyInitializing`   | `string[]` | yes      | A moderator just send a [SelectWriter](#selectwriter) message and the etherpad is still initializing |
+| `FailedInitialization`    | `string[]` | yes      | The etherpad initialization failed                                                                   |
 
-__Examples:__
+##### Example
 
 ```json
 {
