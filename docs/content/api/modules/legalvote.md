@@ -12,7 +12,7 @@ The `Start` message can be send by a user to start a new legal vote.
 
 __Response:__
 
-A [Started](#started) message is send to all participants that are currently in the room.
+A [Started](#started) message is sent to all participants that are currently in the room.
 
 __Fields:__
 
@@ -52,7 +52,7 @@ Stop the currently active vote. Will only succeed when the issuer is the vote in
 
 __Response:__
 
-A [Stopped](#stopped) message is send to all participants that are currently in the room.
+A [Stopped](#stopped) message is sent to all participants that are currently in the room.
 
 __Fields:__
 
@@ -82,7 +82,7 @@ See [Canceled](#canceled) for more details on which server events may cause this
 
 __Response:__
 
-A [Canceled](#canceled) message is send to all participants that are currently in the room.
+A [Canceled](#canceled) message is sent to all participants that are currently in the room.
 
 __Fields:__
 
@@ -110,9 +110,9 @@ Cast a vote on the specified `vote_id`. Each user is allowed to only vote once.
 
 __Response:__
 
-When the vote is successful, a [Voted](#voted) message is send to each participant that is logged in under the same user id.
+When the vote is successful, a [Voted](#voted) message is sent to each participant that is logged in under the same user id.
 
-When the vote failed, a [Voted](#voted) response is send to the issuer.
+When the vote failed, a [Voted](#voted) response is sent to the issuer.
 __Fields:__
 
 | Field     | Type     | Required | Description                                                                                 |
