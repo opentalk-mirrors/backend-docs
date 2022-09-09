@@ -10,23 +10,19 @@ Commands are issued by a participant to start or interact with a vote.
 
 The `Start` message can be send by a user to start a new legal vote.
 
-__Response:__
-
-A [Started](#started) message is sent to all participants that are currently in the room.
-
-__Fields:__
+#### Fields
 
 | Field                  | Type       | Required | Validation        | Description                                                                              |
 | ---------------------- | ---------- | -------- | ----------------- | ---------------------------------------------------------------------------------------- |
 | `action`               | `enum`     | yes      |                   | Must be "start".                                                                         |
 | `name`                 | `string`   | yes      | max 150 chars     | General name of the vote                                                                 |
 | `topic`                | `string`   | yes      | max 500 chars     | Detailed topic that will be voted on.                                                    |
-| `allowed_participants` | `[string]` | yes      | min 1 participant | An array of participant ids, where each contained participant is allowed to cast a vote. |
+| `allowed_participants` | `string[]` | yes      | min 1 participant | An array of participant ids, where each contained participant is allowed to cast a vote. |
 | `enable_abstain`       | `bool`     | yes      |                   | Enable/Disable the 'Abstain' option on this vote                                         |
 | `auto_stop`            | `bool`     | yes      |                   | When set, the vote will automatically stop when every allowed participant casted a vote. |
 | `duration`             | `int`      | no       | min 5 seconds     | Duration of the vote in seconds                                                          |
 
-__Example:__
+##### Example
 
 ```json
 {
@@ -44,24 +40,24 @@ __Example:__
 }
 ```
 
+#### Response
+
+A [Started](#started) message is sent to all participants that are currently in the room.
+
 ---
 
 ### Stop
 
 Stop the currently active vote. Will only succeed when the issuer is the vote initiator.
 
-__Response:__
-
-A [Stopped](#stopped) message is sent to all participants that are currently in the room.
-
-__Fields:__
+#### Fields
 
 | Field     | Type     | Required | Description                    |
 | --------- | -------- | -------- | ------------------------------ |
 | `action`  | `enum`   | yes      | Must be "stop".                |
 | `vote_id` | `string` | yes      | The vote that shall be stopped |
 
-__Example:__
+##### Example
 
 ```json
 {
@@ -69,6 +65,10 @@ __Example:__
     "vote_id": "00000000-0000-0000-0000-000000000000"
 }
 ```
+
+#### Response
+
+A [Stopped](#stopped) message is sent to all participants that are currently in the room.
 
 ---
 
@@ -80,11 +80,7 @@ The vote protocol will still be saved in the database and in the room-vote-histo
 This command may be triggered by the controller itself when an invalid state or error was detected.
 See [Canceled](#canceled) for more details on which server events may cause this.
 
-__Response:__
-
-A [Canceled](#canceled) message is sent to all participants that are currently in the room.
-
-__Fields:__
+#### Fields
 
 | Field     | Type     | Required | Validation    | Description                      |
 | --------- | -------- | -------- | ------------- | -------------------------------- |
@@ -92,7 +88,7 @@ __Fields:__
 | `vote_id` | `string` | yes      |               | The vote that shall be canceled. |
 | `reason`  | `string` | yes      | max 255 chars | The reason for the cancel.       |
 
-__Example:__
+##### Example
 
 ```json
 {
@@ -102,18 +98,17 @@ __Example:__
 }
 ```
 
+#### Response
+
+A [Canceled](#canceled) message is sent to all participants that are currently in the room.
+
 ---
 
 ### Vote
 
 Cast a vote on the specified `vote_id`. Each user is allowed to only vote once.
 
-__Response:__
-
-When the vote is successful, a [Voted](#voted) message is sent to each participant that is logged in under the same user id.
-
-When the vote failed, a [Voted](#voted) response is sent to the issuer.
-__Fields:__
+#### Fields
 
 | Field     | Type     | Required | Description                                                                                 |
 | --------- | -------- | -------- | ------------------------------------------------------------------------------------------- |
@@ -121,7 +116,7 @@ __Fields:__
 | `vote_id` | `string` | yes      | The vote that shall be voted on.                                                            |
 | `option`  | `enum`   | yes      | The chosen vote option, may be `yes`, `no` or `abstain` when the abstain option is enabled. |
 
-__Example:__
+##### Example
 
 ```json
 {
@@ -130,6 +125,12 @@ __Example:__
     "option": "yes",
 }
 ```
+
+#### Response
+
+When the vote is successful, a [Voted](#voted) message is sent to each participant that is logged in under the same user id.
+
+When the vote failed, a [Voted](#voted) response is sent to the issuer.
 
 ---
 
@@ -144,7 +145,7 @@ A vote has been started by a moderator.
 
 This message will also be received when joining a room that has an active vote going.
 
-__Fields:__
+#### Fields
 
 | Field                  | Type       | Required | Description                                                                              |
 | ---------------------- | ---------- | -------- | ---------------------------------------------------------------------------------------- |
@@ -155,12 +156,12 @@ __Fields:__
 | `max_votes`            | `int`      | yes      | The maximum number of possible votes.                                                    |
 | `name`                 | `string`   | yes      | General name of the vote.                                                                |
 | `topic`                | `string`   | yes      | Detailed topic that will be voted on.                                                    |
-| `allowed_participants` | `[string]` | yes      | An array of participant ids, where each contained participant is allowed to cast a vote. |
+| `allowed_participants` | `string[]` | yes      | An array of participant ids, where each contained participant is allowed to cast a vote. |
 | `enable_abstain`       | `bool`     | yes      | Enable/Disable the 'Abstain' option on this vote.                                        |
 | `auto_stop`            | `bool`     | yes      | When set, the vote will automatically stop when every allowed participant casted a vote. |
 | `duration`             | `int`      | no       | Duration of the vote in seconds, counting from the `start_time`.                         |
 
-__Example:__
+##### Example
 
 ```json
 {
@@ -190,7 +191,7 @@ Event received whenever a user voted. Usually understood as a response to the [V
 Since every user may only vote once, each participant logged is as that user will receive this message after
 any of them successfully cast their vote.
 
-__Fields:__
+#### Fields
 
 | Field         | Type     | Required                     | Description                                 |
 | ------------- | -------- | ---------------------------- | ------------------------------------------- |
@@ -209,7 +210,7 @@ __Failure reason:__
 | `ineligible`      | the user is not eligible to vote                          |
 | `invalid_option`  | the given `vote_option` field contained an unknown option |
 
-__Examples:__
+##### Examples
 
 Successful vote:
 
@@ -240,7 +241,7 @@ Failed vote:
 
 Update to a ongoing vote, signaling the newest results. Used to visualize the UI.
 
-__Fields:__
+#### Fields
 
 | Field     | Type     | Required                        | Description                                             |
 | --------- | -------- | ------------------------------- | ------------------------------------------------------- |
@@ -251,7 +252,7 @@ __Fields:__
 | `abstain` | `int`    | when `enable_abstain` is `true` | Number of `abstain` votes                               |
 | `voters`  | `map`    | yes                             | Mapping of participant which voted to their vote option |
 
-__Example:__
+##### Example
 
 ```json
 {
@@ -277,7 +278,7 @@ __Example:__
 Ongoing vote has been finished and the results are being distributed with this event. The vote results may be invalid, this happens when
 the final vote results are not consistent or altered unexpectedly.
 
-__Fields:__
+#### Fields
 
 | Field     | Type     | Required                   | Description                                                                                               |
 | --------- | -------- | -------------------------- | --------------------------------------------------------------------------------------------------------- |
@@ -302,7 +303,7 @@ When `invalid`:
 | -------- | ------ | -------- | ------------------------------------------------------ |
 | `reason` | `enum` | yes      | Either `abstain_disabled` or `vote_count_inconsistent` |
 
-__Example:__
+##### Example
 
 Stopped with valid results:
 
@@ -346,7 +347,7 @@ Stopped with invalid results:
 Ongoing vote with `vote_id` has been canceled. This may either be issued by a moderator, or by the server when some error
 or inconsistency occurred.
 
-__Fields:__
+#### Fields
 
 | Field     | Type     | Required                  | Description                                           |
 | --------- | -------- | ------------------------- | ----------------------------------------------------- |
@@ -355,7 +356,7 @@ __Fields:__
 | `reason`  | `enum`   | yes                       | Either `custom`, `room_destroyed` or `initiator_left` |
 | `custom`  | `string` | when `reason` is `custom` | The reason for the cancel, set by the moderator.      |
 
-__Examples:__
+##### Examples
 
 ```json
 {
@@ -388,8 +389,8 @@ that can happen at any time. (e.g. an `internal` error may occur at any time to 
 | --------- | ---------- | ------------------------------------------- | ---------------------------------------------------- |
 | `message` | `enum`     | yes                                         | Is "error".                                          |
 | `error`   | `enum`     | yes                                         | Exhaustive list of error strings, see table below    |
-| `guests`  | `[string]` | when `error` is `allowlist_contains_guests` | A list of participants that where found to be quests |
-| `fields`  | `[string]` | when `error` is `bad_request`               | A list of fields that ignored validation constraints |
+| `guests`  | `string[]` | when `error` is `allowlist_contains_guests` | A list of participants that where found to be quests |
+| `fields`  | `string[]` | when `error` is `bad_request`               | A list of fields that ignored validation constraints |
 
 | Error                       | Description                                                                                     |
 | --------------------------- | ----------------------------------------------------------------------------------------------- |
@@ -401,7 +402,7 @@ that can happen at any time. (e.g. an `internal` error may occur at any time to 
 | `bad_request`               | The input validation failed for one or more of the provided fields                              |
 | `internal`                  | Backend services encountered an internal error and any active vote should be considered invalid |
 
-__Example:__
+#### Example
 
 ```json
 {
