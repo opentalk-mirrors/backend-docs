@@ -21,11 +21,7 @@ The `Start` action can be sent by a moderator to start a new timer.
 
 Can return [Error](#error) of kind `insufficient_permissions`, `invalid_duration` or `timer_already_running`
 
-__Response:__
-
-Each participant receives an [Started](#started) message with the configuration of the timer
-
-__Fields:__
+#### Fields
 
 | Field                | Type     | Required | Description                                                                                     |
 | -------------------- | -------- | -------- | ----------------------------------------------------------------------------------------------- |
@@ -36,7 +32,7 @@ __Fields:__
 
 When `duration` is set, the module will automatically send a [Stopped](#stopped) message when the duration expires.
 
-__Examples:__
+##### Examples
 
 ```json
 {
@@ -47,15 +43,17 @@ __Examples:__
 }
 ```
 
+#### Response
+
+Each participant receives a [Started](#started) message with the configuration of the timer.
+
+---
+
 ### Stop
 
-The `Stop` action can be sent by moderator to start a stop a timer.
+The `Stop` action can be sent by a moderator to stop a timer.
 
-__Response:__
-
-Each participant receives an [Stopped](#stopped) message.
-
-__Fields:__
+#### Fields
 
 | Field      | Type     | Required | Description                                           |
 | ---------- | -------- | -------- | ----------------------------------------------------- |
@@ -63,7 +61,7 @@ __Fields:__
 | `timer_id` | `string` | yes      | The timer id (uuid)                                   |
 | `reason`   | `string` | no       | An optional reason for the stop, set by the moderator |
 
-__Examples:__
+##### Examples
 
 ```json
         {
@@ -73,17 +71,19 @@ __Examples:__
         }
 ```
 
+#### Response
+
+Each participant receives a [Stopped](#stopped) message.
+
+---
+
 ### Update Ready Status
 
 Set the ready status of a participant.
 
 Can be sent by any participant only when `ready_check` is set to true in [Start](#start).
 
-__Response:__
-
-Each participant receives a [Control Update](#control-update) event with the participants R2C status.
-
-__Fields:__
+#### Fields
 
 | Field      | Type     | Required | Description                       |
 | ---------- | -------- | -------- | --------------------------------- |
@@ -91,7 +91,7 @@ __Fields:__
 | `timer_id` | `string` | yes      | The timer id (uuid)               |
 | `status`   | `bool`   | yes      | The R2C status of the participant |
 
-__Examples:__
+##### Examples
 
 ```json
 {
@@ -101,6 +101,12 @@ __Examples:__
 }
 ```
 
+#### Response
+
+Each participant receives a [Control Update](#control-update) event with the participant's R2C status.
+
+---
+
 ## Events
 
 ### Started
@@ -109,7 +115,7 @@ A timer has been started.
 
 This message is also received in the `join_success` message when joining a room where a timer is active.
 
-__Fields:__
+#### Fields
 
 | Field                 | Type     | Always | Description                                                          |
 | --------------------- | -------- | ------ | -------------------------------------------------------------------- |
@@ -122,7 +128,7 @@ __Fields:__
 
 When the `ends_at` field is not set, the timer shall behave like a stopwatch (count up).
 
-__Example:__
+##### Example
 
 ```json
 {
@@ -135,11 +141,13 @@ __Example:__
 }
 ```
 
+---
+
 ### Stopped
 
 A timer has been stopped.
 
-__Fields:__
+#### Fields
 
 | Field            | Type     | Always                        | Description                                                         |
 | ---------------- | -------- | ----------------------------- | ------------------------------------------------------------------- |
@@ -157,7 +165,7 @@ __StopKind:__
 | `expired`      | The duration of the timer has expired         |
 | `creator_left` | The creator of the timer has left the room    |
 
-__Example:__
+##### Example
 
 by moderator:
 
@@ -191,11 +199,13 @@ creator_left:
 }
 ```
 
+---
+
 ### Updated ready status
 
 A participant has updated its ready status.
 
-__Fields:__
+#### Fields
 
 | Field            | Type     | Always | Description                                 |
 | ---------------- | -------- | ------ | ------------------------------------------- |
@@ -204,7 +214,7 @@ __Fields:__
 | `participant_id` | `string` | yes    | The participant that had its status updated |
 | `status`         | `bool`   | yes    | The participants status                     |
 
-__Examples:__
+##### Examples
 
 ```json
 {
@@ -215,11 +225,13 @@ __Examples:__
 }
 ```
 
+---
+
 ### Error
 
 An error has occurred while issuing a command.
 
-__Fields:__
+#### Fields
 
 | Error                      | Description                                                |
 | -------------------------- | ---------------------------------------------------------- |
@@ -227,7 +239,7 @@ __Fields:__
 | `invalid_duration`         | The provided duration (in a start request) is invalid      |
 | `timer_already_running`    | A timer is already running while trying to start a new one |
 
-__Examples:__
+##### Examples
 
 ```json
 {

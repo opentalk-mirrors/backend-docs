@@ -31,6 +31,8 @@ Can return [Error](#error) of kind `insufficient_permissions`, `currently_initia
 Each participant receives an access url. Depending if they where selected as a writer they will receive
 either a [WriteUrl](#writeurl) or [ReadUrl](#readurl).
 
+---
+
 ## Events
 
 ### WriteUrl

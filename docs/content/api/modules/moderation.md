@@ -43,6 +43,8 @@ Remove a participant from the room.
 }
 ```
 
+---
+
 ### Ban
 
 Requires moderator role.
@@ -66,6 +68,8 @@ be banned from the room for the remainder of the session.
 }
 ```
 
+---
+
 ### EnableWaitingRoom
 
 Requires moderator role.
@@ -86,6 +90,8 @@ Enable the waiting room.
 }
 
 ```
+
+---
 
 ### DisableWaitingRoom
 
@@ -110,6 +116,8 @@ __NOTE:__ Participants inside the waiting room will not be automatically accepte
 
 ```
 
+---
+
 ### Accept
 
 Requires moderator role.
@@ -133,6 +141,8 @@ Accept a participant inside the waiting into the room.
 
 ```
 
+---
+
 ## Events
 
 ### Kicked
@@ -153,6 +163,8 @@ Received when you were kicked from the room. Will be the last message before ser
 }
 ```
 
+---
+
 ### Banned
 
 Received when you were banned from the room. Will be the last message before server-side websocket disconnection.
@@ -170,6 +182,8 @@ Received when you were banned from the room. Will be the last message before ser
     "message": "banned"
 }
 ```
+
+---
 
 ### In Waiting Room
 
@@ -189,6 +203,8 @@ until the [Accepted](#accepted) event was received. Then the room can be entered
     "message": "in_waiting_room",
 }
 ```
+
+---
 
 ### JoinedWaitingRoom
 
@@ -213,6 +229,8 @@ of the `control` as other modules will not be initialized before the user joins 
 }
 ```
 
+---
+
 ### LeftWaitingRoom
 
 Received when a participant left the waiting-room. Will also be received when a participant makes the transition from
@@ -234,6 +252,8 @@ waiting-room to "conference-"room.
 }
 ```
 
+---
+
 ### WaitingRoomEnabled
 
 Received when a moderator enabled the waiting-room.
@@ -252,6 +272,8 @@ Received when a moderator enabled the waiting-room.
 }
 ```
 
+---
+
 ### WaitingRoomDisabled
 
 Received when a moderator disabled the waiting-room.
@@ -269,6 +291,8 @@ Received when a moderator disabled the waiting-room.
     "message": "waiting_room_disabled"
 }
 ```
+
+---
 
 ### Accepted
 
@@ -289,6 +313,8 @@ Can only be received while in the waiting room. A moderator accepted this you in
 
 }
 ```
+
+---
 
 ### Error
 

@@ -39,6 +39,7 @@ A [Started](#started) message is sent to all participants that are currently in 
 Can return [Error](#error) of kind `insufficient_permissions`, `invalid_choice_count`, `invalid_choice_description`, `invalid_topic`, `invalid_duration`, and `still_running`.
 
 ---
+
 ### Vote
 
 Cast your vote for a poll with the specified `poll_id`. Each participant can only vote once per poll.
@@ -66,6 +67,8 @@ If a vote is started with the `live` flag set to `true` a [LiveUpdate](#liveupda
 #### Response
 
 Can return [Error](#error) of kind `invalid_poll_id`, `invalid_choice_id` and `voted_already`.
+
+---
 
 ### Finish
 
@@ -138,6 +141,8 @@ __`Choice` Fields:__
 }
 ```
 
+---
+
 ### LiveUpdate
 
 A poll has been updated.
@@ -171,6 +176,8 @@ __`Choice` Fields:__
 }
 ```
 
+---
+
 ### Done
 
 A poll has been completed due to expiration or a moderator issuing the [Finish](#finish) command.
@@ -203,6 +210,8 @@ __`Choice` Fields:__
     ]
 }
 ```
+
+---
 
 ### Error
 

@@ -25,6 +25,8 @@ Must be the first message to be sent when the websocket connection is establishe
 }
 ```
 
+---
+
 ### EnterRoom
 
 Can only be sent while in the waiting room and after being accepted by an moderator.
@@ -45,6 +47,8 @@ See [InWaitingRoom](/api/modules/moderation#inwaitingroom)
 }
 ```
 
+---
+
 ### Raise Hand
 
 Notify other users that your hand is raised.
@@ -63,6 +67,8 @@ Notify other users that your hand is raised.
 }
 ```
 
+---
+
 ### Lower Hand
 
 Notify other users that your hand is no longer raised.
@@ -80,6 +86,8 @@ Notify other users that your hand is no longer raised.
     "action": "raise_hand"
 }
 ```
+
+---
 
 ### Grant moderator role
 
@@ -103,6 +111,8 @@ Grant a participant the moderator role.
 }
 ```
 
+---
+
 ### Revoke moderator role
 
 Requires moderator role.
@@ -124,6 +134,8 @@ Revoke the moderator role from a participant. Cannot revoke the moderator role f
     "target": "00000000-0000-0000-0000-000000000000"
 }
 ```
+
+---
 
 ## Events
 
