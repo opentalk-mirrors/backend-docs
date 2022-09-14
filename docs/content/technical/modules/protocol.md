@@ -16,4 +16,6 @@ depending on if they were picked as a `writer`.
 
 Each participant has an individual etherpad session that gets set as cookie on the client by the `ep_auth_session` Etherpad plugin.
 The plugin provides the additional endpoint `/auth_session` that takes the clients session id as a query parameter, sets the
- session cookie on the clients browser, and the forwards the client to the actual `pad`.
+session cookie on the clients browser, and the forwards the client to the actual `pad`.
+
+A participants write access can be revoked with the `deselect_write` message. The participant will then receive a new read url.
