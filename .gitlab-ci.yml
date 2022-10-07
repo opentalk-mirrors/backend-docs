@@ -4,6 +4,7 @@ variables:
 
 stages:
   - lint
+  - test
   - build
 
 lint:markdown:
@@ -12,13 +13,27 @@ lint:markdown:
   script:
     - mdl --style .markdown_style.rb  --warnings .
 
-build:test:
-  stage: build
-  image: python:alpine
-  before_script:
-    - pip install mkdocs mkdocs-material mkdocs-render-swagger-plugin mkdocs-mermaid2-plugin
+test:container:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_PIPELINE_SOURCE == 'schedule'
+  stage: test
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: ['']
   script:
-    - mkdocs build -f docs/mkdocs.yml
+    - mkdir -p /kaniko/.docker
+    - >
+      echo
+      "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$(echo -n ${CI_REGISTRY_USER}:${CI_REGISTRY_PASSWORD} | base64)\"}}}" >
+      /kaniko/.docker/config.json
+    - >
+      /kaniko/executor
+      --registry-mirror=mirror.gcr.io
+      --context $CI_PROJECT_DIR
+      --dockerfile $CI_PROJECT_DIR/Dockerfile
+      --no-push
+      --force
 
 build:container:
   rules:
