@@ -118,6 +118,55 @@ __NOTE:__ Participants inside the waiting room will not be automatically accepte
 
 ---
 
+### EnableRaisedHands
+
+Requires moderator role.
+
+Enable raising of hands by participants in the room.
+
+#### Fields
+
+| Field    | Type   | Required | Description                  |
+| -------- | ------ | -------- | ---------------------------- |
+| `action` | `enum` | yes      | Must be "enable_raise_hands" |
+
+##### Example
+
+```json
+{
+    "action": "enable_raise_hands"
+}
+
+```
+
+---
+
+### DisableRaiseHands
+
+Requires moderator role.
+
+Disable raising of hands by participants in the room.
+
+__NOTE:__ Raised hands by participants will be lowered when this command is
+triggered.
+
+#### Fields
+
+| Field    | Type   | Required | Description                   |
+| -------- | ------ | -------- | ----------------------------- |
+| `action` | `enum` | yes      | Must be "disable_raise_hands" |
+
+##### Example
+
+```json
+{
+    "action": "disable_raise_hands"
+}
+
+```
+
+---
+
 ### Accept
 
 Requires moderator role.
@@ -137,6 +186,29 @@ Accept a participant inside the waiting into the room.
 {
     "action": "accept",
     "target": "00000000-0000-0000-0000-000000000000"
+}
+
+```
+
+---
+
+### ResetRaisedHands
+
+Requires moderator role.
+
+Reset all raised hands in the room.
+
+#### Fields
+
+| Field    | Type     | Required | Description                  |
+| -------- | -------- | -------- | ---------------------------- |
+| `action` | `enum`   | yes      | Must be "reset_raised_hands" |
+
+##### Example
+
+```json
+{
+    "action": "reset_raised_hands",
 }
 
 ```
@@ -294,6 +366,50 @@ Received when a moderator disabled the waiting-room.
 
 ---
 
+### RaiseHandsEnabled
+
+Received when a moderator enabled raising of hands.
+
+#### Fields
+
+| Field       | Type     | Always | Description                 |
+| ----------- | -------- | ------ | --------------------------- |
+| `message`   | `enum`   | yes    | Is "raise_hands_enabled"    |
+| `issued_by` | `string` | yes    | Id of the issuing moderator |
+
+##### Example
+
+```json
+{
+    "message": "raise_hands_enabled",
+    "issued_by": "00000000-0000-0000-0000-000000000000"
+}
+```
+
+---
+
+### RaiseHandsDisabled
+
+Received when a moderator disabled raising of hands.
+
+#### Fields
+
+| Field       | Type     | Always | Description                 |
+| ----------- | -------- | ------ | --------------------------- |
+| `message`   | `enum`   | yes    | Is "raise_hands_disabled"   |
+| `issued_by` | `string` | yes    | Id of the issuing moderator |
+
+##### Example
+
+```json
+{
+    "message": "raise_hands_disabled",
+    "issued_by": "00000000-0000-0000-0000-000000000000"
+}
+```
+
+---
+
 ### Accepted
 
 Can only be received while in the waiting room. A moderator accepted this you into the room, which can now entered using
@@ -331,5 +447,27 @@ Can only be received while in the waiting room. A moderator accepted this you in
 {
     "message": "error",
     "error": "cannot_ban_guest"
+}
+```
+
+---
+
+### RaisedHandResetByModerator
+
+Received when a moderator lowered the hand of the participant.
+
+#### Fields
+
+| Field       | Type     | Always | Description                         |
+| ----------- | -------- | ------ | ----------------------------------- |
+| `message`   | `enum`   | yes    | Is "raised_hand_reset_by_moderator" |
+| `issued_by` | `string` | yes    | Id of the issuing moderator         |
+
+##### Example
+
+```json
+{
+    "message": "raised_hand_reset_by_moderator",
+    "issued_by": "00000000-0000-0000-0000-000000000000"
 }
 ```
