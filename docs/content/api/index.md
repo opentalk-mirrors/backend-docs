@@ -8,5 +8,6 @@ Documentation of the API.
 
 ## Signaling v1
 
+* [Chat](modules/chat)
 * [Legal Vote](modules/legalvote)
 * [Protocol](modules/protocol)
