@@ -96,7 +96,7 @@ const createConfig = async () => {
           items: [
             {
               type: "doc",
-              docId: "getting-started",
+              docId: "index",
               position: "left",
               label: "Signaling",
             },
@@ -116,13 +116,7 @@ const createConfig = async () => {
               type: "docsVersionDropdown",
               position: "right",
               dropdownActiveClassDisabled: true,
-            },
-
-            {
-              href: "https://github.com/facebook/docusaurus",
-              label: "GitHub",
-              position: "right",
-            },
+            }
           ],
         },
         footer: {
@@ -133,7 +127,7 @@ const createConfig = async () => {
               items: [
                 {
                   label: "Signaling",
-                  to: "/docs/getting-started",
+                  to: "/docs/",
                 },
                 {
                   label: "REST API",

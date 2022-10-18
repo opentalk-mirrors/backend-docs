@@ -2,9 +2,6 @@
 # Use a larger node image to do the build for native deps (e.g., gcc, python)
 FROM node:lts as build
 
-
-
-
 # We'll run the app as the `node` user, so put it in their home directory
 WORKDIR /home/node/app
 RUN chown -R node:node /home/node
