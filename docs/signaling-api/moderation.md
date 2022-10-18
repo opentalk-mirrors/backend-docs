@@ -260,7 +260,7 @@ Received when you were banned from the room. Will be the last message before ser
 ### In Waiting Room
 
 Received after sending [Join](#join) in a room which has the waiting-room enabled. Once in the waiting room one must wait
-until the [Accepted](#accepted) event was received. Then the room can be entered using [Control/EnterRoom](/api/modules/control#enterroom).
+until the [Accepted](#accepted) event was received. Then the room can be entered using [Control/EnterRoom](control#enterroom).
 
 #### Fields
 
@@ -413,7 +413,7 @@ Received when a moderator disabled raising of hands.
 ### Accepted
 
 Can only be received while in the waiting room. A moderator accepted this you into the room, which can now entered using
-[Control/EnterRoom](/api/modules/control#enterroom).
+[Control/EnterRoom](control#enterroom).
 
 #### Fields
 
