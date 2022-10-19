@@ -94,3 +94,65 @@ Allows a moderator to clear the global chat history of the conference room.
     "action": "clear_history"
 }
 ```
+
+## Events
+
+### MessageSent
+
+A message has been sent to either the global chat or directly to the participant.
+
+#### Fields
+
+| Field       | Type     | Always | Description                                                              |
+| ----------- | -------- | ------ | ------------------------------------------------------------------------ |
+| `message`   | `enum`   | yes    | Is "message_sent"                                                        |
+| `source`    | `string` | yes    | Id of the participant who sent the message                               |
+| `scope`     | `enum`   | yes    | Either "global" or "private"                                             |
+| `target`    | `string` | no     | Only present if `scope` is "private". Participant id of the current user |
+| `timestamp` | `string` | yes    | Deprecated, use `timestamp` field of the Namespaced struct instead       |
+
+##### Example
+
+```json
+{
+    "message": "message_sent",
+    "source": "00000000-0000-0000-0000-000000000000",
+    "scope": "global",
+    "timestamp": "1970-01-01T00:00:00Z",
+    "content": "Hello all!"
+}
+```
+
+```json
+{
+    "message": "message_sent",
+    "source": "00000000-0000-0000-0000-000000000000",
+    "scope": "private",
+    "target": "00000000-0000-0000-0000-0000deadbeef",
+    "timestamp": "1970-01-01T00:00:00Z",
+    "content": "Hello Bob!"
+}
+```
+
+### Error
+
+Received when something went wrong processing messages sent to the server.
+
+#### Fields
+
+| Field     | Type   | Always | Description                                       |
+| --------- | ------ | ------ | ------------------------------------------------- |
+| `message` | `enum` | yes    | Is "error"                                        |
+| `error`   | `enum` | yes    | Exhaustive list of error strings, see table below |
+
+| Error                      | Description                                                     |
+| -------------------------- | --------------------------------------------------------------- |
+| `chat_disabled`            | A message was sent while the chat was disabled                  |
+| `insufficient_permissions` | A moderator action was attempted by a non-moderator participant |
+
+```json
+{
+    "message": "error",
+    "error": "chat_disabled"
+}
+```
