@@ -1,0 +1,11 @@
+Dockerfile
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+.docusaurus
+.editorconfig
+.vscode

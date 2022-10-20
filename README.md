@@ -1,26 +1,29 @@
-# K3K Docs
+# OpenTalk Docs
 
-This repository contains the user, API and technical documentation about the architecture.
+This website is built using [Docusaurus 2](https://docusaurus.io/).
 
-## Development
+## Read here
 
-To quickly view your latest changes, install:
+The content is stored as markdown files in the [docs](docs) directory.
 
-- `mkdocs`
+### Installation
 
-Then run in the `docs` folder:
-
-```bash
-mkdocs serve
+```sh
+yarn
 ```
 
-## Build
+### Local Development
 
-To build the docs and view them, run:
-
-```bash
-podman build -f ci/Dockerfile -t k3k-docs .
-podman run -p 8080:80 k3k-docs
+```sh
+yarn start
 ```
 
-The docs are now available at `localhost:8080`.
+This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
+
+### Build
+
+```sh
+yarn build
+```
+
+This command generates static content into the `build` directory and can be served using any static contents hosting service.

@@ -31,7 +31,7 @@ Must be the first message to be sent when the websocket connection is establishe
 
 Can only be sent while in the waiting room and after being accepted by an moderator.
 
-See [InWaitingRoom](/api/modules/moderation#inwaitingroom)
+See [InWaitingRoom](moderation#inwaitingroom)
 
 #### Fields
 

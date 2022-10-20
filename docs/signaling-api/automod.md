@@ -47,8 +47,8 @@ That list can be used to avoid double selections (option) when randomly choosing
 
 In this selection strategy the following holds.
 
-`allow_list` is used to describe the pool of valid manual selection targets.  
-`playlist` is not used.
+* `allow_list` is used to describe the pool of valid manual selection targets.
+* `playlist` is not used.
 
 ### Selection Strategy: Playlist
 
@@ -61,8 +61,9 @@ The playlist can, while the automod is active, be edited.
 
 In this selection strategy the following holds.
 
-`allow_list` is not used.  
-`playlist` is a ordered list of participants which will get used to select the next participant when yielding.
+* `allow_list` is not used.
+* `playlist` is a ordered list of participants which will get used to select the next participant when yielding.
+
 It is also used as a pool to select participants randomly from (moderator command `select`).
 
 ### Selection Strategy: Random
@@ -71,8 +72,8 @@ This strategy behaves like `None` but will always choose the next speaker random
 
 In this selection strategy the following holds.
 
-`allow_list` is used to describe the pool of valid selection targets.  
-`playlist` is not used.  
+* `allow_list` is used to describe the pool of valid selection targets.
+* `playlist` is not used.
 
 ### Selection Strategy: Nomination
 
@@ -81,8 +82,8 @@ The nominated participant **MUST** be inside the `allow_list` and if double sele
 
 In this selection strategy the following holds.
 
-`allow_list` is used to describe the pool of valid manual selection targets.  
-`playlist` is not used.  
+* `allow_list` is used to describe the pool of valid manual selection targets.
+* `playlist` is not used.
 
 ## Commands
 
@@ -104,7 +105,7 @@ The `Start` message can be send by a moderator (or user with the correct permiss
 
 | Field                    | Type       | Required | Validation                                                 | Description                                                                                                              |
 | ------------------------ | ---------- | -------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `action`                 | `enum`     | yes      | Must be `start`                                            |
+| `action`                 | `enum`     | yes      | Must be `start`                                            |                                                                                                                          |
 | `selection_strategy`     | `enum`     | yes      | Must be one of  `none`, `playlist`, `random`, `nomination` | The used selection strategy                                                                                              |
 | `show_list`              | `bool`     | yes      |                                                            | When true, the module will relay information about the last and upcoming speakers to the frontend.                       |
 | `consider_hand_raise`    | `bool`     | yes      |                                                            | When true, the module will add the participant raising their hand to the playlist                                        |
