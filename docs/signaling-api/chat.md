@@ -107,6 +107,54 @@ Allows a moderator to clear the global chat history of the conference room.
 }
 ```
 
+---
+
+### SetLastSeenTimestamp
+
+Set the last seen timestamp for either global chat messages, group or private
+messages with a specific participant.
+
+The values that are set in `SetLastSeenTimestamp`, will be included in the `chat` field of
+`module_data` inside the [JoinSuccess](control#joinsuccess) message when
+reconnecting to the same room after leaving.
+
+#### Fields
+
+| Field       | Type     | Required                               | Description                                                |
+| ----------- | -------- | -------------------------------------- | ---------------------------------------------------------- |
+| `action`    | `enum`   | yes                                    | Must be `"set_last_seen_timestamp"`                        |
+| `scope`     | `enum`   | yes                                    | Either `"global"`, `"group"` or `"private"`                |
+| `target`    | `string` | If `scope` is `"group"` or `"private"` | Participant id or group                                    |
+| `timestamp` | `string` | yes                                    | The timestamp when the messages in the chat were last read |
+
+##### Example
+
+```json
+{
+    "action": "set_last_seen_timestamp",
+    "scope": "global",
+    "timestamp": "2022-10-22T11:22:33Z"
+}
+```
+
+```json
+{
+    "action": "set_last_seen_timestamp",
+    "scope": "group",
+    "target": "/OpenTalk/OU/Backend",
+    "timestamp": "2022-10-22T11:22:33Z"
+}
+```
+
+```json
+{
+    "action": "set_last_seen_timestamp",
+    "scope": "private",
+    "target": "00000000-0000-0000-0000-000000000000",
+    "timestamp": "2022-10-22T11:22:33Z"
+}
+```
+
 ## Events
 
 ### MessageSent
@@ -185,11 +233,14 @@ The `join_success` control event contains the module-specific fields decribed be
 
 #### Fields
 
-| Field            | Type              | Always | Description                    |
-| ---------------- | ----------------- | ------ | ------------------------------ |
-| `enabled`        | `bool`            | yes    | When true, the chat is enabled |
-| `room_history`   | `StoredMessage[]` | yes    | Chat history for the room      |
-| `groups_history` | `GroupHistory[]`  | yes    | Chat history for each group    |
+| Field                          | Type              | Always | Description                                                            |
+| ------------------------------ | ----------------- | ------ | ---------------------------------------------------------------------- |
+| `enabled`                      | `bool`            | yes    | When true, the chat is enabled                                         |
+| `room_history`                 | `StoredMessage[]` | yes    | Chat history for the room                                              |
+| `groups_history`               | `GroupHistory[]`  | yes    | Chat history for each group                                            |
+| `last_seen_timestamp_global`   | `string`          | no     | Last seen timestamp for the global chat                                |
+| `last_seen_timestamps_private` | `map`             | no     | Last seen timestamps for private chats. Map key is the participant id. |
+| `last_seen_timestamps_group`   | `map`             | no     | Last seen timestamps for group chats. Map key is the group name.       |
 
 ##### Example
 
@@ -219,6 +270,14 @@ The `join_success` control event contains the module-specific fields decribed be
         },
         ...
     ],
+    "last_seen_timestamp_global": "2023-01-03T12:34:56Z",
+    "last_seen_timestamps_private": {
+        "00000000-0000-0000-0000-000000000000": "2023-01-02T11:22:33Z"
+    },
+    "last_seen_timestamps_group": {
+        "/OpenTalk/OU/Backend": "2023-01-02T12:11:11Z",
+        "/OpenTalk/Role/Developer": "2023-01-02T12:10:23Z"
+    }
     ...
 ```
 
