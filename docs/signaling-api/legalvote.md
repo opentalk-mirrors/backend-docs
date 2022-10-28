@@ -16,6 +16,7 @@ The `Start` message can be send by a user to start a new legal vote.
 | ---------------------- | ---------- | -------- | ----------------- | ---------------------------------------------------------------------------------------- |
 | `action`               | `enum`     | yes      |                   | Must be "start".                                                                         |
 | `name`                 | `string`   | yes      | max 150 chars     | General name of the vote                                                                 |
+| `subtitle`             | `string`   | yes      | max 255 chars     | A subtitle for the vote                                                                  |
 | `topic`                | `string`   | yes      | max 500 chars     | Detailed topic that will be voted on.                                                    |
 | `allowed_participants` | `string[]` | yes      | min 1 participant | An array of participant ids, where each contained participant is allowed to cast a vote. |
 | `enable_abstain`       | `bool`     | yes      |                   | Enable/Disable the 'Abstain' option on this vote                                         |
@@ -155,6 +156,7 @@ This message will also be received when joining a room that has an active vote g
 | `start_time`           | `string`   | yes      | RFC 3339 timestamp when the vote started.                                                |
 | `max_votes`            | `int`      | yes      | The maximum number of possible votes.                                                    |
 | `name`                 | `string`   | yes      | General name of the vote.                                                                |
+| `subtitle`             | `string`   | yes      | A subtitle for the vote                                                                  |
 | `topic`                | `string`   | yes      | Detailed topic that will be voted on.                                                    |
 | `allowed_participants` | `string[]` | yes      | An array of participant ids, where each contained participant is allowed to cast a vote. |
 | `enable_abstain`       | `bool`     | yes      | Enable/Disable the 'Abstain' option on this vote.                                        |
