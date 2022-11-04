@@ -1,3 +1,3 @@
 [submodule "api"]
 	path = api
-	url = ../../heinlein-video/k3k-api
+	url = ../k3k-api
