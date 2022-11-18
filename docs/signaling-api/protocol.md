@@ -59,6 +59,30 @@ Can return [Error](#error) of kind `insufficient_permissions`, `currently_initia
 }
 ```
 
+### GeneratePdf
+
+Allows a moderator to generate a PDF from the current contents of the protocol.
+
+Access to the PDF is given to all participants in the room via the `PdfAsset` event.
+
+#### Response
+
+A [`PdfAsset`](#pdfasset) message with the asset id of the PDF document is sent to every participant in the room.
+
+#### Fields
+
+| Field    | Type   | Required | Description               |
+| -------- | ------ | -------- | ------------------------- |
+| `action` | `enum` | yes      | Must be `"generate_pdf"`. |
+
+#### Example
+
+```json
+{
+    "action": "generate_pdf",
+}
+```
+
 ## Events
 
 ### WriteUrl
@@ -127,6 +151,30 @@ An update message is issued when a participants etherpad access level changes.
             "readonly": false
         }
     }
+}
+```
+
+### PdfAsset
+
+Contains the filename and asset id of the PDF document of the protocol.
+
+This event is received by every participant when a moderator generates a PDF document for the protocol.
+
+#### Fields
+
+| Field      | Type     | Required | Description                                       |
+| ---------- | -------- | -------- | ------------------------------------------------- |
+| `message`  | `enum`   | yes      | Is `"pdf_asset"`.                                 |
+| `filename` | `string` | yes      | The file name of the PDF document of the protocol |
+| `asset_id` | `string` | yes      | The id of the PDF document asset                  |
+
+#### Example
+
+```json
+{
+    "message": "pdf_asset",
+    "filename": "vote_protocol_2023-01-16_12:34:56-UTC.pdf",
+    "asset_id": "5be191a8-3eb1-4c79-afe1-d4857dcf0e73"
 }
 ```
 
