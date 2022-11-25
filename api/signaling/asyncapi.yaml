@@ -1,0 +1,104 @@
+---
+asyncapi: 2.0.0
+id: urn:de:heinlein-video:signaling:server
+info:
+  title: K3K Signaling Async API
+  version: 0.1.0
+  description: |
+    This document specifies the K3K Signaling API.
+    It is used together with the K3K Control API and SDP, WebRTC, etc.
+    to join video chat rooms. For a start you need to obtain an access_token
+    from the control server. Using this you can establish a WebSocket connection
+    to the signaling server.
+
+    Our API relies on tagged unions which are not nice to display using
+    AsyncAPI. In most cases we split the outer tagged union into different
+    messages, these share a common outer envelope.
+    For an overview of how these messages look like, consult the respective
+    example.
+
+    Examples in this document follow some basic rules.
+    For the sake of consistency and human readability our own `participant_id`
+    used in examples is:
+    `00000000-1111-0000-0000-0000deadbeef`
+    The following `participant_id`s belong to other parties in a video chat room
+    - `00000000-0000-1111-0000-00000badf00d`
+    - `00000000-0000-2222-0000-00000badf00d`
+  license:
+    name: TODO
+    url: https://todo.todo/todo
+servers:
+  test-local:
+    url: localhost:{port}
+    protocol: ws
+    variables:
+      port:
+        default: '8180'
+
+channels:
+  /signaling:
+    bindings:
+      ws:
+        method: GET
+        headers:
+          type: object
+          required:
+            - Sec-WebSocket-Protocol
+          properties:
+            Sec-WebSocket-Protocol:
+              type: array
+              items:
+                - type: string
+                  enum: [k3k-signaling-json-v$MAJOR.$MINOR]
+                  description: |
+                    This informs the API that you want to talk using Protocol specified in this document.
+                    The version part MUST be a valid MAJOR.MINOR release of this specification.
+
+                    The server will respond with the same version as part of the WebSocket sub-protocol negotiation.
+                - type: string
+                  enum: [ticket#<..>]
+                  description: |
+                    Used to authenticate this websocket.
+                    You can obtain a ticket from the [`/rooms/{roomid}/start`] endpoint.
+                    The server checks the ticket to be valid. These normally have a short lifetime.
+                    Always get a fresh one when opening the WebSocket.
+
+                    For example,
+                    ticket#eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2V4YW1wbGUuYXV0aDAuY29tLy
+
+    publish:
+      summary: Send messages to the K3K Websocket Signaling API
+      operationId: onFrontEndEvent
+      message:
+        oneOf:
+          - $ref: control-asyncapi.yaml#/components/messages/join
+          - $ref: media-outgoing-asyncapi.yaml#/components/messages/publish
+          - $ref: media-outgoing-asyncapi.yaml#/components/messages/publish_complete
+          - $ref: media-outgoing-asyncapi.yaml#/components/messages/unpublish
+          - $ref: media-outgoing-asyncapi.yaml#/components/messages/update_media_session
+          - $ref: media-outgoing-asyncapi.yaml#/components/messages/sdp_subscribe_action
+          - $ref: media-outgoing-asyncapi.yaml#/components/messages/sdp_answer_action
+          - $ref: media-outgoing-asyncapi.yaml#/components/messages/sdp_candidate_action
+          - $ref: media-outgoing-asyncapi.yaml#/components/messages/sdp_end_of_candidate_action
+          - $ref: chat-asyncapi.yaml#/components/messages/chat_action
+          - $ref: ee-chat-asyncapi.yaml#/components/messages/ee_chat_group_action
+
+    subscribe:
+      summary: Messages that you receive from the K3K Websocket Signaling API
+      operationId: onServerEvent
+      message:
+        oneOf:
+          - $ref: control-asyncapi.yaml#/components/messages/join_success
+          - $ref: control-asyncapi.yaml#/components/messages/joined
+          - $ref: control-asyncapi.yaml#/components/messages/left
+          - $ref: control-asyncapi.yaml#/components/messages/update
+          - $ref: control-asyncapi.yaml#/components/messages/error
+          - $ref: media-incoming-asyncapi.yaml#/components/messages/sdp_offer_message
+          - $ref: media-incoming-asyncapi.yaml#/components/messages/sdp_answer_message
+          - $ref: media-incoming-asyncapi.yaml#/components/messages/sdp_candidate_message
+          - $ref: media-incoming-asyncapi.yaml#/components/messages/webrtc_up_message
+          - $ref: media-incoming-asyncapi.yaml#/components/messages/webrtc_down_message
+          - $ref: media-incoming-asyncapi.yaml#/components/messages/webrtc_slow_message
+          - $ref: media-incoming-asyncapi.yaml#/components/messages/sdp_error_message
+          - $ref: chat-asyncapi.yaml#/components/messages/chat
+          - $ref: ee-chat-asyncapi.yaml#/components/messages/ee_chat_group

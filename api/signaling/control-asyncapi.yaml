@@ -1,0 +1,284 @@
+---
+components:
+  messages:
+    join:
+      name: 'Pub: Control - Join'
+      description: |
+        Inform the signaling server about your display name and that you are here and ready.
+
+        The server will send you a [Sub: Control - Join Success](<#message-Sub: Control - Join Success>)
+        in return containing your generated `participant_id`. Use this `participant_id` when you refer to yourself.
+        Upon this point, the server informs other participants in this video room about your presence,
+        by sending them a [Sub: Control - User Joined](<#message-Sub: Control - User Joined>) message.
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/control_envelope'
+          - type: object
+            properties:
+              payload:
+                $ref: '#/components/schemas/join_action'
+      examples:
+        - payload:
+            namespace: control
+            payload:
+              action: join
+              display_name: Your Display Name
+      x-response:
+        $ref: '#/components/messages/join_success'
+
+    join_success:
+      name: 'Sub: Control - Join Success'
+      description: |
+        Join Success message, sent as response to a published
+        [Pub: Control - Join](<#message-Pub: Control - Join>) message.
+
+        Contains your participant id and a list of other participants in this room and their media sessions,
+        if they currently are publishing.
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/control_envelope'
+          - type: object
+            properties:
+              payload:
+                $ref: '#/components/schemas/join_success_message'
+      examples:
+        - payload:
+            namespace: control
+            payload:
+              message: join_success
+              id: 00000000-1111-0000-0000-0000deadbeef
+              participants:
+                - id: 00000000-0000-1111-0000-00000badf00d
+                  display_name: Name of User 1
+                  media:
+                    video:
+                      audio: true
+                      video: true
+                - id: 00000000-0000-2222-0000-00000badf00d
+                  display_name: Name of User 2
+                  media:
+                    video:
+                      audio: true
+                      video: false
+                    screen:
+                      audio: false
+                      video: true
+              chat:
+                room_history:
+                  - content: Hello All!
+                  - scope: global
+                  - source: 00000000-0000-2222-0000-00000badf00d
+                  - timestamp: 2021-06-25T11:25:04.281833651Z
+
+    joined:
+      name: 'Sub: Control - User Joined'
+      description: |
+        Sent by the signaling server when another participant joins this room.
+
+        Contains information about that participant including published media
+        session and their state.
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/control_envelope'
+          - type: object
+            properties:
+              payload:
+                $ref: '#/components/schemas/joined_message'
+      examples:
+        - payload:
+            namespac: control
+            payload:
+              message: joined
+              id: 00000000-0000-1111-0000-00000badf00d
+              display_name: Name of User 1
+              publishing:
+                video:
+                  audio: true
+                  video: true
+
+    left:
+      name: 'Sub: Control - User Left'
+      description: |
+        Sent by the signaling server when another participant left this room.
+
+        You should remove the participant with this id from your internal state
+        upon receipt.
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/control_envelope'
+          - type: object
+            properties:
+              payload:
+                $ref: '#/components/schemas/left_message'
+      examples:
+        - payload:
+            namespace: control
+            payload:
+              message: left
+              id: 00000000-0000-2222-0000-00000badf00d
+
+    update:
+      name: 'Sub: Control - Update'
+      description: |
+        Sent by the signaling server when another participant updated its state.
+
+        This can be either caused by a new published media session, or a change of
+        the state of the microphone (muted/unmuted).
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/control_envelope'
+          - type: object
+            properties:
+              payload:
+                $ref: '#/components/schemas/update_message'
+      examples:
+        - payload:
+            namespace: control
+            payload:
+              kind: update
+              data:
+                id: 00000000-0000-2222-0000-00000badf00d
+                display_name: Name of User 2
+                publishing:
+                  video:
+                    audio: true
+                    video: true
+
+    error:
+      name: 'Sub: Error Response'
+      description: |
+        In this version of the spec the error message is just a string
+        describing what went wrong. We intent to provide better ways to describe
+        various error types in the future.
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/control_envelope'
+          - type: object
+            properties:
+              payload:
+                $ref: '#/components/schemas/error_message'
+      examples:
+        - payload:
+            properties:
+              type: string
+              description: The error message
+
+  schemas:
+    control_envelope:
+      name: Control Message Envelope
+      description: Common envelope for control all messages
+      type: object
+      required:
+        - namespace
+        - payload
+      additionalProperties: false
+      properties:
+        namespace:
+          type: string
+          enum: [control]
+        payload:
+          type: object
+      discriminator_:
+        propertyName: namespace
+
+    join_action:
+      type: object
+      required:
+        - action
+        - display_name
+      properties:
+        action:
+          type: string
+          enum: [join]
+        display_name:
+          $ref: common-asyncapi.yaml#/components/schemas/display_name
+      discriminator_:
+        propertyName: action
+
+    join_success_message:
+      description: |
+        Hello message, sent when new participant enters a room.
+      type: object
+      required:
+        - message
+        - id
+        - participants
+        - chat
+      descriminator:
+        propertyName: action
+      properties:
+        message:
+          type: string
+          enum: [join_success]
+        id:
+          $ref: common-asyncapi.yaml#/components/schemas/participant_id
+        participants:
+          type: array
+          items:
+            $ref: common-asyncapi.yaml#/components/schemas/participant
+        chat:
+          type: object
+          required:
+            - room_history
+          additionalProperties: false
+          properties:
+            room_history:
+              type: array
+              items:
+                $ref: chat-asyncapi.yaml#/components/schemas/chat_message
+
+    joined_message:
+      message:
+        type: string
+        enum: [joined]
+      additionalProperties: false
+      properties:
+        id:
+          $ref: common-asyncapi.yaml#/components/schemas/participant
+
+    update_message:
+      type: object
+      required:
+        - message
+        - id
+      descriminator:
+        propertyName: action
+      properties:
+        message:
+          type: string
+          enum: [update]
+        id:
+          $ref: common-asyncapi.yaml#/components/schemas/participant
+      additionalProperties: false
+
+    left_message:
+      type: object
+      required:
+        - message
+        - id
+      descriminator:
+        propertyName: action
+      properties:
+        message:
+          type: string
+          enum: [left]
+        id:
+          $ref: common-asyncapi.yaml#/components/schemas/participant_id
+      additionalProperties: false
+
+    error_message:
+      type: object
+      required:
+        - message
+        - text
+      descriminator:
+        propertyName: action
+      properties:
+        message:
+          type: string
+          enum: [error]
+        text:
+          description: |
+            the reason of the error
+          type: string
+      additionalProperties: false

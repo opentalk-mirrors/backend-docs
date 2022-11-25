@@ -1,0 +1,277 @@
+---
+components:
+  messages:
+    sdp_offer_message:
+      name: 'Sub: Media - SDP Offer Message'
+      description: |
+        This message contains a SDP Offer related to a media session,
+        which can be identified via the `source` and `media_session_type`.
+
+        Usually it is received right after sending a
+        ['Pub: Media - SDP Subscribe Action'](<#message-Pub: Media - SDP Subscribe Action>)
+        but can also be received if the media server requires a session renegotiation.
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/media_message_envelope'
+          - type: object
+            properties:
+              payload:
+                $ref: '#/components/schemas/sdp_offer_message'
+      examples:
+        - payload:
+            namespace: media
+            payload:
+              action: sdp_offer
+              sdp: THIS...IS..SDPDATA.......
+              source: 00000000-0000-1111-0000-00000badf00d
+              media_session_type: video
+
+    sdp_answer_message:
+      name: 'Sub: SDP Answer Message'
+      description: |
+        This message contains a SDP Answer related to a media session,
+        which can be identified via the `source` and `media_session_type`.
+
+        It can only occur after a ['Pub: Media - Publish Action'](<#message-Pub: Media - Publish Action>)
+        has been sent and `source` will always be the the own `id`.
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/media_message_envelope'
+          - type: object
+            properties:
+              payload:
+                $ref: '#/components/schemas/sdp_answer_message'
+      examples:
+        - payload:
+            namespace: media
+            payload:
+              action: sdp_answer
+              sdp: THIS...IS..SDPDATA.......
+              source: 00000000-1111-0000-0000-0000deadbeef
+              media_session_type: video
+
+    sdp_candidate_message:
+      name: 'Sub: SDP Candidate Message'
+      description:
+        A SDP Candidate message signals a Trickle/ICE Candidate event.
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/media_message_envelope'
+          - type: object
+            properties:
+              payload:
+                $ref: '#/components/schemas/sdp_candidate_message'
+      examples:
+        - payload:
+            namespace: media
+            payload:
+              action: sdp_candidate
+              candidate: THIS...IS..SDPDATA.......
+              source: 00000000-1111-0000-0000-0000deadbeef
+              media_session_type: video
+
+    sdp_error_message:
+      name: 'Sub: SDP Error Message'
+      description: |
+        Signals an error when suscribing or publishing media sessions.
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/media_message_envelope'
+          - type: object
+            properties:
+              payload:
+                $ref: '#/components/schemas/sdp_error_message'
+      examples:
+        - payload:
+            namespace: media
+            payload:
+              action: error
+              text: Some error message ... offer failed
+
+    webrtc_up_message:
+      name: 'Sub: WebRtcUp Message'
+      description: |
+        Signals that the server has successfully established a WebRTC connection to the client.
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/media_message_envelope'
+          - type: object
+            properties:
+              payload:
+                $ref: '#/components/schemas/webrtc_up_message'
+      examples:
+        - payload:
+            namespace: media
+            payload:
+              message: webrtc_up
+              source: 00000000-1111-0000-0000-0000deadbeef
+              media_session_type: video
+
+    webrtc_down_message:
+      name: 'Sub: WebRtcDown Message'
+      description: |
+        Signals that the WebRTC connection has been closed on the server side. Due to the cause not
+        being specified, the client may attempt to reconnect to the server.
+
+        This message may not be received when the stream was shut down due to a
+        participant leaving and therefore cannot be relied upon to handle all stream state.
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/media_message_envelope'
+          - type: object
+            properties:
+              payload:
+                $ref: '#/components/schemas/webrtc_down_message'
+      examples:
+        - payload:
+            namespace: media
+            payload:
+              message: webrtc_down
+              source: 00000000-1111-0000-0000-0000deadbeef
+              media_session_type: video
+
+    webrtc_slow_message:
+      name: 'Sub: WebRtcSlow Message'
+      description: |
+        Signals that the server has trouble sending/receiving media on the WebRTC connection.
+        The `direction` property has to be interpreted from the server's perspective.
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/media_message_envelope'
+          - type: object
+            properties:
+              payload:
+                $ref: '#/components/schemas/webrtc_slow_message'
+      examples:
+        - payload:
+            namespace: media
+            payload:
+              message: webrtc_slow
+              direction: downstream
+              source: 00000000-1111-0000-0000-0000deadbeef
+              media_session_type: video
+  schemas:
+    media_message_envelope:
+      name: Media Message Envelope
+      description: |
+        Common envelope for media all messages
+      type: object
+      required:
+        - namespace
+        - payload
+      additionalProperties: false
+      properties:
+        namespace:
+          type: string
+          enum: [media]
+        payload:
+          payload:
+            $ref: '#/components/schemas/media_message'
+      discriminator_:
+        propertyName: namespace
+
+    media_message:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          enum: [sdp_answer, sdp_offer, sdp_candidate, error]
+      discriminator_:
+        propertyName: message
+
+    sdp_answer_message:
+      name: 'Media Message: SDP Answer'
+      description: |
+        A SDP answer
+      allOf:
+        - type: object
+          required:
+            - message
+          properties:
+            message:
+              enum: [sdp_answer]
+        - $ref: common-asyncapi.yaml#/components/schemas/source_sdp
+
+    sdp_offer_message:
+      name: 'Media Message: SDP Offer'
+      description: |
+        A SDP offer, might be the response to a requestOffer
+      allOf:
+        - type: object
+          required:
+            - message
+          properties:
+            message:
+              enum: [sdp_offer]
+        - $ref: common-asyncapi.yaml#/components/schemas/source_sdp
+
+    sdp_candidate_message:
+      name: 'Media Message: SDP Candidate'
+      description: |
+        A SDP Candidate (Trickle/ICE Candidate)
+      allOf:
+        - type: object
+          required:
+            - message
+          properties:
+            message:
+              enum: [sdp_candidate]
+        - $ref: common-asyncapi.yaml#/components/schemas/source_candidate
+
+    sdp_error_message:
+      name: 'Media Message: Error'
+      description: |
+        SDP Error message
+      type: object
+      required:
+        - message
+        - text
+      properties:
+        message:
+          enum: [error]
+        text:
+          type: string
+
+    webrtc_up_message:
+      name: 'Media Message: WebRtcUp'
+      description: |
+        The WebRtc connection is up
+      allOf:
+        - type: object
+          required:
+            - message
+          properties:
+            message:
+              enum: [webrtc_up]
+        - $ref: common-asyncapi.yaml#/components/schemas/source_base
+
+    webrtc_down_message:
+      name: 'Media Message: WebRtcDown'
+      description: |
+        The WebRtc connection is down
+      allOf:
+        - type: object
+          required:
+            - message
+          properties:
+            message:
+              enum: [webrtc_down]
+        - $ref: common-asyncapi.yaml#/components/schemas/source_base
+
+    webrtc_slow_message:
+      name: 'Media Message: WebRtcSlow'
+      description: |
+        The WebRtc connection is slow
+      allOf:
+        - type: object
+          required:
+            - message
+            - direction
+          properties:
+            message:
+              enum: [webrtc_slow]
+            direction:
+              enum: [upstream, downstream]
+        - $ref: common-asyncapi.yaml#/components/schemas/source_base

@@ -1,0 +1,105 @@
+---
+tags:
+  enterprise:
+    name: Enterprise
+    description: Only part of the enterprise edition.
+
+components:
+  messages:
+    ee_chat_group:
+      name: 'Sub: EE-Chat Group - Message'
+      description: |
+        EE-Chat message, send to a `group` the user is part of from an other user.
+
+        Contains the senders participant id, a `timestamp`,
+        the message content and the group id.
+      tags:
+        - $ref: '#/tags/enterprise'
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/ee_chat_envelope'
+          - type: object
+            properties:
+              payload:
+                $ref: '#/components/schemas/ee_chat_message'
+      examples:
+        - payload:
+            namespace: ee-chat
+            payload:
+              source: 00000000-0000-1111-0000-00000badf00d
+              group: our-group
+              timestamp: 2021-06-24T14:00:11.873753715Z
+              content: Hello Group
+
+    ee_chat_group_action:
+      name: 'Pub: EE-Chat Group - Action'
+      description: |
+        EE-Chat message, send to the current `group`.
+
+        Contains a `content` field for the message text and a target `group`.
+        The server will send a [Sub: EE-Chat Group  - Message](<#message-Sub: EE-Chat Group - Message>) in return.
+      tags:
+        - $ref: '#/tags/enterprise'
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/ee_chat_envelope'
+          - type: object
+            properties:
+              payload:
+                $ref: '#/components/schemas/ee_chat_action'
+      examples:
+        - payload:
+            namespace: ee-chat
+            payload:
+              group: our-group
+              content: Hello Bob
+
+  schemas:
+    ee_chat_envelope:
+      description: A EE-Chat Group Message
+      type: object
+      required:
+        - namespace
+        - payload
+      additionalProperties: false
+      properties:
+        namespace:
+          type: string
+          enum: [ee-chat]
+        payload:
+          type: object
+      discriminator_:
+        propertyName: namespace
+
+    ee_chat_message:
+      description: A EE-Chat Group Message received from the server
+      type: object
+      required:
+        - source
+        - group
+        - timestamp
+        - content
+      additionalProperties: false
+      properties:
+        source:
+          type: string
+        group:
+          type: string
+        timestamp:
+          type: string
+        content:
+          description: The message text
+          type: string
+
+    ee_chat_action:
+      description: A EE-Chat Group Message send to the server
+      type: object
+      required:
+        - content
+        - group
+      additionalProperties: false
+      properties:
+        group:
+          type: string
+        content:
+          type: string

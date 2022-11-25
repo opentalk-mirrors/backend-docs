@@ -1,0 +1,328 @@
+---
+components:
+  messages:
+    publish:
+      name: 'Pub: Media - Publish Action'
+      description: |
+        Notify the signaling server of the intent to publish a media session.
+        The server will relay the SDP message with the intent to create a new publisher.
+
+        For this `target` MUST be the users own `participant_id` and `media_session_type`
+        the source of his media session
+        (currently `screen` and `video`, used for enforcing different bit-rates on the server).
+        The server will send you a ['Sub: SDP Answer Message'](<#message-Sub: SDP Answer Message>).
+
+        When the server receives this message, it will update the state of your
+        client session (saving that you are publishing a 'media session'
+        of media session type X).
+        Finally when the process is complete and a
+        ['Pub: Media - Publish Action'](<#message-Pub: Media - Publish Action>) was send
+        other participants in the room will be notified with a
+        [Sub: Media - Update](<#message-Sub: Media - Update>).
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/media_action_envelope'
+          - type: object
+            properties:
+              payload:
+                $ref: '#/components/schemas/publish_action'
+      examples:
+        - payload:
+            namespace: media
+            payload:
+              action: publish
+              media_session_type: video
+              media_session_state:
+                audio: true
+                video: true
+
+    publish_complete:
+      name: 'Pub: Media - Publish Complete Action'
+      description: |
+        The participant successfully established a `media_session`
+
+        When the server receives this message, it will update the state of your client session
+        (saving that you are publishing a 'media session' of media session type X)
+        and finally send the update to other participants in the room.
+        Other participants will receive a [Sub: Control - Update](<#message-Sub: Conrol - Update>).
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/media_action_envelope'
+          - type: object
+            properties:
+              payload:
+                $ref: '#/components/schemas/publish_complete_action'
+      examples:
+        - payload:
+            namespace: media
+            payload:
+              action: publish
+              media_session_type: video
+              media_session_state:
+                audio: true
+                video: true
+
+    unpublish:
+      name: 'Pub: Media - Unpublish Action'
+      description: |
+        Notify the signaling server that you stopped publishing a media session.
+
+        When the server receives this message, it will update the state of your client session
+        (saving that you are publishing a 'media session' of media session type X)
+        and finally send the update to other participants in the room.
+        Other participants will receive a [Sub: Media - Update](<#message-Sub: Media - Update>)
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/media_action_envelope'
+          - type: object
+            properties:
+              payload:
+                $ref: '#/components/schemas/unpublish_action'
+      examples:
+        - payload:
+            namespace: media
+            payload:
+              action: unpublish
+              media_session_type: video
+
+    update_media_session:
+      name: 'Pub: Media - UpdateMediaSession Action'
+      description: |
+        Inform the signaling server of a changed state of your media session.
+
+        This can be mute/unmute of video or audio
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/media_action_envelope'
+          - type: object
+            properties:
+              payload:
+                $ref: '#/components/schemas/update_media_session_action'
+      examples:
+        - payload:
+            namespace: media
+            payload:
+              action: update_media_session
+              media_session_type: video
+              media_session_state:
+                audio: false
+                video: true
+
+    sdp_subscribe_action:
+      name: 'Pub: Media - SDP Subscribe Action'
+      description: |
+        This message signal the intent to subscribe to the given `target` and
+        `media_session_type`.
+
+        The server will send a ['Sub: SDP Offer Message'](<#message-Sub: SDP Offer Message>)
+        when successful or a ['SDP Error Message'](<#message-SDP Error Message>).
+        There are no time guarantees when to expect an answer.
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/media_action_envelope'
+          - type: object
+            properties:
+              payload:
+                $ref: '#/components/schemas/sdp_subscribe_action'
+      examples:
+        - payload:
+            namespace: media
+            payload:
+              action: subscribe
+              target: 00000000-0000-1111-0000-00000badf00d
+              media_session_type: video
+        - payload:
+            namespace: media
+            payload:
+              action: subscribe
+              target: 00000000-0000-2222-0000-00000badf00d
+              media_session_type: screen
+      x-response:
+        $ref: media-incoming-asyncapi.yaml#/components/messages/sdp_offer_message
+
+    sdp_answer_action:
+      name: 'Pub: Media - SDP Answer Action'
+      description: |
+        This message is used to convey an SDP answer generated from a
+        ['Sub: Media - SDP Offer Message'](<#message-Sub: Media - SDP Offer Message>) received from the server.
+        The `target` field need to be set to the value of the `source` field of the message it replies to.
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/media_action_envelope'
+          - type: object
+            properties:
+              payload:
+                $ref: '#/components/schemas/sdp_answer_action'
+      examples:
+        - payload:
+            namespace: media
+            payload:
+              action: sdp_answer
+              payload: THIS_IS_SDPDATA....
+              target: 00000000-1111-0000-0000-0000deadbeef
+              media_session_type: video
+
+    sdp_candidate_action:
+      name: 'Pub: Media - SDP Candidate Action'
+      description: |
+        To speed up the session establishment a session, using ICE, may use the `trickle` option.
+
+        `Trickled Candidates` related to a media session must be sent via this message type.
+        Once the candidate discovery process is finished a
+        ['Pub: Media - SDP End of Candidate Action'](<#message-Pub: Media - SDP End of Candidate Action>)
+        must be sent.
+
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/media_action_envelope'
+          - type: object
+            properties:
+              payload:
+                $ref: '#/components/schemas/sdp_candidate_action'
+
+    sdp_end_of_candidate_action:
+      name: 'Pub: Media - SDP Candidate Action'
+      description: |
+        This message is finishes the process of candidate announcements and
+        follows a set of ['Pub: Media - SDP Candidate Action'](<#message-Pub: Media - SDP Candidate Action>) messages.
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/media_action_envelope'
+          - type: object
+            properties:
+              payload:
+                $ref: '#/components/schemas/sdp_end_of_candidates_action'
+
+  schemas:
+    media_action_envelope:
+      name: Media Action Envelope
+      description: |
+        Common envelope for media all messages
+      type: object
+      required:
+        - namespace
+        - payload
+      additionalProperties: false
+      properties:
+        namespace:
+          type: string
+          enum: [media]
+        payload:
+          $ref: '#/components/schemas/media_action'
+      discriminator_:
+        propertyName: namespace
+
+    media_action:
+      type: object
+      required:
+        - action
+      properties:
+        action:
+          type: string
+          enum: [
+            publish, publish_complete, unpublish, subscribe,
+            sdp_answer, sdp_candidate, sdp_end_of_candidates,
+            update_media_session
+          ]
+      discriminator_:
+        propertyName: action
+
+    publish_action:
+      name: 'Media Action: Publish'
+      description: A SDP offer, or the intent to publish a media_session
+      allOf:
+        - type: object
+          properties:
+            action:
+              type: string
+              enum: [publish]
+        - $ref: common-asyncapi.yaml#/components/schemas/targeted_sdp
+
+    publish_complete_action:
+      name: 'Media Action: Publish Complete'
+      description: |
+        The participant successfully established a media session
+      allOf:
+        - type: object
+          properties:
+            action:
+              type: string
+              enum: [publish_complete]
+        - $ref: common-asyncapi.yaml#/components/schemas/media_session_info
+
+    unpublish_action:
+      name: 'Media Action: Unpublish'
+      description: |
+        The participants media session has stopped (for whatever reason)
+      allOf:
+        - type: object
+          properties:
+            action:
+              type: string
+              enum: [unpublish]
+        - $ref: common-asyncapi.yaml#/components/schemas/associated_media_session
+
+    update_media_session_action:
+      name: 'Media Action: Update Media Session'
+      description: |
+        The participant updates its session state.
+
+        This can be mute/unmute of video or audio.
+      allOf:
+        - type: object
+          properties:
+            action:
+              type: string
+              enum: [update_media_session]
+        - $ref: common-asyncapi.yaml#/components/schemas/media_session_info
+
+    sdp_answer_action:
+      name: 'Media Action: SDP Answer'
+      description: |
+        Response to a SDP Offer Message
+      allOf:
+        - type: object
+          properties:
+            action:
+              type: string
+              enum: [sdp_answer]
+        - $ref: common-asyncapi.yaml#/components/schemas/targeted_sdp
+
+    sdp_candidate_action:
+      name: 'Media Action: SDP Candidate'
+      description: |
+        A SDP Candidate (Trickle/ICE Candidate)
+      allOf:
+        - type: object
+          properties:
+            action:
+              type: string
+              enum: [sdp_candidate]
+        - $ref: common-asyncapi.yaml#/components/schemas/targeted_candidate
+
+    sdp_end_of_candidates_action:
+      name: 'Media Action: SDP End of Candidate'
+      description: |
+        Signals that you sent all found ICE candidates.
+        The target contains your own participant_id
+      allOf:
+        - type: object
+          properties:
+            action:
+              type: string
+              enum: [sdp_end_of_candidates]
+        - $ref: common-asyncapi.yaml#/components/schemas/targeted_base
+
+    sdp_subscribe_action:
+      name: 'Media Action: SDP Subscribe'
+      description: |
+        A SDP request offer, or the intent to subscribe to a published `media_session` from another participant.
+        The target contains the `participant_id` of the participant you want to subscribe to and
+        the `media_session_type` of interest.
+      allOf:
+        - type: object
+          properties:
+            action:
+              type: string
+              enum: [subscribe]
+        - $ref: common-asyncapi.yaml#/components/schemas/targeted_base
