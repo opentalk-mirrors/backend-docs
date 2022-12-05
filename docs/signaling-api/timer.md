@@ -25,7 +25,7 @@ Can return [Error](#error) of kind `insufficient_permissions`, `invalid_duration
 
 | Field                | Type     | Required | Description                                                                                     |
 | -------------------- | -------- | -------- | ----------------------------------------------------------------------------------------------- |
-| `action`             | `enum`   | yes      | Must be "start"                                                                                 |
+| `action`             | `enum`   | yes      | Must be `"start"`                                                                               |
 | `duration`           | `int`    | no       | The duration (seconds) of the timer. If not set, the timer will act like a stopwatch (count up) |
 | `title`              | `string` | no       | The optional title for the timer                                                                |
 | `enable_ready_check` | `bool`   | yes      | Enables/Disables participants to send a `update_ready_check` action                             |
@@ -57,7 +57,7 @@ The `Stop` action can be sent by a moderator to stop a timer.
 
 | Field      | Type     | Required | Description                                           |
 | ---------- | -------- | -------- | ----------------------------------------------------- |
-| `action`   | `enum`   | yes      | Must be "stop"                                        |
+| `action`   | `enum`   | yes      | Must be `"stop"`                                      |
 | `timer_id` | `string` | yes      | The timer id (uuid)                                   |
 | `reason`   | `string` | no       | An optional reason for the stop, set by the moderator |
 
@@ -87,7 +87,7 @@ Can be sent by any participant only when `ready_check` is set to true in [Start]
 
 | Field      | Type     | Required | Description                       |
 | ---------- | -------- | -------- | --------------------------------- |
-| `action`   | `enum`   | yes      | Must be "update_ready_status"     |
+| `action`   | `enum`   | yes      | Must be `"update_ready_status"`   |
 | `timer_id` | `string` | yes      | The timer id (uuid)               |
 | `status`   | `bool`   | yes      | The R2C status of the participant |
 
@@ -119,7 +119,7 @@ This message is also received in the `join_success` message when joining a room 
 
 | Field                 | Type     | Always | Description                                                          |
 | --------------------- | -------- | ------ | -------------------------------------------------------------------- |
-| `message`             | `enum`   | yes    | Is "started"                                                         |
+| `message`             | `enum`   | yes    | Is `"started"`                                                       |
 | `timer_id`            | `string` | yes    | The timer id (uuid)                                                  |
 | `started_at`          | `string` | yes    | RFC 3339 timestamp of when the timer started                         |
 | `ends at`             | `string` | no     | optional RFC 3339 timestamp of when the timer will end               |
@@ -149,13 +149,13 @@ A timer has been stopped.
 
 #### Fields
 
-| Field            | Type     | Always                        | Description                                                         |
-| ---------------- | -------- | ----------------------------- | ------------------------------------------------------------------- |
-| `message`        | `enum`   | yes                           | Is "stopped"                                                        |
-| `timer_id`       | `string` | yes                           | The timer id (uuid)                                                 |
-| `kind`           | `enum`   | yes                           | The kind of stop. Must me `by_moderator`, `expired`, `creator_left` |
-| `participant_id` | `string` | when `kind` is `by_moderator` | The participant id of the moderator that stopped the timer          |
-| `reason`         | `string` | when `kind` is `by_moderator` | Optional reason. Set by the moderator                               |
+| Field            | Type     | Always                        | Description                                                               |
+| ---------------- | -------- | ----------------------------- | ------------------------------------------------------------------------- |
+| `message`        | `enum`   | yes                           | Is `"stopped"`                                                            |
+| `timer_id`       | `string` | yes                           | The timer id (uuid)                                                       |
+| `kind`           | `enum`   | yes                           | The kind of stop. Must be `"by_moderator"`, `"expired"`, `"creator_left"` |
+| `participant_id` | `string` | when `kind` is `by_moderator` | The participant id of the moderator that stopped the timer                |
+| `reason`         | `string` | when `kind` is `by_moderator` | Optional reason. Set by the moderator                                     |
 
 __StopKind:__
 
@@ -189,7 +189,7 @@ expired:
 }
 ```
 
-creator_left:
+creator left:
 
 ```json
 {
@@ -209,7 +209,7 @@ A participant has updated its ready status.
 
 | Field            | Type     | Always | Description                                 |
 | ---------------- | -------- | ------ | ------------------------------------------- |
-| `message`        | `enum`   | yes    | Is "updated_ready_status"                   |
+| `message`        | `enum`   | yes    | Is `"updated_ready_status"`                 |
 | `timer_id`       | `string` | yes    | The timer id (uuid)                         |
 | `participant_id` | `string` | yes    | The participant that had its status updated |
 | `status`         | `bool`   | yes    | The participants status                     |
