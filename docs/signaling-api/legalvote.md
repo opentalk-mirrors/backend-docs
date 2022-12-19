@@ -31,18 +31,17 @@ The `Start` message can be sent by a moderator to start a new legal vote.
 
 #### Fields
 
-| Field                  | Type       | Required | Validation        | Description                                                                              |
-| ---------------------- | ---------- | -------- | ----------------- | ---------------------------------------------------------------------------------------- |
-| `action`               | `enum`     | yes      |                   | Must be `"start"`.                                                                       |
-| `name`                 | `string`   | yes      | max 150 chars     | General name of the vote                                                                 |
-| `subtitle`             | `string`   | no       | max 255 chars     | A subtitle for the vote                                                                  |
-| `topic`                | `string`   | no       | max 500 chars     | Detailed topic that will be voted on.                                                    |
-| `allowed_participants` | `string[]` | yes      | min 1 participant | An array of participant ids, where each contained participant is allowed to cast a vote. |
-| `enable_abstain`       | `bool`     | yes      |                   | Enable/Disable the 'Abstain' option on this vote                                         |
-| `hidden`               | `bool`     | yes      |                   | Hide the voting choices of all participants in all event messages                        |
-| `auto_stop`            | `bool`     | yes      |                   | When set, the vote will automatically stop when every allowed participant casted a vote. |
-| `create_pdf`           | `bool`     | yes      |                   | Automatically create a protocol PDF when the vote ends.                                  |
-| `duration`             | `int`      | no       | min 5 seconds     | Duration of the vote in seconds                                                          |
+| Field                  | Type       | Required | Validation        | Description                                                                               |
+| ---------------------- | ---------- | -------- | ----------------- | ----------------------------------------------------------------------------------------- |
+| `action`               | `enum`     | yes      |                   | Must be `"start"`.                                                                        |
+| `name`                 | `string`   | yes      | max 150 chars     | General name of the vote                                                                  |
+| `subtitle`             | `string`   | no       | max 255 chars     | A subtitle for the vote                                                                   |
+| `topic`                | `string`   | no       | max 500 chars     | Detailed topic that will be voted on.                                                     |
+| `allowed_participants` | `string[]` | yes      | min 1 participant | An array of participant ids, where each contained participant is allowed to cast a vote.  |
+| `enable_abstain`       | `bool`     | yes      |                   | Enable/Disable the 'Abstain' option on this vote                                          |
+| `auto_close`           | `bool`     | yes      |                   | When set, the vote will automatically close when every allowed participant casted a vote. |
+| `create_pdf`           | `bool`     | yes      |                   | Automatically create a protocol PDF when the vote ends.                                   |
+| `duration`             | `int`      | no       | min 5 seconds     | Duration of the vote in seconds                                                           |
 
 ##### Example
 
@@ -57,7 +56,7 @@ The `Start` message can be sent by a moderator to start a new legal vote.
         "00000000-0000-0000-0000-000000000003"
     ],
     "enable_abstain": false,
-    "auto_stop": false,
+    "auto_close": false,
     "duration": 60
 }
 ```
@@ -195,21 +194,21 @@ This message will also be received when joining a room that has an active vote g
 
 #### Fields
 
-| Field                  | Type       | Required | Description                                                                              |
-| ---------------------- | ---------- | -------- | ---------------------------------------------------------------------------------------- |
-| `message`              | `enum`     | yes      | Is `"started"`.                                                                          |
-| `initiator_id`         | `string`   | yes      | Id of the participant which started the vote.                                            |
-| `legal_vote_id`        | `string`   | yes      | Id of the vote.                                                                          |
-| `start_time`           | `string`   | yes      | RFC 3339 timestamp when the vote started.                                                |
-| `max_votes`            | `int`      | yes      | The maximum number of possible votes.                                                    |
-| `name`                 | `string`   | yes      | General name of the vote.                                                                |
-| `subtitle`             | `string`   | no       | A subtitle for the vote                                                                  |
-| `topic`                | `string`   | no       | Detailed topic that will be voted on.                                                    |
-| `allowed_participants` | `string[]` | yes      | An array of participant ids, where each contained participant is allowed to cast a vote. |
-| `enable_abstain`       | `bool`     | yes      | Enable/Disable the 'Abstain' option on this vote.                                        |
-| `auto_stop`            | `bool`     | yes      | When set, the vote will automatically stop when every allowed participant casted a vote. |
-| `create_pdf`           | `bool`     | yes      | Automatically create a protocol PDF when the vote ends.                                  |
-| `duration`             | `int`      | no       | Duration of the vote in seconds, counting from the `start_time`.                         |
+| Field                  | Type       | Required | Description                                                                               |
+| ---------------------- | ---------- | -------- | ----------------------------------------------------------------------------------------- |
+| `message`              | `enum`     | yes      | Is `"started"`.                                                                           |
+| `initiator_id`         | `string`   | yes      | Id of the participant which started the vote.                                             |
+| `legal_vote_id`        | `string`   | yes      | Id of the vote.                                                                           |
+| `start_time`           | `string`   | yes      | RFC 3339 timestamp when the vote started.                                                 |
+| `max_votes`            | `int`      | yes      | The maximum number of possible votes.                                                     |
+| `name`                 | `string`   | yes      | General name of the vote.                                                                 |
+| `subtitle`             | `string`   | no       | A subtitle for the vote                                                                   |
+| `topic`                | `string`   | no       | Detailed topic that will be voted on.                                                     |
+| `allowed_participants` | `string[]` | yes      | An array of participant ids, where each contained participant is allowed to cast a vote.  |
+| `enable_abstain`       | `bool`     | yes      | Enable/Disable the 'Abstain' option on this vote.                                         |
+| `auto_close`           | `bool`     | yes      | When set, the vote will automatically close when every allowed participant casted a vote. |
+| `create_pdf`           | `bool`     | yes      | Automatically create a protocol PDF when the vote ends.                                   |
+| `duration`             | `int`      | no       | Duration of the vote in seconds, counting from the `start_time`.                          |
 
 ##### Example
 
@@ -228,7 +227,7 @@ This message will also be received when joining a room that has an active vote g
         "00000000-0000-0000-0000-000000000003"
     ],
     "enable_abstain": false,
-    "auto_stop": false,
+    "auto_close": false,
     "duration": 60
 }
 ```
