@@ -138,6 +138,7 @@ Cast a vote on the specified `legal_vote_id`. Each user is allowed to only vote 
 | `action`        | `enum`   | yes      | Must be `"vote"`.                                                                                 |
 | `legal_vote_id` | `string` | yes      | The vote that shall be voted on.                                                                  |
 | `option`        | `enum`   | yes      | The chosen vote option, may be `"yes"`, `"no"` or `"abstain"` when the abstain option is enabled. |
+| `token`         | `string` | yes      | The token that was handed to the user with the [Started](#started) message.                       |
 
 ##### Example
 
@@ -146,6 +147,7 @@ Cast a vote on the specified `legal_vote_id`. Each user is allowed to only vote 
     "action": "vote",
     "legal_vote_id": "00000000-0000-0000-0000-000000000000",
     "option": "yes",
+    "token": "2QNav7b3FJw"
 }
 ```
 
@@ -212,6 +214,7 @@ This message will also be received when joining a room that has an active vote g
 | `auto_close`           | `bool`     | yes      | When set, the vote will automatically close when every allowed participant casted a vote. |
 | `create_pdf`           | `bool`     | yes      | Automatically create a protocol PDF when the vote ends.                                   |
 | `duration`             | `int`      | no       | Duration of the vote in seconds, counting from the `start_time`.                          |
+| `token`                | `string`   | no       | Optional. Only users who participate in the voting procedure receive a token.             |
 
 ##### Example
 
@@ -232,7 +235,8 @@ This message will also be received when joining a room that has an active vote g
     ],
     "enable_abstain": false,
     "auto_close": false,
-    "duration": 60
+    "duration": 60,
+    "token": "2QNav7b3FJw"
 }
 ```
 
@@ -246,14 +250,15 @@ any of them successfully cast their vote.
 
 #### Fields
 
-| Field           | Type     | Required                     | Description                                 |
-| --------------- | -------- | ---------------------------- | ------------------------------------------- |
-| `message`       | `enum`   | yes                          | Is `"voted"`.                               |
-| `legal_vote_id` | `string` | yes                          | Id of the vote.                             |
-| `response`      | `enum`   | yes                          | Either `"success"` or `"failed"`            |
-| `vote_option`   | `enum`   | when `response` is `success` | The option the `issuer` voted for           |
-| `issuer`        | `string` | when `response` is `success` | Id of the participant which voted.          |
-| `reason`        | `enum`   | when `response` is `failed`  | Reason why the vote failed, see table below |
+| Field            | Type     | Required                     | Description                                      |
+| ---------------- | -------- | ---------------------------- | ------------------------------------------------ |
+| `message`        | `enum`   | yes                          | Is `"voted"`.                                    |
+| `legal_vote_id`  | `string` | yes                          | Id of the vote.                                  |
+| `response`       | `enum`   | yes                          | Either `"success"` or `"failed"`                 |
+| `vote_option`    | `enum`   | when `response` is `success` | The option the `issuer` voted for                |
+| `issuer`         | `string` | when `response` is `success` | Id of the participant which voted.               |
+| `consumed_token` | `string` | when `response` is `success` | The token that is consumed once a user has voted |
+| `reason`         | `enum`   | when `response` is `failed`  | Reason why the vote failed, see table below      |
 
 __Failure reason:__
 
@@ -273,7 +278,8 @@ Successful vote:
     "legal_vote_id": "00000000-0000-0000-0000-000000000123",
     "response": "success",
     "vote_option": "yes",
-    "issuer": "00000000-0000-0000-0000-000000000001"
+    "issuer": "00000000-0000-0000-0000-000000000001",
+    "consumed_token": "2QNav7b3FJw"
 }
 ```
 
