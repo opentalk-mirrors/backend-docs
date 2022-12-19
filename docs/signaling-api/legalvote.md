@@ -34,6 +34,7 @@ The `Start` message can be sent by a moderator to start a new legal vote.
 | Field                  | Type       | Required | Validation        | Description                                                                               |
 | ---------------------- | ---------- | -------- | ----------------- | ----------------------------------------------------------------------------------------- |
 | `action`               | `enum`     | yes      |                   | Must be `"start"`.                                                                        |
+| `kind`                 | `enum`     | yes      |                   | The exhaustive list of `kind` can be found [below](#vote-kind).                           |
 | `name`                 | `string`   | yes      | max 150 chars     | General name of the vote                                                                  |
 | `subtitle`             | `string`   | no       | max 255 chars     | A subtitle for the vote                                                                   |
 | `topic`                | `string`   | no       | max 500 chars     | Detailed topic that will be voted on.                                                     |
@@ -48,6 +49,7 @@ The `Start` message can be sent by a moderator to start a new legal vote.
 ```json
 {
     "action": "start",
+    "kind": "roll_call",
     "name": "Vote Test",
     "topic": "Yes or No?",
     "allowed_participants": [
@@ -197,6 +199,7 @@ This message will also be received when joining a room that has an active vote g
 | Field                  | Type       | Required | Description                                                                               |
 | ---------------------- | ---------- | -------- | ----------------------------------------------------------------------------------------- |
 | `message`              | `enum`     | yes      | Is `"started"`.                                                                           |
+| `kind`                 | `enum`     | yes      | The exhaustive list of `kind` can be found [below](#vote-kind).                           |
 | `initiator_id`         | `string`   | yes      | Id of the participant which started the vote.                                             |
 | `legal_vote_id`        | `string`   | yes      | Id of the vote.                                                                           |
 | `start_time`           | `string`   | yes      | RFC 3339 timestamp when the vote started.                                                 |
@@ -215,6 +218,7 @@ This message will also be received when joining a room that has an active vote g
 ```json
 {
     "message": "started",
+    "kind": "roll_call",
     "initiator_id": "00000000-0000-0000-0000-000000000004",
     "legal_vote_id": "00000000-0000-0000-0000-000000000123",
     "start_time": "1970-01-01T00:00:00Z",
@@ -522,3 +526,13 @@ Error for an invalid [Start](#start) request, where `topic` and `duration` const
     "guests": ["topic", "duration"]
 }
 ```
+
+## Enumeration Values
+
+### Vote Kind
+
+| Kind           | Description                                                                                        |
+| -------------- | -------------------------------------------------------------------------------------------------- |
+| `roll_call`    | After the voting procedure finishes, the votes are published for each user.                        |
+| `pseudonymous` | After the voting procedure finishes, only the list of used `token`s and their votes are published. |
+
