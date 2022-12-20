@@ -37,7 +37,6 @@ rules:
   new-lines: enable
   octal-values: enable
   quoted-strings:
-    quote-type: single
     required: only-when-needed
   trailing-spaces: enable
   truthy:

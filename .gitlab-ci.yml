@@ -30,7 +30,8 @@ lint:openapi:
     name: redocly/openapi-cli
     entrypoint: ['']
   script:
-    - /usr/local/bin/openapi lint controller/frontend_api.yaml
+    - /usr/local/bin/openapi lint api/controller/frontend_api.yaml
+    - /usr/local/bin/openapi lint api/controller/internal.yaml
 
 test:container:
   rules:
