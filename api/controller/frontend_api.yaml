@@ -288,44 +288,6 @@ paths:
         500:
           $ref: "#/components/responses/InternalServerError"
 
-  /rooms/sip/start:
-    post:
-      summary: Start a signaling session through SIP
-      description: >
-        Takes a sip id and password and returns a ticket for the /signaling endpoint. Behaves similar to the
-        `/rooms/{room_id}/start` endpoint, but cannot return a 404 to counteract url guessing attacks.
-
-        This endpoint is used by the SIP-OpenTalk gateway to start a room connection for SIP users. The user
-        has to provide the credentials via DTMF (the number pad).
-
-        When the sip id and password are semantically correct but the values are invalid, a 401
-        `invalid_credentials` is returned regardless which of the two fields is wrong.
-      tags: [rooms, signaling, sip]
-      operationId: start_sip
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/SipStart"
-      responses:
-        200:
-          description: Includes the information needed to connect to the signaling endpoint in the response body.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RoomStartSuccess"
-        400:
-          description: The provided request body contains wrong syntax or bad values,
-        401:
-          description: The provided sip id or the password is wrong.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RoomStartError"
-        500:
-          $ref: "#/components/responses/InternalServerError"
-
   /rooms/{room_uuid}/invites:
     get:
       summary: Get all invites
@@ -1304,6 +1266,42 @@ paths:
         500:
           $ref: "#/components/responses/InternalServerError"
 
+  /services/call_in/start:
+    post:
+      summary: Starts a signaling session given a room id and pin
+      description: >
+        Takes call-in id and pin and returns a ticket for the `/signaling` endpoint. Behaves similar to the
+        `/rooms/{room_id}/start` endpoint.
+
+        This endpoint is provided for call-in gateways to start a room connection for Call-In users. The user
+        has to provide the credentials (id and pin) via DTMF (the number pad).
+      tags: [services, signaling, call_in]
+      operationId: start_sip
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CallInStart"
+      responses:
+        200:
+          description: Includes the information needed to connect to the signaling endpoint in the response body.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoomStartSuccess"
+        400:
+          description: The provided request body contains wrong syntax or bad values.
+        401:
+          description: >
+            `id` and `pin` are not valid for any room. The error code is set to `invalid_credentials`.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoomStartError"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+
 components:
   securitySchemes:
     BearerAuth:
@@ -1681,20 +1679,20 @@ components:
             Defaults to `false` when not set on creation.
           type: boolean
 
-    SipStart:
-      description: Arguments for the sip start endpoint
+    CallInStart:
+      description: Request body for the POST `/services/call_in/start` endpoint
       type: object
       additionalProperties: false
       required:
-        - sip_id
-        - password
+        - id
+        - pin
       properties:
-        sip_id:
+        id:
           description: >
             Unique numeric string with 10 characters to identify the room
           type: string
           maxLength: 10
-        password:
+        pin:
           description: >
             Numeric string with 10 characters to secure room access
           type: string
