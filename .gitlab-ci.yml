@@ -5,17 +5,26 @@ stages:
   - build
 
 lint:markdown:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_PIPELINE_SOURCE == 'schedule'
   stage: lint
   image: registry.gitlab.com/pipeline-components/markdownlint:latest
   script:
     - mdl --style .markdown_style.rb  --warnings .
 
 lint:yaml:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_PIPELINE_SOURCE == 'schedule'
   stage: lint
   image: registry.gitlab.com/pipeline-components/yamllint:latest
   script: yamllint . -s
 
 lint:openapi:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_PIPELINE_SOURCE == 'schedule'
   stage: lint
   image:
     name: redocly/openapi-cli
@@ -44,18 +53,6 @@ test:container:
       --dockerfile $CI_PROJECT_DIR/Dockerfile
       --no-push
       --force
-
-build:openapi:
-  stage: build
-  image:
-    name: ghcr.io/redocly/redoc/cli:v2.0.0-rc.63
-    entrypoint: ['']
-  artifacts:
-    paths:
-      - redoc-static.html
-    expire_in: 1 week
-  script:
-    - /usr/local/bin/redoc-cli bundle controller/frontend_api.yaml
 
 build:container:
   rules:
