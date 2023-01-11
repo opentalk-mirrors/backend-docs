@@ -47,22 +47,24 @@ Allows a moderator to disable the chat if it is currently enabled.
 
 ### SendMessage
 
-Send a message to either the conference room (global message) or to a
+Send a message to either the conference room (global message), a group or a
 specific user (direct message).
 
 #### Fields
 
-| Field     | Type     | Required | Description                                |
-| --------- | -------- | -------- | ------------------------------------------ |
-| `action`  | `enum`   | yes      | Must be "send_message"                     |
-| `target`  | `string` | no       | The target participant for direct messages |
-| `content` | `string` | yes      | The message content                        |
+| Field     | Type     | Required | Description                                                         |
+| --------- | -------- | -------- | ------------------------------------------------------------------- |
+| `action`  | `enum`   | yes      | Must be "send_message"                                              |
+| `scope`   | `enum`   | yes      | Either "global", "group" or "private"                               |
+| `target`  | `string` | no       | Needed if `scope` is "group" or "private". Participant id or group  |
+| `content` | `string` | yes      | The message content                                                 |
 
 ##### Example
 
 ```json
 {
     "action": "send_message",
+    "scope": "global",
     "content": "Hello all!"
 }
 ```
@@ -70,6 +72,16 @@ specific user (direct message).
 ```json
 {
     "action": "send_message",
+    "scope": "group",
+    "target": "management",
+    "content": "Hello managers!"
+}
+```
+
+```json
+{
+    "action": "send_message",
+    "scope": "private",
     "target": "00000000-0000-0000-0000-000000000000",
     "content": "Hello Bob!"
 }
@@ -107,9 +119,9 @@ A message has been sent to either the global chat or directly to the participant
 | ----------- | -------- | ------ | ------------------------------------------------------------------------ |
 | `message`   | `enum`   | yes    | Is "message_sent"                                                        |
 | `source`    | `string` | yes    | Id of the participant who sent the message                               |
-| `scope`     | `enum`   | yes    | Either "global" or "private"                                             |
-| `target`    | `string` | no     | Only present if `scope` is "private". Participant id of the current user |
-| `timestamp` | `string` | yes    | Deprecated, use `timestamp` field of the Namespaced struct instead       |
+| `scope`     | `enum`   | yes    | Either "global", "group" or "private"                                    |
+| `target`    | `string` | no     | Only if `scope` is "group" or "private". Participant id or group         |
+| `content`   | `string` | yes    | The message content                                                      |
 
 ##### Example
 
@@ -118,8 +130,17 @@ A message has been sent to either the global chat or directly to the participant
     "message": "message_sent",
     "source": "00000000-0000-0000-0000-000000000000",
     "scope": "global",
-    "timestamp": "1970-01-01T00:00:00Z",
     "content": "Hello all!"
+}
+```
+
+```json
+{
+    "message": "message_sent",
+    "source": "00000000-0000-0000-0000-000000000000",
+    "scope": "group",
+    "target": "management",
+    "content": "Hello managers!"
 }
 ```
 
@@ -129,7 +150,6 @@ A message has been sent to either the global chat or directly to the participant
     "source": "00000000-0000-0000-0000-000000000000",
     "scope": "private",
     "target": "00000000-0000-0000-0000-0000deadbeef",
-    "timestamp": "1970-01-01T00:00:00Z",
     "content": "Hello Bob!"
 }
 ```
@@ -155,4 +175,72 @@ Received when something went wrong processing messages sent to the server.
     "message": "error",
     "error": "chat_disabled"
 }
+```
+
+## Control Events
+
+### JoinSuccess
+
+The `join_success` control event contains the module-specific fields decribed below.
+
+#### Fields
+
+| Field            | Type              | Always | Description                    |
+| ---------------- | ----------------- | ------ | ------------------------------ |
+| `enabled`        | `bool`            | yes    | When true, the chat is enabled |
+| `room_history`   | `StoredMessage[]` | yes    | Chat history for the room      |
+| `groups_history` | `GroupHistory[]`  | yes    | Chat history for each group    |
+
+##### Example
+
+```json
+    ...
+    "room_history": [
+        {
+            "source": "00000000-0000-0000-0000-000000000000",
+            "scope": "global",
+            "content": "Hello all!",
+            "timestamp": "2023-01-13T12:37:08Z"
+        },
+        ...
+    ],
+    "groups_history": [
+        {
+            "history": [
+                {
+                    "source": "00000000-0000-0000-0000-000000000000",
+                    "scope": "group",
+                    "target": "management",
+                    "content": "Hello managers!",
+                    "timestamp": "2023-01-13T12:37:08Z"
+                }
+            ],
+            "name": "/OpenTalk/OU/Backend"
+        },
+        ...
+    ],
+    ...
+```
+
+### Joined
+
+The `joined` control event contains the module-specific fields decribed below.
+
+#### Fields
+
+| Field        | Type       | Always | Description                         |
+| ------------ | -----------| ------ | ----------------------------------- |
+| `groups`     | `string[]` | yes    | Groups belonging to the participant |
+
+##### Example
+
+```json
+    ...
+    "groups": [
+        "/OpenTalk/OU/Backend",
+        "/OpenTalk/Role/Developer",
+        ...
+    ]
+    ...
+
 ```
