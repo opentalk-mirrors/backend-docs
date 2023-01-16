@@ -21,6 +21,7 @@ The `Start` message can be send by a user to start a new legal vote.
 | `allowed_participants` | `string[]` | yes      | min 1 participant | An array of participant ids, where each contained participant is allowed to cast a vote. |
 | `enable_abstain`       | `bool`     | yes      |                   | Enable/Disable the 'Abstain' option on this vote                                         |
 | `auto_stop`            | `bool`     | yes      |                   | When set, the vote will automatically stop when every allowed participant casted a vote. |
+| `create_pdf`           | `bool`     | yes      |                   | Automatically create a protocol PDF when the vote ends.                                   |
 | `duration`             | `int`      | no       | min 5 seconds     | Duration of the vote in seconds                                                          |
 
 ##### Example
@@ -132,6 +133,32 @@ Cast a vote on the specified `vote_id`. Each user is allowed to only vote once.
 When the vote is successful, a [Voted](#voted) message is sent to each participant that is logged in under the same user id.
 
 When the vote failed, a [Voted](#voted) response is sent to the issuer.
+
+---
+
+### GeneratePdf
+
+Generate a PDF of the protocol of the specified `vote_id`. Only passed votes can be generated as a PDF document.
+
+#### Fields
+
+| Field     | Type     | Required | Description             |
+| --------- | -------- | -------- | ----------------------- |
+| `action`  | `enum`   | yes      | Must be "generate_pdf". |
+| `vote_id` | `string` | yes      | The selected vote       |
+
+##### Example
+
+```json
+{
+    "action": "generate_pdf",
+    "vote_id": "00000000-0000-0000-0000-000000000000",
+}
+```
+
+#### Response
+
+When the PDF got created, a [PdfAsset](#pdfasset) response is sent to the issuer.
 
 ---
 
@@ -376,6 +403,33 @@ With custom reason:
     "vote_id": "00000000-0000-0000-0000-000000000000",
     "reason": "custom",
     "custom": "Some important voters left"
+}
+```
+
+---
+
+### PdfAsset
+
+A PDF document has been created for the specified vote.
+
+This message is sent to the issuing moderator when the vote ends and `create_pdf` field in the [Start](#start) message
+is set. In case of an automatic stop, the message is sent to the vote initiator.
+
+#### Fields
+
+| Field           | Type     | Required | Description              |
+| --------------- | -------- | -------- | ------------------------ |
+| `message`       | `enum`   | yes      | Is "pdf_asset".          |
+| `legal_vote_id` | `string` | yes      | Id of the vote.          |
+| `asset_id`      | `string` | yes      | Id of the created asset. |
+
+##### Examples
+
+```json
+{
+    "message": "pdf_asset",
+    "legal_vote_id": "00000000-0000-0000-0000-000000000000",
+    "asset_id": "00000000-0000-0000-0000-000000000000"
 }
 ```
 
