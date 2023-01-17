@@ -20,10 +20,10 @@ When joining a room, the `join_success` message contains the current status of t
 
 The module data has the following structure:
 
-| Field    | Type     | Required                       | Description                                             |
-| -------- | -------- | ------------------------------ | ------------------------------------------------------- |
-| `status` | `enum`   | yes                            | Either `not_initialized`, `initializing`, `initialized` |
-| `url`    | `string` | when `status` is `initialized` | The access url to the space of the room                 |
+| Field    | Type     | Required                         | Description                                                   |
+| -------- | -------- | -------------------------------- | ------------------------------------------------------------- |
+| `status` | `enum`   | yes                              | Either `"not_initialized"`, `"initializing"`, `"initialized"` |
+| `url`    | `string` | when `status` is `"initialized"` | The access url to the space of the room                       |
 
 ## Commands
 
@@ -44,9 +44,9 @@ A [`SpaceUrl`](#spaceurl) message with the access URL to the space is sent to ev
 
 #### Fields
 
-| Field    | Type   | Required | Description           |
-| -------- | ------ | -------- | --------------------- |
-| `action` | `enum` | yes      | Must be "initialize". |
+| Field    | Type   | Required | Description             |
+| -------- | ------ | -------- | ----------------------- |
+| `action` | `enum` | yes      | Must be `"initialize"`. |
 
 #### Example
 
@@ -68,9 +68,9 @@ A [`PdfUrl`](#pdfurl)message with the access URL to the PDF document is sent to 
 
 #### Fields
 
-| Field    | Type   | Required | Description             |
-| -------- | ------ | -------- | ----------------------- |
-| `action` | `enum` | yes      | Must be "generate_pdf". |
+| Field    | Type   | Required | Description               |
+| -------- | ------ | -------- | ------------------------- |
+| `action` | `enum` | yes      | Must be `"generate_pdf"`. |
 
 #### Example
 
@@ -100,7 +100,7 @@ Is received by every participant when a moderator initialized the space.
 
 | Field     | Type     | Required | Description                      |
 | --------- | -------- | -------- | -------------------------------- |
-| `message` | `enum`   | yes      | Is "space_url".                  |
+| `message` | `enum`   | yes      | Is `"space_url"`.                |
 | `url`     | `string` | yes      | The URL to the space of the room |
 
 #### Example
@@ -124,7 +124,7 @@ Is received by every participant when a moderator generates a PDF document for t
 
 | Field     | Type     | Required | Description                              |
 | --------- | -------- | -------- | ---------------------------------------- |
-| `message` | `enum`   | yes      | Is "pdf_url".                            |
+| `message` | `enum`   | yes      | Is `"pdf_url"`.                          |
 | `url`     | `string` | yes      | The URL to the PDF document of the space |
 
 #### Example
@@ -146,7 +146,7 @@ An error has occurred while issuing a command.
 
 | Field                     | Type       | Required | Description                                                                             |
 | ------------------------- | ---------- | -------- | --------------------------------------------------------------------------------------- |
-| `message`                 | `enum`     | yes      | Is "error".                                                                             |
+| `message`                 | `enum`     | yes      | Is `"error"`.                                                                           |
 | `InsufficientPermissions` | `[string]` | yes      | The requesting user has insufficient permissions for the operation                      |
 | `CurrentlyInitializing`   | `[string]` | yes      | The spacedeck initialization was already issued and spacedeck is currently initializing |
 | `InitializationFailed`    | `[string]` | yes      | The spacedeck initialization failed                                                     |

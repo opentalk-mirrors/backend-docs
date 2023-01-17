@@ -31,7 +31,7 @@ Remove a participant from the room.
 
 | Field    | Type     | Required | Description                   |
 | -------- | -------- | -------- | ----------------------------- |
-| `action` | `enum`   | yes      | Must be "kick"                |
+| `action` | `enum`   | yes      | Must be `"kick"`              |
 | `target` | `string` | yes      | Id of the participant to kick |
 
 ##### Example
@@ -56,7 +56,7 @@ be banned from the room for the remainder of the session.
 
 | Field    | Type     | Required | Description                  |
 | -------- | -------- | -------- | ---------------------------- |
-| `action` | `enum`   | yes      | Must be "ban"                |
+| `action` | `enum`   | yes      | Must be `"ban"`              |
 | `target` | `string` | yes      | Id of the participant to ban |
 
 ##### Example
@@ -78,9 +78,9 @@ Enable the waiting room.
 
 #### Fields
 
-| Field    | Type   | Required | Description                   |
-| -------- | ------ | -------- | ----------------------------- |
-| `action` | `enum` | yes      | Must be "enable_waiting_room" |
+| Field    | Type   | Required | Description                     |
+| -------- | ------ | -------- | ------------------------------- |
+| `action` | `enum` | yes      | Must be `"enable_waiting_room"` |
 
 ##### Example
 
@@ -103,9 +103,9 @@ __NOTE:__ Participants inside the waiting room will not be automatically accepte
 
 #### Fields
 
-| Field    | Type   | Required | Description                    |
-| -------- | ------ | -------- | ------------------------------ |
-| `action` | `enum` | yes      | Must be "disable_waiting_room" |
+| Field    | Type   | Required | Description                      |
+| -------- | ------ | -------- | -------------------------------- |
+| `action` | `enum` | yes      | Must be `"disable_waiting_room"` |
 
 ##### Example
 
@@ -126,9 +126,9 @@ Enable raising of hands by participants in the room.
 
 #### Fields
 
-| Field    | Type   | Required | Description                  |
-| -------- | ------ | -------- | ---------------------------- |
-| `action` | `enum` | yes      | Must be "enable_raise_hands" |
+| Field    | Type   | Required | Description                    |
+| -------- | ------ | -------- | ------------------------------ |
+| `action` | `enum` | yes      | Must be `"enable_raise_hands"` |
 
 ##### Example
 
@@ -152,9 +152,9 @@ triggered.
 
 #### Fields
 
-| Field    | Type   | Required | Description                   |
-| -------- | ------ | -------- | ----------------------------- |
-| `action` | `enum` | yes      | Must be "disable_raise_hands" |
+| Field    | Type   | Required | Description                     |
+| -------- | ------ | -------- | ------------------------------- |
+| `action` | `enum` | yes      | Must be `"disable_raise_hands"` |
 
 ##### Example
 
@@ -177,7 +177,7 @@ Accept a participant inside the waiting into the room.
 
 | Field    | Type     | Required | Description                     |
 | -------- | -------- | -------- | ------------------------------- |
-| `action` | `enum`   | yes      | Must be "accept"                |
+| `action` | `enum`   | yes      | Must be `"accept"`              |
 | `target` | `string` | yes      | Id of the participant to accept |
 
 ##### Example
@@ -200,9 +200,9 @@ Reset all raised hands in the room.
 
 #### Fields
 
-| Field    | Type     | Required | Description                  |
-| -------- | -------- | -------- | ---------------------------- |
-| `action` | `enum`   | yes      | Must be "reset_raised_hands" |
+| Field    | Type     | Required | Description                    |
+| -------- | -------- | -------- | ------------------------------ |
+| `action` | `enum`   | yes      | Must be `"reset_raised_hands"` |
 
 ##### Example
 
@@ -223,9 +223,9 @@ Received when you were kicked from the room. Will be the last message before ser
 
 #### Fields
 
-| Field     | Type   | Always | Description |
-| --------- | ------ | ------ | ----------- |
-| `message` | `enum` | yes    | Is "kicked" |
+| Field     | Type   | Always | Description   |
+| --------- | ------ | ------ | ------------- |
+| `message` | `enum` | yes    | Is `"kicked"` |
 
 ##### Example
 
@@ -243,9 +243,9 @@ Received when you were banned from the room. Will be the last message before ser
 
 #### Fields
 
-| Field     | Type   | Always | Description |
-| --------- | ------ | ------ | ----------- |
-| `message` | `enum` | yes    | Is "banned" |
+| Field     | Type   | Always | Description   |
+| --------- | ------ | ------ | ------------- |
+| `message` | `enum` | yes    | Is `"banned"` |
 
 ##### Example
 
@@ -264,9 +264,9 @@ until the [Accepted](#accepted) event was received. Then the room can be entered
 
 #### Fields
 
-| Field     | Type   | Always | Description          |
-| --------- | ------ | ------ | -------------------- |
-| `message` | `enum` | yes    | Is "in_waiting_room" |
+| Field     | Type   | Always | Description            |
+| --------- | ------ | ------ | ---------------------- |
+| `message` | `enum` | yes    | Is `"in_waiting_room"` |
 
 ##### Example
 
@@ -285,9 +285,9 @@ of the `control` as other modules will not be initialized before the user joins 
 
 #### Fields
 
-| Field     | Type   | Always | Description              |
-| --------- | ------ | ------ | ------------------------ |
-| `message` | `enum` | yes    | Is "joined_waiting_room" |
+| Field     | Type   | Always | Description                |
+| --------- | ------ | ------ | -------------------------- |
+| `message` | `enum` | yes    | Is `"joined_waiting_room"` |
 
 ##### Example
 
@@ -310,10 +310,10 @@ waiting-room to "conference-"room.
 
 #### Fields
 
-| Field     | Type     | Always | Description            |
-| --------- | -------- | ------ | ---------------------- |
-| `message` | `enum`   | yes    | Is "left_waiting_room" |
-| `target`  | `string` | yes    | Id of the participant  |
+| Field     | Type     | Always | Description              |
+| --------- | -------- | ------ | ------------------------ |
+| `message` | `enum`   | yes    | Is `"left_waiting_room"` |
+| `target`  | `string` | yes    | Id of the participant    |
 
 ##### Example
 
@@ -332,9 +332,9 @@ Received when a moderator enabled the waiting-room.
 
 #### Fields
 
-| Field     | Type   | Always | Description               |
-| --------- | ------ | ------ | ------------------------- |
-| `message` | `enum` | yes    | Is "waiting_room_enabled" |
+| Field     | Type   | Always | Description                 |
+| --------- | ------ | ------ | --------------------------- |
+| `message` | `enum` | yes    | Is `"waiting_room_enabled"` |
 
 ##### Example
 
@@ -352,9 +352,9 @@ Received when a moderator disabled the waiting-room.
 
 #### Fields
 
-| Field     | Type   | Always | Description                |
-| --------- | ------ | ------ | -------------------------- |
-| `message` | `enum` | yes    | Is "waiting_room_disabled" |
+| Field     | Type   | Always | Description                  |
+| --------- | ------ | ------ | ---------------------------- |
+| `message` | `enum` | yes    | Is `"waiting_room_disabled"` |
 
 ##### Example
 
@@ -374,7 +374,7 @@ Received when a moderator enabled raising of hands.
 
 | Field       | Type     | Always | Description                 |
 | ----------- | -------- | ------ | --------------------------- |
-| `message`   | `enum`   | yes    | Is "raise_hands_enabled"    |
+| `message`   | `enum`   | yes    | Is `"raise_hands_enabled"`  |
 | `issued_by` | `string` | yes    | Id of the issuing moderator |
 
 ##### Example
@@ -396,7 +396,7 @@ Received when a moderator disabled raising of hands.
 
 | Field       | Type     | Always | Description                 |
 | ----------- | -------- | ------ | --------------------------- |
-| `message`   | `enum`   | yes    | Is "raise_hands_disabled"   |
+| `message`   | `enum`   | yes    | Is `"raise_hands_disabled"` |
 | `issued_by` | `string` | yes    | Id of the issuing moderator |
 
 ##### Example
@@ -417,9 +417,9 @@ Can only be received while in the waiting room. A moderator accepted this you in
 
 #### Fields
 
-| Field     | Type   | Always | Description   |
-| --------- | ------ | ------ | ------------- |
-| `message` | `enum` | yes    | Is "accepted" |
+| Field     | Type   | Always | Description     |
+| --------- | ------ | ------ | --------------- |
+| `message` | `enum` | yes    | Is `"accepted"` |
 
 ##### Example
 
@@ -438,7 +438,7 @@ Can only be received while in the waiting room. A moderator accepted this you in
 
 | Field     | Type   | Always | Description                       |
 | --------- | ------ | ------ | --------------------------------- |
-| `message` | `enum` | yes    | Is "error"                        |
+| `message` | `enum` | yes    | Is `"error"`                      |
 | `error`   | `enum` | yes    | currently only `cannot_ban_guest` |
 
 ##### Example
@@ -458,10 +458,10 @@ Received when a moderator lowered the hand of the participant.
 
 #### Fields
 
-| Field       | Type     | Always | Description                         |
-| ----------- | -------- | ------ | ----------------------------------- |
-| `message`   | `enum`   | yes    | Is "raised_hand_reset_by_moderator" |
-| `issued_by` | `string` | yes    | Id of the issuing moderator         |
+| Field       | Type     | Always | Description                           |
+| ----------- | -------- | ------ | ------------------------------------- |
+| `message`   | `enum`   | yes    | Is `"raised_hand_reset_by_moderator"` |
+| `issued_by` | `string` | yes    | Id of the issuing moderator           |
 
 ##### Example
 

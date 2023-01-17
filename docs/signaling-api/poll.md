@@ -14,7 +14,7 @@ The `Start` message can be send by a user to start a new poll. New polls can onl
 
 | Field      | Type       | Required | Description                                             |
 | ---------- | ---------- | -------- | ------------------------------------------------------- |
-| `action`   | `enum`     | yes      | Must be "start"                                         |
+| `action`   | `enum`     | yes      | Must be `"start"`                                       |
 | `topic`    | `string`   | yes      | Topic of the poll                                       |
 | `live`     | `bool`     | yes      | Enable/Disable live updates on the poll                 |
 | `choices`  | `string[]` | yes      | Non empty array of strings which each describe a choice |
@@ -50,7 +50,7 @@ If a vote is started with the `live` flag set to `true` a [LiveUpdate](#liveupda
 
 | Field       | Type     | Required | Description      |
 | ----------- | -------- | -------- | ---------------- |
-| `action`    | `enum`   | yes      | Must be "vote"   |
+| `action`    | `enum`   | yes      | Must be `"vote"` |
 | `poll_id`   | `string` | yes      | ID of the poll   |
 | `choice_id` | `int`    | yes      | ID of the choice |
 
@@ -78,10 +78,10 @@ A [Done](#done) message will be sent to all other participants.
 
 #### Fields
 
-| Field    | Type     | Required | Description      |
-| -------- | -------- | -------- | ---------------- |
-| `action` | `enum`   | yes      | Must be "finish" |
-| `id`     | `string` | yes      | ID of the poll   |
+| Field    | Type     | Required | Description        |
+| -------- | -------- | -------- | ------------------ |
+| `action` | `enum`   | yes      | Must be `"finish"` |
+| `id`     | `string` | yes      | ID of the poll     |
 
 ##### Example
 
@@ -110,7 +110,7 @@ A poll has been started.
 
 | Field      | Type       | Always | Description                                     |
 | ---------- | ---------- | ------ | ----------------------------------------------- |
-| `message`  | `enum`     | yes    | Is "started"                                    |
+| `message`  | `enum`     | yes    | Is `"started"`                                  |
 | `id`       | `string`   | yes    | Id of the poll                                  |
 | `topic`    | `string`   | yes    | Topic of the poll                               |
 | `live`     | `bool`     | yes    | The standings of the poll will be reported live |
@@ -151,7 +151,7 @@ A poll has been updated.
 
 | Field     | Type       | Always | Description                      |
 | --------- | ---------- | ------ | -------------------------------- |
-| `message` | `enum`     | yes    | Is "live_update"                 |
+| `message` | `enum`     | yes    | Is `"live_update"`               |
 | `id`      | `string`   | yes    | Id of the poll                   |
 | `results` | `Choice[]` | yes    | List of choices and their scores |
 
@@ -186,7 +186,7 @@ A poll has been completed due to expiration or a moderator issuing the [Finish](
 
 | Field     | Type       | Always | Description                      |
 | --------- | ---------- | ------ | -------------------------------- |
-| `message` | `enum`     | yes    | Is "live_update"                 |
+| `message` | `enum`     | yes    | Is `"live_update"`               |
 | `id`      | `string`   | yes    | Id of the poll                   |
 | `results` | `Choice[]` | yes    | List of choices and their scores |
 
@@ -219,7 +219,7 @@ An error has occurred when issuing a command
 
 | Field     | Type   | Always | Description                           |
 | --------- | ------ | ------ | ------------------------------------- |
-| `message` | `enum` | yes    | Is "error"                            |
+| `message` | `enum` | yes    | Is `"error"`                          |
 | `error`   | `enum` | yes    | Variant of the error, see table below |
 
 | Error                        | Description                                                                                                   |

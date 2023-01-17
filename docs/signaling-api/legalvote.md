@@ -14,7 +14,7 @@ The `Start` message can be send by a user to start a new legal vote.
 
 | Field                  | Type       | Required | Validation        | Description                                                                              |
 | ---------------------- | ---------- | -------- | ----------------- | ---------------------------------------------------------------------------------------- |
-| `action`               | `enum`     | yes      |                   | Must be "start".                                                                         |
+| `action`               | `enum`     | yes      |                   | Must be `"start"`.                                                                       |
 | `name`                 | `string`   | yes      | max 150 chars     | General name of the vote                                                                 |
 | `subtitle`             | `string`   | yes      | max 255 chars     | A subtitle for the vote                                                                  |
 | `topic`                | `string`   | yes      | max 500 chars     | Detailed topic that will be voted on.                                                    |
@@ -56,7 +56,7 @@ Stop the currently active vote. Will only succeed when the issuer is the vote in
 
 | Field     | Type     | Required | Description                    |
 | --------- | -------- | -------- | ------------------------------ |
-| `action`  | `enum`   | yes      | Must be "stop".                |
+| `action`  | `enum`   | yes      | Must be `"stop"`.              |
 | `vote_id` | `string` | yes      | The vote that shall be stopped |
 
 ##### Example
@@ -86,7 +86,7 @@ See [Canceled](#canceled) for more details on which server events may cause this
 
 | Field     | Type     | Required | Validation    | Description                      |
 | --------- | -------- | -------- | ------------- | -------------------------------- |
-| `action`  | `enum`   | yes      |               | Must be "cancel".                |
+| `action`  | `enum`   | yes      |               | Must be `"cancel"`.              |
 | `vote_id` | `string` | yes      |               | The vote that shall be canceled. |
 | `reason`  | `string` | yes      | max 255 chars | The reason for the cancel.       |
 
@@ -112,11 +112,11 @@ Cast a vote on the specified `vote_id`. Each user is allowed to only vote once.
 
 #### Fields
 
-| Field     | Type     | Required | Description                                                                                 |
-| --------- | -------- | -------- | ------------------------------------------------------------------------------------------- |
-| `action`  | `enum`   | yes      | Must be "vote".                                                                             |
-| `vote_id` | `string` | yes      | The vote that shall be voted on.                                                            |
-| `option`  | `enum`   | yes      | The chosen vote option, may be `yes`, `no` or `abstain` when the abstain option is enabled. |
+| Field     | Type     | Required | Description                                                                                       |
+| --------- | -------- | -------- | ------------------------------------------------------------------------------------------------- |
+| `action`  | `enum`   | yes      | Must be `"vote"`.                                                                                 |
+| `vote_id` | `string` | yes      | The vote that shall be voted on.                                                                  |
+| `option`  | `enum`   | yes      | The chosen vote option, may be `"yes"`, `"no"` or `"abstain"` when the abstain option is enabled. |
 
 ##### Example
 
@@ -177,7 +177,7 @@ This message will also be received when joining a room that has an active vote g
 
 | Field                  | Type       | Required | Description                                                                              |
 | ---------------------- | ---------- | -------- | ---------------------------------------------------------------------------------------- |
-| `message`              | `enum`     | yes      | Is "started".                                                                            |
+| `message`              | `enum`     | yes      | Is `"started"`.                                                                          |
 | `initiator_id`         | `string`   | yes      | Id of the participant which started the vote.                                            |
 | `vote_id`              | `string`   | yes      | Id of the vote.                                                                          |
 | `start_time`           | `string`   | yes      | RFC 3339 timestamp when the vote started.                                                |
@@ -224,9 +224,9 @@ any of them successfully cast their vote.
 
 | Field         | Type     | Required                     | Description                                 |
 | ------------- | -------- | ---------------------------- | ------------------------------------------- |
-| `message`     | `enum`   | yes                          | Is "voted".                                 |
+| `message`     | `enum`   | yes                          | Is `"voted"`.                               |
 | `vote_id`     | `string` | yes                          | Id of the vote.                             |
-| `response`    | `enum`   | yes                          | Either `success` or `failed`                |
+| `response`    | `enum`   | yes                          | Either `"success"` or `"failed"`            |
 | `vote_option` | `enum`   | when `response` is `success` | The option the `issuer` voted for           |
 | `issuer`      | `string` | when `response` is `success` | Id of the participant which voted.          |
 | `reason`      | `enum`   | when `response` is `failed`  | Reason why the vote failed, see table below |
@@ -274,11 +274,11 @@ Update to a ongoing vote, signaling the newest results. Used to visualize the UI
 
 | Field     | Type     | Required                        | Description                                             |
 | --------- | -------- | ------------------------------- | ------------------------------------------------------- |
-| `message` | `enum`   | yes                             | Is "updated".                                           |
+| `message` | `enum`   | yes                             | Is `"updated"`.                                         |
 | `vote_id` | `string` | yes                             | Id of the vote.                                         |
-| `yes`     | `int`    | yes                             | Number of `yes` votes                                   |
-| `no`      | `int`    | yes                             | Number of `no` votes                                    |
-| `abstain` | `int`    | when `enable_abstain` is `true` | Number of `abstain` votes                               |
+| `yes`     | `int`    | yes                             | Number of `"yes"` votes                                 |
+| `no`      | `int`    | yes                             | Number of `"no"` votes                                  |
+| `abstain` | `int`    | when `enable_abstain` is `true` | Number of `"abstain"` votes                             |
 | `voters`  | `map`    | yes                             | Mapping of participant which voted to their vote option |
 
 ##### Example
@@ -311,9 +311,9 @@ the final vote results are not consistent or altered unexpectedly.
 
 | Field     | Type     | Required                   | Description                                                                                               |
 | --------- | -------- | -------------------------- | --------------------------------------------------------------------------------------------------------- |
-| `message` | `enum`   | yes                        | Is "stopped".                                                                                             |
+| `message` | `enum`   | yes                        | Is `"stopped"`.                                                                                           |
 | `vote_id` | `string` | yes                        | Id of the vote.                                                                                           |
-| `kind`    | `enum`   | yes                        | Either `user_stop`, `auto_stop` or `expired`                                                              |
+| `kind`    | `enum`   | yes                        | Either `"user_stop"`, `"auto_stop"` or `"expired"`                                                        |
 | `issuer`  | `string` | when `kind` is `user_stop` | Id of the participant which issued the stop command                                                       |
 | `results` | `enum`   | yes                        | Is either `valid` or `invalid`. This field changes the rest of the fields to one of the following tables. |
 
@@ -321,16 +321,16 @@ When `valid`:
 
 | Field     | Type  | Required                        | Description                                             |
 | --------- | ----- | ------------------------------- | ------------------------------------------------------- |
-| `yes`     | `int` | yes                             | Number of `yes` votes                                   |
-| `no`      | `int` | yes                             | Number of `no` votes                                    |
-| `abstain` | `int` | when `enable_abstain` is `true` | Number of `abstain` votes                               |
+| `yes`     | `int` | yes                             | Number of `"yes"` votes                                 |
+| `no`      | `int` | yes                             | Number of `"no"` votes                                  |
+| `abstain` | `int` | when `enable_abstain` is `true` | Number of `"abstain"` votes                             |
 | `voters`  | `map` | yes                             | Mapping of participant which voted to their vote option |
 
 When `invalid`:
 
-| Field    | Type   | Required | Description                                            |
-| -------- | ------ | -------- | ------------------------------------------------------ |
-| `reason` | `enum` | yes      | Either `abstain_disabled` or `vote_count_inconsistent` |
+| Field    | Type   | Required | Description                                                |
+| -------- | ------ | -------- | ---------------------------------------------------------- |
+| `reason` | `enum` | yes      | Either `"abstain_disabled"` or `"vote_count_inconsistent"` |
 
 ##### Example
 
@@ -378,12 +378,12 @@ or inconsistency occurred.
 
 #### Fields
 
-| Field     | Type     | Required                  | Description                                           |
-| --------- | -------- | ------------------------- | ----------------------------------------------------- |
-| `message` | `enum`   | yes                       | Is "canceled".                                        |
-| `vote_id` | `string` | yes                       | Id of the vote.                                       |
-| `reason`  | `enum`   | yes                       | Either `custom`, `room_destroyed` or `initiator_left` |
-| `custom`  | `string` | when `reason` is `custom` | The reason for the cancel, set by the moderator.      |
+| Field     | Type     | Required                  | Description                                                 |
+| --------- | -------- | ------------------------- | ----------------------------------------------------------- |
+| `message` | `enum`   | yes                       | Is `"canceled"`.                                            |
+| `vote_id` | `string` | yes                       | Id of the vote.                                             |
+| `reason`  | `enum`   | yes                       | Either `"custom"`, `"room_destroyed"` or `"initiator_left"` |
+| `custom`  | `string` | when `reason` is `custom` | The reason for the cancel, set by the moderator.            |
 
 ##### Examples
 
@@ -441,12 +441,12 @@ The error event is a message that may be triggered by syntactically correct but 
 and therefore could be considered a kind of response. Errors must be handled outside of any context as they are considered events
 that can happen at any time. (e.g. an `internal` error may occur at any time to signal an internal problem)
 
-| Field     | Type       | Required                                    | Description                                          |
-| --------- | ---------- | ------------------------------------------- | ---------------------------------------------------- |
-| `message` | `enum`     | yes                                         | Is "error".                                          |
-| `error`   | `enum`     | yes                                         | Exhaustive list of error strings, see table below    |
-| `guests`  | `string[]` | when `error` is `allowlist_contains_guests` | A list of participants that where found to be quests |
-| `fields`  | `string[]` | when `error` is `bad_request`               | A list of fields that ignored validation constraints |
+| Field     | Type       | Required                                      | Description                                          |
+| --------- | ---------- | --------------------------------------------- | ---------------------------------------------------- |
+| `message` | `enum`     | yes                                           | Is `"error"`.                                        |
+| `error`   | `enum`     | yes                                           | Exhaustive list of error strings, see table below    |
+| `guests`  | `string[]` | when `error` is `"allowlist_contains_guests"` | A list of participants that where found to be quests |
+| `fields`  | `string[]` | when `error` is `"bad_request"`               | A list of fields that ignored validation constraints |
 
 | Error                       | Description                                                                                     |
 | --------------------------- | ----------------------------------------------------------------------------------------------- |

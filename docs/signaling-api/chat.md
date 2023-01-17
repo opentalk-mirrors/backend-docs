@@ -11,9 +11,9 @@ Allows a moderator to enable the chat if it is currently disabled.
 
 #### Fields
 
-| Field    | Type   | Required | Description           |
-| -------- | ------ | -------- | --------------------- |
-| `action` | `enum` | yes      | Must be "enable_chat" |
+| Field    | Type   | Required | Description             |
+| -------- | ------ | -------- | ----------------------- |
+| `action` | `enum` | yes      | Must be `"enable_chat"` |
 
 ##### Example
 
@@ -31,9 +31,9 @@ Allows a moderator to disable the chat if it is currently enabled.
 
 #### Fields
 
-| Field    | Type   | Required | Description            |
-| -------- | ------ | -------- | ---------------------- |
-| `action` | `enum` | yes      | Must be "disable_chat" |
+| Field    | Type   | Required | Description              |
+| -------- | ------ | -------- | ------------------------ |
+| `action` | `enum` | yes      | Must be `"disable_chat"` |
 
 ##### Example
 
@@ -52,12 +52,12 @@ specific user (direct message).
 
 #### Fields
 
-| Field     | Type     | Required | Description                                                         |
-| --------- | -------- | -------- | ------------------------------------------------------------------- |
-| `action`  | `enum`   | yes      | Must be "send_message"                                              |
-| `scope`   | `enum`   | yes      | Either "global", "group" or "private"                               |
-| `target`  | `string` | no       | Needed if `scope` is "group" or "private". Participant id or group  |
-| `content` | `string` | yes      | The message content                                                 |
+| Field     | Type     | Required | Description                                                            |
+| --------- | -------- | -------- | ---------------------------------------------------------------------- |
+| `action`  | `enum`   | yes      | Must be `"send_message"`                                               |
+| `scope`   | `enum`   | yes      | Either `"global"`, `"group"` or `"private"`                            |
+| `target`  | `string` | no       | Needed if `scope` is `"group"` or `"private"`. Participant id or group |
+| `content` | `string` | yes      | The message content                                                    |
 
 ##### Example
 
@@ -95,9 +95,9 @@ Allows a moderator to clear the global chat history of the conference room.
 
 #### Fields
 
-| Field    | Type   | Required | Description             |
-| -------- | ------ | -------- | ----------------------- |
-| `action` | `enum` | yes      | Must be "clear_history" |
+| Field    | Type   | Required | Description               |
+| -------- | ------ | -------- | ------------------------- |
+| `action` | `enum` | yes      | Must be `"clear_history"` |
 
 ##### Example
 
@@ -163,13 +163,13 @@ A message has been sent to either the global chat or directly to the participant
 
 #### Fields
 
-| Field       | Type     | Always | Description                                                              |
-| ----------- | -------- | ------ | ------------------------------------------------------------------------ |
-| `message`   | `enum`   | yes    | Is "message_sent"                                                        |
-| `source`    | `string` | yes    | Id of the participant who sent the message                               |
-| `scope`     | `enum`   | yes    | Either "global", "group" or "private"                                    |
-| `target`    | `string` | no     | Only if `scope` is "group" or "private". Participant id or group         |
-| `content`   | `string` | yes    | The message content                                                      |
+| Field       | Type     | Always | Description                                                          |
+| ----------- | -------- | ------ | -------------------------------------------------------------------- |
+| `message`   | `enum`   | yes    | Is `"message_sent"`                                                  |
+| `source`    | `string` | yes    | Id of the participant who sent the message                           |
+| `scope`     | `enum`   | yes    | Either `"global"`, `"group"` or `"private"`                          |
+| `target`    | `string` | no     | Only if `scope` is `"group"` or `"private"`. Participant id or group |
+| `content`   | `string` | yes    | The message content                                                  |
 
 ##### Example
 
@@ -210,7 +210,7 @@ Received when something went wrong processing messages sent to the server.
 
 | Field     | Type   | Always | Description                                       |
 | --------- | ------ | ------ | ------------------------------------------------- |
-| `message` | `enum` | yes    | Is "error"                                        |
+| `message` | `enum` | yes    | Is `"error"`                                      |
 | `error`   | `enum` | yes    | Exhaustive list of error strings, see table below |
 
 | Error                      | Description                                                     |

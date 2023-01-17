@@ -13,7 +13,7 @@ Must be the first message to be sent when the websocket connection is establishe
 
 | Field          | Type     | Required | Description                                                   |
 | -------------- | -------- | -------- | ------------------------------------------------------------- |
-| `action`       | `enum`   | yes      | Must be "join"                                                |
+| `action`       | `enum`   | yes      | Must be `"join"`                                              |
 | `display_name` | `string` | yes      | String to be displayed as the user's display name in the room |
 
 ##### Example
@@ -35,9 +35,9 @@ See [InWaitingRoom](moderation#inwaitingroom)
 
 #### Fields
 
-| Field    | Type   | Required | Description          |
-| -------- | ------ | -------- | -------------------- |
-| `action` | `enum` | yes      | Must be "enter_room" |
+| Field    | Type   | Required | Description            |
+| -------- | ------ | -------- | ---------------------- |
+| `action` | `enum` | yes      | Must be `"enter_room"` |
 
 ##### Example
 
@@ -55,9 +55,9 @@ Notify other users that your hand is raised.
 
 #### Fields
 
-| Field    | Type   | Required | Description          |
-| -------- | ------ | -------- | -------------------- |
-| `action` | `enum` | yes      | Must be "raise_hand" |
+| Field    | Type   | Required | Description            |
+| -------- | ------ | -------- | ---------------------- |
+| `action` | `enum` | yes      | Must be `"raise_hand"` |
 
 ##### Example
 
@@ -75,9 +75,9 @@ Notify other users that your hand is no longer raised.
 
 #### Fields
 
-| Field    | Type   | Required | Description          |
-| -------- | ------ | -------- | -------------------- |
-| `action` | `enum` | yes      | Must be "raise_hand" |
+| Field    | Type   | Required | Description            |
+| -------- | ------ | -------- | ---------------------- |
+| `action` | `enum` | yes      | Must be `"raise_hand"` |
 
 ##### Example
 
@@ -99,7 +99,7 @@ Grant a participant the moderator role.
 
 | Field    | Type     | Required | Description                                       |
 | -------- | -------- | -------- | ------------------------------------------------- |
-| `action` | `enum`   | yes      | Must be "grant_moderator_role"                    |
+| `action` | `enum`   | yes      | Must be `"grant_moderator_role"`                  |
 | `target` | `string` | yes      | Id of the participant to grant the moderator role |
 
 ##### Example
@@ -123,7 +123,7 @@ Revoke the moderator role from a participant. Cannot revoke the moderator role f
 
 | Field    | Type     | Required | Description                                             |
 | -------- | -------- | -------- | ------------------------------------------------------- |
-| `action` | `enum`   | yes      | Must be "grant_moderator_role"                          |
+| `action` | `enum`   | yes      | Must be `"grant_moderator_role"`                        |
 | `target` | `string` | yes      | Id of the participant to revoke the moderator role from |
 
 ##### Example
@@ -162,9 +162,9 @@ Information about another participant provided by the `control` module
 | Field                | Type     | Always | Description                                                     |
 | -------------------- | -------- | ------ | --------------------------------------------------------------- |
 | `display_name`       | `string` | yes    | Display name of the participant                                 |
-| `role`               | `enum`   | yes    | either `guest`, `user` or `moderator`                           |
+| `role`               | `enum`   | yes    | either `"guest,`, `"user"` or `"moderator"`                     |
 | `avatar_url`         | `string` | no     | url to your avatar image if the participant is a logged in user |
-| `participation_kind` | `enum`   | yes    | either `user`, `guest` or `sip`                                 |
+| `participation_kind` | `enum`   | yes    | either `"user"`, `"guest"` or `"sip"`                           |
 | `hand_is_up`         | `bool`   | yes    | true if the user is currently raising his hand                  |
 | `joined_at`          | `string` | yes    | timestamp of when the participant joined                        |
 | `left_at`            | `string` | no     | timestamp of when the participant left the room                 |
@@ -176,14 +176,14 @@ Received after joining the room. Can be triggered bei either calling [Join](#joi
 
 #### Fields
 
-| Field          | Type            | Always | Description                           |
-| -------------- | --------------- | ------ | ------------------------------------- |
-| `message`      | `enum`          | yes    | Is "join_success"                     |
-| `id`           | `string`        | yes    | Your participant-id in this session   |
-| `display_name` | `string`        | yes    | Your display_name in this session     |
-| `avatar_url`   | `string`        | no     | url to your avatar image if logged    |
-| `role`         | `enum`          | yes    | either `guest`, `user` or `moderator` |
-| `participants` | `Participant[]` | yes    | list of participants in the room      |
+| Field          | Type            | Always | Description                                 |
+| -------------- | --------------- | ------ | ------------------------------------------- |
+| `message`      | `enum`          | yes    | Is `"join_success"`                         |
+| `id`           | `string`        | yes    | Your participant-id in this session         |
+| `display_name` | `string`        | yes    | Your display_name in this session           |
+| `avatar_url`   | `string`        | no     | url to your avatar image if logged          |
+| `role`         | `enum`          | yes    | either `"guest"`, `"user"` or `"moderator"` |
+| `participants` | `Participant[]` | yes    | list of participants in the room            |
 
 ##### Example
 
@@ -216,9 +216,9 @@ Received when a participant changes his state. Wraps a [Participant](#participan
 
 #### Fields
 
-| Field     | Type   | Always | Description |
-| --------- | ------ | ------ | ----------- |
-| `message` | `enum` | yes    | Is "update" |
+| Field     | Type   | Always | Description   |
+| --------- | ------ | ------ | ------------- |
+| `message` | `enum` | yes    | Is `"update"` |
 
 ##### Example
 
@@ -243,9 +243,9 @@ Received when a participant joined the room. Wraps a [Participant](#participant)
 
 #### Fields
 
-| Field     | Type   | Always | Description |
-| --------- | ------ | ------ | ----------- |
-| `message` | `enum` | yes    | Is "joined" |
+| Field     | Type   | Always | Description   |
+| --------- | ------ | ------ | ------------- |
+| `message` | `enum` | yes    | Is `"joined"` |
 
 ##### Example
 
@@ -272,7 +272,7 @@ Received when a participant left the room.
 
 | Field     | Type     | Always | Description                         |
 | --------- | -------- | ------ | ----------------------------------- |
-| `message` | `enum`   | yes    | Is "left"                           |
+| `message` | `enum`   | yes    | Is `"left"`                         |
 | `id`      | `string` | yes    | Id of the participant that has left |
 
 ##### Example
@@ -290,10 +290,10 @@ Received when a moderator assigned you a new role.
 
 #### Fields
 
-| Field      | Type   | Always | Description                         |
-| ---------- | ------ | ------ | ----------------------------------- |
-| `message`  | `enum` | yes    | Is "role_updated"                   |
-| `new_role` | `enum` | yes    | either `guest`, `user`, `moderator` |
+| Field      | Type   | Always | Description                               |
+| ---------- | ------ | ------ | ----------------------------------------- |
+| `message`  | `enum` | yes    | Is `"role_updated"`                       |
+| `new_role` | `enum` | yes    | either `"guest"`, `"user"`, `"moderator"` |
 
 ##### Example
 
@@ -312,7 +312,7 @@ Received when something went wrong.
 
 | Field     | Type   | Always | Description          |
 | --------- | ------ | ------ | -------------------- |
-| `message` | `enum` | yes    | Is "error"           |
+| `message` | `enum` | yes    | Is `"error"`         |
 | `text`    | `enum` | yes    | arbitrary error text |
 
 ##### Example
