@@ -21,6 +21,37 @@ The state of a vote is held in a redis instance. There can only be one active vo
 moved to the `vote history` for later access. Any operation that accesses more than one redis key is done with a Lua
 script in order to make those operations atomic.
 
+## Vote kind
+
+The voting procedure may follow different patterns depending on their kind. In order to choose the vote kind, the correspnonding
+identifier needs to be set in the [Start](#start) message.
+
+### Live roll call
+
+Identifier: `"live_roll_call"`
+
+In a live roll call, every vote that is handed in gets published to all room participants immediately. This allows everybody
+to follow the current state of the voting procedure live, immediately revealing who voted what. The report will contain a list
+of user ids and the vote options they chose.
+
+### Roll call
+
+Identifier: `"roll_call"`
+
+A roll call is private while it is running, while the details get published once it is finished. No updates will be sent out
+during the voting procedure, but votes are counted by the server. The report will contain a list of users and the vote options
+they chose.
+
+### Pseudonymous
+
+Identifier: `"pseudonymous"`
+
+A pseudonymous votc allows the users to keep their vote option private. Each user gets a single use token which is consumed
+when the the vote option is counted. The token is revealed to the user, who should keep it private. The report will contain a
+list of tokens and the vote options that were handed in with them. This allows every user to verify that their vote has been
+counted correctly. Because the tokens are pulished with the association of the chosen vote option, this is only pseudonymous,
+not anonymous.
+
 ## Commands
 
 Commands are issued by a participant to start or interact with a vote.
@@ -31,24 +62,25 @@ The `Start` message can be sent by a moderator to start a new legal vote.
 
 #### Fields
 
-| Field                  | Type       | Required | Validation        | Description                                                                              |
-| ---------------------- | ---------- | -------- | ----------------- | ---------------------------------------------------------------------------------------- |
-| `action`               | `enum`     | yes      |                   | Must be `"start"`.                                                                       |
-| `name`                 | `string`   | yes      | max 150 chars     | General name of the vote                                                                 |
-| `subtitle`             | `string`   | no       | max 255 chars     | A subtitle for the vote                                                                  |
-| `topic`                | `string`   | no       | max 500 chars     | Detailed topic that will be voted on.                                                    |
-| `allowed_participants` | `string[]` | yes      | min 1 participant | An array of participant ids, where each contained participant is allowed to cast a vote. |
-| `enable_abstain`       | `bool`     | yes      |                   | Enable/Disable the 'Abstain' option on this vote                                         |
-| `hidden`               | `bool`     | yes      |                   | Hide the voting choices of all participants in all event messages                        |
-| `auto_stop`            | `bool`     | yes      |                   | When set, the vote will automatically stop when every allowed participant casted a vote. |
-| `create_pdf`           | `bool`     | yes      |                   | Automatically create a protocol PDF when the vote ends.                                  |
-| `duration`             | `int`      | no       | min 5 seconds     | Duration of the vote in seconds                                                          |
+| Field                  | Type       | Required | Validation        | Description                                                                               |
+| ---------------------- | ---------- | -------- | ----------------- | ----------------------------------------------------------------------------------------- |
+| `action`               | `enum`     | yes      |                   | Must be `"start"`.                                                                        |
+| `kind`                 | `enum`     | yes      |                   | The exhaustive list of `kind` can be found in section [Vote Kind](#vote-kind).            |
+| `name`                 | `string`   | yes      | max 150 chars     | General name of the vote                                                                  |
+| `subtitle`             | `string`   | no       | max 255 chars     | A subtitle for the vote                                                                   |
+| `topic`                | `string`   | no       | max 500 chars     | Detailed topic that will be voted on.                                                     |
+| `allowed_participants` | `string[]` | yes      | min 1 participant | An array of participant ids, where each contained participant is allowed to cast a vote.  |
+| `enable_abstain`       | `bool`     | yes      |                   | Enable/Disable the 'Abstain' option on this vote                                          |
+| `auto_close`           | `bool`     | yes      |                   | When set, the vote will automatically close when every allowed participant casted a vote. |
+| `create_pdf`           | `bool`     | yes      |                   | Automatically create a protocol PDF when the vote ends.                                   |
+| `duration`             | `int`      | no       | min 5 seconds     | Duration of the vote in seconds                                                           |
 
 ##### Example
 
 ```json
 {
     "action": "start",
+    "kind": "roll_call",
     "name": "Vote Test",
     "topic": "Yes or No?",
     "allowed_participants": [
@@ -57,7 +89,7 @@ The `Start` message can be sent by a moderator to start a new legal vote.
         "00000000-0000-0000-0000-000000000003"
     ],
     "enable_abstain": false,
-    "auto_stop": false,
+    "auto_close": false,
     "duration": 60
 }
 ```
@@ -137,6 +169,7 @@ Cast a vote on the specified `legal_vote_id`. Each user is allowed to only vote 
 | `action`        | `enum`   | yes      | Must be `"vote"`.                                                                                 |
 | `legal_vote_id` | `string` | yes      | The vote that shall be voted on.                                                                  |
 | `option`        | `enum`   | yes      | The chosen vote option, may be `"yes"`, `"no"` or `"abstain"` when the abstain option is enabled. |
+| `token`         | `string` | yes      | The token that was handed to the user with the [Started](#started) message.                       |
 
 ##### Example
 
@@ -145,6 +178,7 @@ Cast a vote on the specified `legal_vote_id`. Each user is allowed to only vote 
     "action": "vote",
     "legal_vote_id": "00000000-0000-0000-0000-000000000000",
     "option": "yes",
+    "token": "2QNav7b3FJw"
 }
 ```
 
@@ -195,27 +229,30 @@ This message will also be received when joining a room that has an active vote g
 
 #### Fields
 
-| Field                  | Type       | Required | Description                                                                              |
-| ---------------------- | ---------- | -------- | ---------------------------------------------------------------------------------------- |
-| `message`              | `enum`     | yes      | Is `"started"`.                                                                          |
-| `initiator_id`         | `string`   | yes      | Id of the participant which started the vote.                                            |
-| `legal_vote_id`        | `string`   | yes      | Id of the vote.                                                                          |
-| `start_time`           | `string`   | yes      | RFC 3339 timestamp when the vote started.                                                |
-| `max_votes`            | `int`      | yes      | The maximum number of possible votes.                                                    |
-| `name`                 | `string`   | yes      | General name of the vote.                                                                |
-| `subtitle`             | `string`   | no       | A subtitle for the vote                                                                  |
-| `topic`                | `string`   | no       | Detailed topic that will be voted on.                                                    |
-| `allowed_participants` | `string[]` | yes      | An array of participant ids, where each contained participant is allowed to cast a vote. |
-| `enable_abstain`       | `bool`     | yes      | Enable/Disable the 'Abstain' option on this vote.                                        |
-| `auto_stop`            | `bool`     | yes      | When set, the vote will automatically stop when every allowed participant casted a vote. |
-| `create_pdf`           | `bool`     | yes      | Automatically create a protocol PDF when the vote ends.                                  |
-| `duration`             | `int`      | no       | Duration of the vote in seconds, counting from the `start_time`.                         |
+| Field                  | Type       | Required | Description                                                                               |
+| ---------------------- | ---------- | -------- | ----------------------------------------------------------------------------------------- |
+| `message`              | `enum`     | yes      | Is `"started"`.                                                                           |
+| `kind`                 | `enum`     | yes      | The exhaustive list of `kind` can be found in section [Vote Kind](#vote-kind).            |
+| `initiator_id`         | `string`   | yes      | Id of the participant which started the vote.                                             |
+| `legal_vote_id`        | `string`   | yes      | Id of the vote.                                                                           |
+| `start_time`           | `string`   | yes      | RFC 3339 timestamp when the vote started.                                                 |
+| `max_votes`            | `int`      | yes      | The maximum number of possible votes.                                                     |
+| `name`                 | `string`   | yes      | General name of the vote.                                                                 |
+| `subtitle`             | `string`   | no       | A subtitle for the vote                                                                   |
+| `topic`                | `string`   | no       | Detailed topic that will be voted on.                                                     |
+| `allowed_participants` | `string[]` | yes      | An array of participant ids, where each contained participant is allowed to cast a vote.  |
+| `enable_abstain`       | `bool`     | yes      | Enable/Disable the 'Abstain' option on this vote.                                         |
+| `auto_close`           | `bool`     | yes      | When set, the vote will automatically close when every allowed participant casted a vote. |
+| `create_pdf`           | `bool`     | yes      | Automatically create a protocol PDF when the vote ends.                                   |
+| `duration`             | `int`      | no       | Duration of the vote in seconds, counting from the `start_time`.                          |
+| `token`                | `string`   | no       | Optional. Only users who participate in the voting procedure receive a token.             |
 
 ##### Example
 
 ```json
 {
     "message": "started",
+    "kind": "roll_call",
     "initiator_id": "00000000-0000-0000-0000-000000000004",
     "legal_vote_id": "00000000-0000-0000-0000-000000000123",
     "start_time": "1970-01-01T00:00:00Z",
@@ -228,8 +265,9 @@ This message will also be received when joining a room that has an active vote g
         "00000000-0000-0000-0000-000000000003"
     ],
     "enable_abstain": false,
-    "auto_stop": false,
-    "duration": 60
+    "auto_close": false,
+    "duration": 60,
+    "token": "2QNav7b3FJw"
 }
 ```
 
@@ -237,20 +275,21 @@ This message will also be received when joining a room that has an active vote g
 
 ### Voted
 
-Event received whenever a user voted. Usually understood as a response to the [Vote](#vote) command.
+Event received by a user whenever they voted. Usually understood as a response to the [Vote](#vote) command.
 Since every user may only vote once, each participant logged in as that user will receive this message after
 any of them successfully cast their vote.
 
 #### Fields
 
-| Field           | Type     | Required                     | Description                                 |
-| --------------- | -------- | ---------------------------- | ------------------------------------------- |
-| `message`       | `enum`   | yes                          | Is `"voted"`.                               |
-| `legal_vote_id` | `string` | yes                          | Id of the vote.                             |
-| `response`      | `enum`   | yes                          | Either `"success"` or `"failed"`            |
-| `vote_option`   | `enum`   | when `response` is `success` | The option the `issuer` voted for           |
-| `issuer`        | `string` | when `response` is `success` | Id of the participant which voted.          |
-| `reason`        | `enum`   | when `response` is `failed`  | Reason why the vote failed, see table below |
+| Field            | Type     | Required                     | Description                                      |
+| ---------------- | -------- | ---------------------------- | ------------------------------------------------ |
+| `message`        | `enum`   | yes                          | Is `"voted"`.                                    |
+| `legal_vote_id`  | `string` | yes                          | Id of the vote.                                  |
+| `response`       | `enum`   | yes                          | Either `"success"` or `"failed"`                 |
+| `vote_option`    | `enum`   | when `response` is `success` | The option the `issuer` voted for                |
+| `issuer`         | `string` | when `response` is `success` | Id of the participant which voted.               |
+| `consumed_token` | `string` | when `response` is `success` | The token that is consumed once a user has voted |
+| `reason`         | `enum`   | when `response` is `failed`  | Reason why the vote failed, see table below      |
 
 __Failure reason:__
 
@@ -270,7 +309,8 @@ Successful vote:
     "legal_vote_id": "00000000-0000-0000-0000-000000000123",
     "response": "success",
     "vote_option": "yes",
-    "issuer": "00000000-0000-0000-0000-000000000001"
+    "issuer": "00000000-0000-0000-0000-000000000001",
+    "consumed_token": "2QNav7b3FJw"
 }
 ```
 
@@ -289,22 +329,20 @@ Failed vote:
 
 ### Updated
 
-Update to an ongoing vote, signaling the newest results. Used to visualize the UI.
+Update to an ongoing vote which supports live updates, signaling the newest results. Used to visualize the UI.
 
 #### Fields
 
-| Field           | Type     | Required                        | Description                                                                                     |
-| --------------- | -------- | ------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `message`       | `enum`   | yes                             | Is `"updated"`.                                                                                 |
-| `legal_vote_id` | `string` | yes                             | Id of the vote.                                                                                 |
-| `yes`           | `int`    | yes                             | Number of `"yes"` votes                                                                         |
-| `no`            | `int`    | yes                             | Number of `"no"` votes                                                                          |
-| `abstain`       | `int`    | when `enable_abstain` is `true` | Number of `"abstain"` votes                                                                     |
-| `voters`        | `map`    | no                              | Optional mapping of participant which voted to their vote option, omitted if the vote is hidden |
+| Field           | Type     | Required                        | Description                                             |
+| --------------- | -------- | ------------------------------- | ------------------------------------------------------- |
+| `message`       | `enum`   | yes                             | Is `"updated"`.                                         |
+| `legal_vote_id` | `string` | yes                             | Id of the vote.                                         |
+| `yes`           | `int`    | yes                             | Number of `"yes"` votes                                 |
+| `no`            | `int`    | yes                             | Number of `"no"` votes                                  |
+| `abstain`       | `int`    | when `enable_abstain` is `true` | Number of `"abstain"` votes                             |
+| `voting_record` | `map`    | yes                             | Mapping of participant which voted to their vote option |
 
 ##### Example
-
-Public vote:
 
 ```json
 {
@@ -313,25 +351,13 @@ Public vote:
     "yes": 1,
     "no": 2,
     "abstain": 2,
-    "voters": {
+    "voting_record": {
         "00000000-0000-0000-0000-000000000001": "yes",
         "00000000-0000-0000-0000-000000000002": "no",
         "00000000-0000-0000-0000-000000000003": "abstain",
         "00000000-0000-0000-0000-000000000004": "abstain",
         "00000000-0000-0000-0000-000000000005": "no"
     }
-}
-```
-
-Hidden vote:
-
-```json
-{
-    "message": "updated",
-    "legal_vote_id": "00000000-0000-0000-0000-000000000123",
-    "yes": 1,
-    "no": 2,
-    "abstain": 2
 }
 ```
 
@@ -351,15 +377,16 @@ invalid, this happens when the final vote results are not consistent or altered 
 | `kind`          | `enum`   | yes                             | Either `"by_participant"`, `"auto"` or `"expired"`                                                        |
 | `issuer`        | `string` | when `kind` is `by_participant` | Id of the participant which issued the stop command                                                       |
 | `results`       | `enum`   | yes                             | Is either `valid` or `invalid`. This field changes the rest of the fields to one of the following tables. |
+| `end_time`      | `string` | yes                             | RFC 3339 timestamp when the vote ended.                                                                   |
 
-When `valid`:
+When `results` is `valid`:
 
-| Field     | Type  | Required                        | Description                                                                                     |
-| --------- | ----- | ------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `yes`     | `int` | yes                             | Number of `"yes"` votes                                                                         |
-| `no`      | `int` | yes                             | Number of `"no"` votes                                                                          |
-| `abstain` | `int` | when `enable_abstain` is `true` | Number of `"abstain"` votes                                                                     |
-| `voters`  | `map` | no                              | Optional mapping of participant which voted to their vote option, omitted if the vote is hidden |
+| Field           | Type  | Required                        | Description                                                 |
+| --------------- | ----- | ------------------------------- | ----------------------------------------------------------- |
+| `yes`           | `int` | yes                             | Number of `"yes"` votes                                     |
+| `no`            | `int` | yes                             | Number of `"no"` votes                                      |
+| `abstain`       | `int` | when `enable_abstain` is `true` | Number of `"abstain"` votes                                 |
+| `voting_record` | `map` | yes                             | Mapping of participant or token including their vote option |
 
 When `invalid`:
 
@@ -369,7 +396,7 @@ When `invalid`:
 
 ##### Example
 
-Stopped with valid results:
+Stopped with valid results on a vote which reveals the users:
 
 ```json
 {
@@ -381,13 +408,37 @@ Stopped with valid results:
     "yes": 1,
     "no": 2,
     "abstain": 2,
-    "voters": {
+    "voting_record": {
         "00000000-0000-0000-0000-000000000001": "yes",
         "00000000-0000-0000-0000-000000000002": "no",
         "00000000-0000-0000-0000-000000000003": "abstain",
         "00000000-0000-0000-0000-000000000004": "abstain",
         "00000000-0000-0000-0000-000000000005": "no"
-    }
+    },
+    "end_time": "1970-01-01T00:00:00Z"
+}
+```
+
+Stopped with valid results on a vote which reveals the tokens:
+
+```json
+{
+    "message": "stopped",
+    "legal_vote_id": "00000000-0000-0000-0000-000000000123",
+    "kind": "by_participant",
+    "issuer":  "00000000-0000-0000-0000-000000000001",
+    "results": "valid",
+    "yes": 1,
+    "no": 2,
+    "abstain": 2,
+    "voting_record": {
+        "9AMndyeorvB": "yes",
+        "G9rLx7vkeMD": "no",
+        "Mypgay5rhRj": "abstain",
+        "TjR94viayBf": "abstain",
+        "UuLLU1sxgPw": "no"
+    },
+    "end_time": "1970-01-01T00:00:00Z"
 }
 ```
 
@@ -400,7 +451,8 @@ Stopped with invalid results:
     "kind": "by_participant",
     "issuer":  "00000000-0000-0000-0000-000000000001",
     "results": "invalid",
-    "reason": "vote_count_inconsistent"
+    "reason": "vote_count_inconsistent",
+    "end_time": "1970-01-01T00:00:00Z"
 }
 ```
 
