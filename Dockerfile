@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: OpenTalk GmbH <mail@opentalk.eu>
+#
+# SPDX-License-Identifier: EUPL-1.2
+
 ## Base ########################################################################
 # Use a larger node image to do the build for native deps (e.g., gcc, python)
 FROM node:lts as build
