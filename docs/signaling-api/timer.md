@@ -6,9 +6,11 @@
 
 The timer module allows a moderator to start a timer for all participants in the room.
 
-When a duration is configured, the timer behaves like a normal countdown that triggers a `stopped` event forall participants when the duration expired.
+There are two variations of the timer: `"countdown"` and `"stopwatch"`.
 
-When no duration is configured, the timer will act like a stopwatch (count up) and must be stopped manually by one of the moderators via a `Stop` action.
+When the `"countdown"` kind is configured, the timer continues to run until its duration expires or if a moderator stops it beforehand.
+
+When the `"stopwatch"` kind is configured, the timer continues to run until a moderator stops it.
 
 There can only be one timer present at a time. Due to a current limitation of our module system,
 all participants will receive a `stopped` event when the creator of a timer leaves the room. This behavior shall be fixed in the future.
@@ -23,22 +25,50 @@ Can return [Error](#error) of kind `insufficient_permissions`, `invalid_duration
 
 #### Fields
 
-| Field                | Type     | Required | Description                                                                                     |
-| -------------------- | -------- | -------- | ----------------------------------------------------------------------------------------------- |
-| `action`             | `enum`   | yes      | Must be `"start"`                                                                               |
-| `duration`           | `int`    | no       | The duration (seconds) of the timer. If not set, the timer will act like a stopwatch (count up) |
-| `title`              | `string` | no       | The optional title for the timer                                                                |
-| `enable_ready_check` | `bool`   | yes      | Enables/Disables participants to send a `update_ready_check` action                             |
+| Field                | Type     | Required                   | Description                                                         |
+| -------------------- | -------- | -------------------------- | ------------------------------------------------------------------- |
+| `action`             | `enum`   | yes                        | Must be `"start"`                                                   |
+| `kind`               | `enum`   | yes                        | Either `"countdown"` or `"stopwatch"`                               |
+| `duration`           | `int`    | if `kind` is `"countdown"` | The duration (seconds) of the timer                                 |
+| `title`              | `string` | no                         | The optional title for the timer                                    |
+| `style`              | `string` | no                         | An optional style tag to identify a timer across frontend clients   |
+| `enable_ready_check` | `bool`   | yes                        | Enables/Disables participants to send a `update_ready_check` action |
 
-When `duration` is set, the module will automatically send a [Stopped](#stopped) message when the duration expires.
+When the `kind` is set to `"countdown"`, the module will automatically send a [Stopped](#stopped) message when the `duration` expires.
 
 ##### Examples
+
+Countdown:
 
 ```json
 {
     "action": "start",
-    "duration": 5,
+    "kind": "countdown",
+    "duration": 20,
     "title": "Testing the timer!",
+    "ready_check": false
+}
+```
+
+Countdown with style:
+
+```json
+{
+    "action": "start",
+    "kind": "countdown",
+    "duration": 180,
+    "style": "coffee_break",
+    "ready_check": true
+}
+```
+
+Stopwatch:
+
+```json
+{
+    "action": "start",
+    "kind": "stopwatch",
+    "title": "Testing the stopwatch!",
     "ready_check": false
 }
 ```
@@ -117,26 +147,57 @@ This message is also received in the `join_success` message when joining a room 
 
 #### Fields
 
-| Field                 | Type     | Always | Description                                                          |
-| --------------------- | -------- | ------ | -------------------------------------------------------------------- |
-| `message`             | `enum`   | yes    | Is `"started"`                                                       |
-| `timer_id`            | `string` | yes    | The timer id (uuid)                                                  |
-| `started_at`          | `string` | yes    | RFC 3339 timestamp of when the timer started                         |
-| `ends at`             | `string` | no     | optional RFC 3339 timestamp of when the timer will end               |
-| `title`               | `string` | no     | An optional title for the timer                                      |
-| `ready_check_enabled` | `bool`   | yes    | Enables/Disables participants to send a `update_ready_status` action |
-
-When the `ends_at` field is not set, the timer shall behave like a stopwatch (count up).
+| Field                 | Type     | Always                     | Description                                                          |
+| --------------------- | -------- | -------------------------- | -------------------------------------------------------------------- |
+| `message`             | `enum`   | yes                        | Is `"started"`                                                       |
+| `timer_id`            | `string` | yes                        | The timer id (uuid)                                                  |
+| `kind`                | `enum`   | yes                        | Either `"countdown"` or `"stopwatch"`                                |
+| `started_at`          | `string` | yes                        | RFC 3339 timestamp of when the timer started                         |
+| `ends at`             | `string` | if `kind` is `"countdown"` | optional RFC 3339 timestamp of when the timer will end               |
+| `title`               | `string` | no                         | An optional title for the timer                                      |
+| `style`               | `string` | no                         | An optional style tag to identify a timer across frontend clients    |
+| `ready_check_enabled` | `bool`   | yes                        | Enables/Disables participants to send a `update_ready_status` action |
 
 ##### Example
+
+Countdown:
 
 ```json
 {
     "message": "started",
     "timer_id": "00000000-0000-0000-0000-000000000000",
+    "kind": "countdown",
     "started_at": "1970-01-01T00:00:00Z",
     "ends_at": "1970-01-01T00:00:00Z",
     "title": "Testing the timer!",
+    "ready_check_enabled": false
+}
+```
+
+Countdown with style:
+
+```json
+{
+    "message": "started",
+    "timer_id": "00000000-0000-0000-0000-000000000000",
+    "kind": "countdown",
+    "started_at": "1970-01-01T00:00:00Z",
+    "ends_at": "1970-01-01T00:00:00Z",
+    "style": "coffee_break",
+    "ready_check_enabled": false
+}
+```
+
+Stopwatch:
+
+```json
+{
+    "message": "started",
+    "timer_id": "00000000-0000-0000-0000-000000000000",
+    "kind": "stopwatch",
+    "started_at": "1970-01-01T00:00:00Z",
+    "ends_at": "1970-01-01T00:00:00Z",
+    "title": "Testing the stopwatch!",
     "ready_check_enabled": false
 }
 ```
