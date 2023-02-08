@@ -183,6 +183,7 @@ Received after joining the room. Can be triggered bei either calling [Join](#joi
 | `display_name` | `string`        | yes    | Your display_name in this session           |
 | `avatar_url`   | `string`        | no     | url to your avatar image if logged          |
 | `role`         | `enum`          | yes    | either `"guest"`, `"user"` or `"moderator"` |
+| `modules`      | `string[]`      | yes    | list of available modules                   |
 | `participants` | `Participant[]` | yes    | list of participants in the room            |
 
 ##### Example
@@ -194,6 +195,7 @@ Received after joining the room. Can be triggered bei either calling [Join](#joi
   "display_name": "My Display Name",
   "avatar_url":"https://example.org/",
   "role": "moderator",
+  "modules":["chat","breakout","moderation","media","polls","timer"],
   "participants": [
     {
       "id": "00000000-0000-0000-0000-000000000000",
