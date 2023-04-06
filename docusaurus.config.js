@@ -23,7 +23,7 @@ const createConfig = async () => {
 
     // GitHub pages deployment config.
     // If you aren't using GitHub pages, you don't need these.
-    organizationName: "heinlein-video", // Usually your GitHub org/user name.
+    organizationName: "OpenTalk", // Usually your GitHub org/user name.
     projectName: "docs", // Usually your repo name.
 
     // Even if you don't use internalization, you can use this field to set useful
@@ -44,7 +44,7 @@ const createConfig = async () => {
             // Only show edit link on internal builds.
             editUrl: isPublic
               ? undefined
-              : "https://git.heinlein-video.de/heinlein-video/k3k-docs/-/tree/main",
+              : "https://git.opentalk.dev/opentalk/k3k-docs/-/tree/main",
             remarkPlugins: [mdxMermaid.default],
           },
 
@@ -60,12 +60,7 @@ const createConfig = async () => {
             {
               route: "/openapi/rest/",
               spec: "api/controller/frontend_api.yaml",
-            },
-            // Only include the internal docs in internal builds.
-            !isPublic && {
-              route: "/openapi/internal/",
-              spec: "api/controller/internal.yaml",
-            },
+            }
           ],
           theme: {
             primaryColor: "#1890ff",
@@ -74,6 +69,7 @@ const createConfig = async () => {
         },
       ],
     ],
+    
     themes: [
       [
         require.resolve("@easyops-cn/docusaurus-search-local"),
@@ -105,12 +101,6 @@ const createConfig = async () => {
               position: "left",
               label: "REST API",
             },
-
-            !isPublic && {
-              to: "/openapi/internal",
-              position: "left",
-              label: "Internal Endpoints",
-            },
             // Right
             {
               type: "docsVersionDropdown",
@@ -140,7 +130,7 @@ const createConfig = async () => {
               items: [
                 {
                   label: "GitLab",
-                  href: "https://git.heinlein-video.de/heinlein-video",
+                  href: "https://git.opentalk.dev/opentalk",
                 },
               ],
             },
