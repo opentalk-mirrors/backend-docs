@@ -27,8 +27,8 @@ clone:controller:
   stage: clone
   image: bitnami/git:latest
   variables:
-    REPO_NAME: k3k-controller
-    REPO_SOURCE: https://gitlab-ci-token:${CI_JOB_TOKEN}@git.opentalk.dev/opentalk/$REPO_NAME.git
+    REPO_NAME: controller
+    REPO_SOURCE: https://gitlab-ci-token:${CI_JOB_TOKEN}@git.opentalk.dev/opentalk/backend/services/$REPO_NAME.git
   cache:
     <<: *global_cache
   artifacts:
@@ -63,7 +63,7 @@ clone:controller-enterprise:
   image: bitnami/git:latest
   variables:
     REPO_NAME: controller-enterprise
-    REPO_SOURCE: https://gitlab-ci-token:${CI_JOB_TOKEN}@git.opentalk.dev/opentalk/$REPO_NAME.git
+    REPO_SOURCE: https://gitlab-ci-token:${CI_JOB_TOKEN}@git.opentalk.dev/opentalk/backend/services/$REPO_NAME.git
   cache:
     <<: *global_cache
   artifacts:
