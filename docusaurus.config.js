@@ -40,11 +40,10 @@ const createConfig = async () => {
         /** @type {import('@docusaurus/preset-classic').Options} */
         ({
           docs: {
+            path: 'docs/signaling',
+            routeBasePath: 'signaling',
+
             sidebarPath: require.resolve("./sidebars.js"),
-            // Only show edit link on internal builds.
-            editUrl: isPublic
-              ? undefined
-              : "https://git.opentalk.dev/opentalk/k3k-docs/-/tree/main",
             remarkPlugins: [mdxMermaid.default],
           },
 
@@ -58,7 +57,7 @@ const createConfig = async () => {
         {
           specs: [
             {
-              route: "/openapi/rest/",
+              route: "/rest/",
               spec: "api/controller/frontend_api.yaml",
             }
           ],
@@ -97,7 +96,7 @@ const createConfig = async () => {
               label: "Signaling",
             },
             {
-              to: "/openapi/rest",
+              to: "/rest/",
               position: "left",
               label: "REST API",
             },
@@ -117,11 +116,11 @@ const createConfig = async () => {
               items: [
                 {
                   label: "Signaling",
-                  to: "/docs/",
+                  to: "/signaling/",
                 },
                 {
                   label: "REST API",
-                  to: "/openapi/rest",
+                  to: "/rest/",
                 },
               ],
             },
