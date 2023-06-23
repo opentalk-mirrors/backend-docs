@@ -17,13 +17,13 @@ function HomepageHeader() {
         <div className={styles.buttons}>
           <Link
             className="button button--secondary button--lg"
-            to="/openapi/rest"
+            to="/rest/"
           >
             REST API
           </Link>
           <Link
             className="button button--secondary button--lg"
-            to="/docs/signaling-api"
+            to="/signaling/"
           >
             Signaling API
           </Link>
