@@ -10,18 +10,15 @@ const baseUrl = process.env.BASE_URL ?? "/";
 const createConfig = async () => {
   const mdxMermaid = await import("mdx-mermaid");
   return {
-    title: "OpenTalk API Docs",
+    title: "OpenTalk Docs",
     tagline: "OpenTalk",
-    url: "https://opentalk.eu",
-    baseUrl,
-    onBrokenLinks: "throw",
-    onBrokenMarkdownLinks: "warn",
     favicon: "img/favicon.ico",
 
-    // GitHub pages deployment config.
-    // If you aren't using GitHub pages, you don't need these.
-    organizationName: "OpenTalk", // Usually your GitHub org/user name.
-    projectName: "docs", // Usually your repo name.
+    url: "https://opentalk.eu",
+    baseUrl,
+
+    onBrokenLinks: "throw",
+    onBrokenMarkdownLinks: "warn",
 
     // Even if you don't use internalization, you can use this field to set useful
     // metadata like html lang. For example, if your site is Chinese, you may want
