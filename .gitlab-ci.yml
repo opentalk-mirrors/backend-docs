@@ -16,6 +16,41 @@ cache: &global_cache
     - .yarn
   policy: pull-push
 
+clone:support:
+  needs: []
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_PIPELINE_SOURCE == 'schedule'
+    - if: $CI_PIPELINE_SOURCE == 'pipeline'
+    - if: $CI_COMMIT_TAG != null
+  stage: clone
+  image: bitnami/git:latest
+  variables:
+    REPO_NAME: support
+    REPO_SOURCE: https://gitlab-ci-token:${CI_JOB_TOKEN}@git.opentalk.dev/opentalk/$REPO_NAME.git
+  cache:
+    <<: *global_cache
+  artifacts:
+    name: $CI_JOB_NAME
+    paths:
+      - i18n
+      - user-docs
+  script:
+    - mkdir -p .tmp user-docs i18n/de/docusaurus-plugin-content-docs-user/current/
+    - rm -rf ".tmp/$REPO_NAME"
+    - >
+      if [[ -d .tmp/$REPO_NAME ]]; then
+        git -C ".tmp/$REPO_NAME" remote set-url origin "$REPO_SOURCE";
+        git -C ".tmp/$REPO_NAME" pull --recurse-submodules;
+        git -C ".tmp/$REPO_NAME" checkout ${GIT_REF_EXT:=main};
+      else
+        git clone --recurse-submodules --depth=1 --shallow-submodules --no-single-branch \
+            --branch ${GIT_REF_EXT:=main} $REPO_SOURCE ".tmp/$REPO_NAME";
+      fi
+    - cp -rv .tmp/$REPO_NAME/docs/docusaurus/user/* i18n/de/docusaurus-plugin-content-docs-user/current/
+    - cp -rv .tmp/$REPO_NAME/docs/docusaurus/i18n/en/docusaurus-plugin-content-docs/current/* user-docs/
+
 clone:controller:
   needs: []
   rules:
@@ -34,10 +69,13 @@ clone:controller:
   artifacts:
     name: $CI_JOB_NAME
     paths:
-      - docs
-      - api
+      - developer-docs
+      - admin-docs
+      - openapi
   script:
-    - mkdir -p .tmp api docs
+    - >
+      mkdir -p .tmp openapi developer-docs/controller admin-docs/controller
+      i18n/de/docusaurus-plugin-content-docs-admin/current/ i18n/de/docusaurus-plugin-content-docs-developer/current/
     - rm -rf ".tmp/$REPO_NAME"
     - >
       if [[ -d .tmp/$REPO_NAME ]]; then
@@ -48,8 +86,9 @@ clone:controller:
         git clone --recurse-submodules --depth=1 --shallow-submodules --no-single-branch \
             --branch ${GIT_REF_EXT:=main} $REPO_SOURCE ".tmp/$REPO_NAME";
       fi
-    - cp -rv .tmp/$REPO_NAME/docs/* docs/
-    - cp -rv .tmp/$REPO_NAME/api/* api/
+    - cp -rv .tmp/$REPO_NAME/docs/signaling/* developer-docs/controller/
+    - cp -rv .tmp/$REPO_NAME/docs/admin/* admin-docs/controller
+    - cp -rv .tmp/$REPO_NAME/api/controller/frontend_api.yaml openapi/controller.yaml
 
 clone:controller-enterprise:
   needs: []
@@ -69,10 +108,12 @@ clone:controller-enterprise:
   artifacts:
     name: $CI_JOB_NAME
     paths:
-      - docs
-      - api
+      - developer-docs
+      - admin-docs
   script:
-    - mkdir -p .tmp api docs
+    - >
+      mkdir -p .tmp openapi developer-docs/controller admin-docs/controller
+      i18n/de/docusaurus-plugin-content-docs-admin/current/ i18n/de/docusaurus-plugin-content-docs-developer/current/
     - rm -rf ".tmp/$REPO_NAME"
     - >
       if [[ -d .tmp/$REPO_NAME ]]; then
@@ -83,7 +124,7 @@ clone:controller-enterprise:
         git clone --recurse-submodules --depth=1 --shallow-submodules --no-single-branch \
             --branch ${GIT_REF_EXT:=main} $REPO_SOURCE ".tmp/$REPO_NAME";
       fi
-    - cp -rv .tmp/$REPO_NAME/docs/* docs/
+    - cp -rv .tmp/$REPO_NAME/docs/signaling/* developer-docs/controller/
 
 lint:yaml:
   needs: []
@@ -119,7 +160,7 @@ lint:licensing:
     - reuse lint
 
 build:
-  needs: [clone:controller, clone:controller-enterprise]
+  needs: [clone:support, clone:controller, clone:controller-enterprise]
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
@@ -136,6 +177,9 @@ build:
     paths:
       - build
   script:
+    # TODO: remove echoes when docs have a proper index pages
+    - echo '# Admin Index' > admin-docs/index.md
+    - echo '# Developer Index' > developer-docs/index.md
     - yarn install --immutable
     - yarn build
 
