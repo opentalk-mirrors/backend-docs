@@ -9,6 +9,3 @@ lint:
     # FIXME: Enable this in the future again
     operation-4xx-response: off
     no-unused-components: off
-    # We currently do not have a license url as it is All Rights Reserved currently.
-    # FIXME: Delete this exception when we have a license.
-    info-license-url: off
