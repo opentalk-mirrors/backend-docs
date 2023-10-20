@@ -78,7 +78,7 @@ const createConfig = async () => {
         },
       ],
     ],
-    plugins: [require.resolve("./sitePlugin")],
+    plugins: [],
     themeConfig:
       /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
       ({
