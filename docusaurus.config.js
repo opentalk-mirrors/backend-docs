@@ -65,10 +65,10 @@ const createConfig = async () => {
     
     themes: [
       [
-        require.resolve("@easyops-cn/docusaurus-search-local"),
+        "@cmfcmf/docusaurus-search-local",
         {
           indexPages: true,
-          hashed: true,
+          indexBlog: false,
         },
       ],
     ],

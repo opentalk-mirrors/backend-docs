@@ -2,6 +2,9 @@
 #
 # SPDX-License-Identifier: EUPL-1.2
 
+/node_modules
+/build
+
 .yarn/*
 !.yarn/patches
 !.yarn/plugins
@@ -21,5 +24,6 @@ api/
 .docusaurus
 .editorconfig
 .vscode
+.idea
 
 build/
