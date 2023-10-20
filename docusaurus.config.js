@@ -5,9 +5,6 @@ const lightCodeTheme = require("prism-react-renderer/themes/github");
 const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 
 const baseUrl = process.env.BASE_URL ?? "/";
-const isDev = process.env.NODE_ENV === "development";
-
-const isPublic = process.env.IS_PUBLIC === "true";
 
 /** @type {import('@docusaurus/types').Config} */
 const createConfig = async () => {
