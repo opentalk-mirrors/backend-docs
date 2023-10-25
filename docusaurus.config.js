@@ -10,8 +10,8 @@ const baseUrl = process.env.BASE_URL ?? "/";
 const createConfig = async () => {
     const mdxMermaid = await import("mdx-mermaid");
     return {
-        title: "OpenTalk Docs",
-        tagline: "OpenTalk",
+        title: "OpenTalk",
+        tagline: "Documentation",
         favicon: "img/favicon.ico",
 
         url: "https://opentalk.eu",
@@ -119,7 +119,7 @@ const createConfig = async () => {
         /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
             ({
                 navbar: {
-                    title: "OpenTalk API",
+                    title: "OpenTalk Docs",
                     logo: {
                         alt: "OpenTalk Logo",
                         src: "img/logo.svg",
@@ -196,6 +196,10 @@ const createConfig = async () => {
                         {
                             title: "More",
                             items: [
+                                {
+                                    label: 'OpenTalk',
+                                    href: 'https://opentalk.eu/',
+                                },
                                 {
                                     label: 'OpenCoDE',
                                     href: 'https://gitlab.opencode.de/opentalk/',

@@ -1,5 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
+import Link from "@docusaurus/Link";
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import styles from './index.module.css';
@@ -11,6 +12,30 @@ function HomepageHeader() {
         <div className="container">
           <h1 className="hero__title">{siteConfig.title}</h1>
           <p className="hero__subtitle">{siteConfig.tagline}</p>
+          <div className={styles.buttons}>
+            <Link
+              className="button button--secondary button--lg"
+              to="/user/"
+            >
+              User
+            </Link>
+          </div>
+          <div className={styles.buttons}>
+            <Link
+              className="button button--secondary button--lg"
+              to="/admin/"
+            >
+              Admin
+            </Link>
+          </div>
+          <div className={styles.buttons}>
+            <Link
+              className="button button--secondary button--lg"
+              to="/developer/"
+            >
+              Developer
+            </Link>
+          </div>
         </div>
       </header>
   );
