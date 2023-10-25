@@ -27,8 +27,7 @@ clone:support:
   stage: clone
   image: bitnami/git:latest
   variables:
-    REPO_NAME: support
-    REPO_SOURCE: https://gitlab-ci-token:${CI_JOB_TOKEN}@git.opentalk.dev/opentalk/$REPO_NAME.git
+    REPO_BASE: https://gitlab-ci-token:${CI_JOB_TOKEN}@git.opentalk.dev
   cache:
     <<: *global_cache
   artifacts:
@@ -37,19 +36,7 @@ clone:support:
       - i18n
       - user-docs
   script:
-    - mkdir -p .tmp user-docs i18n/de/docusaurus-plugin-content-docs-user/current/
-    - rm -rf ".tmp/$REPO_NAME"
-    - >
-      if [[ -d .tmp/$REPO_NAME ]]; then
-        git -C ".tmp/$REPO_NAME" remote set-url origin "$REPO_SOURCE";
-        git -C ".tmp/$REPO_NAME" pull --recurse-submodules;
-        git -C ".tmp/$REPO_NAME" checkout ${GIT_REF_EXT:=main};
-      else
-        git clone --recurse-submodules --depth=1 --shallow-submodules --no-single-branch \
-            --branch ${GIT_REF_EXT:=main} $REPO_SOURCE ".tmp/$REPO_NAME";
-      fi
-    - cp -rv .tmp/$REPO_NAME/docs/docusaurus/user/* i18n/de/docusaurus-plugin-content-docs-user/current/
-    - cp -rv .tmp/$REPO_NAME/docs/docusaurus/i18n/en/docusaurus-plugin-content-docs/current/* user-docs/
+    - ci/clone-repo-support
 
 clone:controller:
   needs: []
@@ -62,8 +49,7 @@ clone:controller:
   stage: clone
   image: bitnami/git:latest
   variables:
-    REPO_NAME: controller
-    REPO_SOURCE: https://gitlab-ci-token:${CI_JOB_TOKEN}@git.opentalk.dev/opentalk/backend/services/$REPO_NAME.git
+    REPO_BASE: https://gitlab-ci-token:${CI_JOB_TOKEN}@git.opentalk.dev
   cache:
     <<: *global_cache
   artifacts:
@@ -73,22 +59,7 @@ clone:controller:
       - admin-docs
       - openapi
   script:
-    - >
-      mkdir -p .tmp openapi developer-docs/controller admin-docs/controller
-      i18n/de/docusaurus-plugin-content-docs-admin/current/ i18n/de/docusaurus-plugin-content-docs-developer/current/
-    - rm -rf ".tmp/$REPO_NAME"
-    - >
-      if [[ -d .tmp/$REPO_NAME ]]; then
-        git -C ".tmp/$REPO_NAME" remote set-url origin "$REPO_SOURCE";
-        git -C ".tmp/$REPO_NAME" pull --recurse-submodules;
-        git -C ".tmp/$REPO_NAME" checkout ${GIT_REF_EXT:=main};
-      else
-        git clone --recurse-submodules --depth=1 --shallow-submodules --no-single-branch \
-            --branch ${GIT_REF_EXT:=main} $REPO_SOURCE ".tmp/$REPO_NAME";
-      fi
-    - cp -rv .tmp/$REPO_NAME/docs/signaling/* developer-docs/controller/
-    - cp -rv .tmp/$REPO_NAME/docs/admin/* admin-docs/controller
-    - cp -rv .tmp/$REPO_NAME/api/controller/frontend_api.yaml openapi/controller.yaml
+    ci/clone-repo-controller
 
 clone:controller-enterprise:
   needs: []
@@ -101,8 +72,7 @@ clone:controller-enterprise:
   stage: clone
   image: bitnami/git:latest
   variables:
-    REPO_NAME: controller-enterprise
-    REPO_SOURCE: https://gitlab-ci-token:${CI_JOB_TOKEN}@git.opentalk.dev/opentalk/backend/services/$REPO_NAME.git
+    REPO_BASE: https://gitlab-ci-token:${CI_JOB_TOKEN}@git.opentalk.dev
   cache:
     <<: *global_cache
   artifacts:
@@ -111,20 +81,7 @@ clone:controller-enterprise:
       - developer-docs
       - admin-docs
   script:
-    - >
-      mkdir -p .tmp openapi developer-docs/controller admin-docs/controller
-      i18n/de/docusaurus-plugin-content-docs-admin/current/ i18n/de/docusaurus-plugin-content-docs-developer/current/
-    - rm -rf ".tmp/$REPO_NAME"
-    - >
-      if [[ -d .tmp/$REPO_NAME ]]; then
-        git -C ".tmp/$REPO_NAME" remote set-url origin "$REPO_SOURCE";
-        git -C ".tmp/$REPO_NAME" pull --recurse-submodules;
-        git -C ".tmp/$REPO_NAME" checkout ${GIT_REF_EXT:=main};
-      else
-        git clone --recurse-submodules --depth=1 --shallow-submodules --no-single-branch \
-            --branch ${GIT_REF_EXT:=main} $REPO_SOURCE ".tmp/$REPO_NAME";
-      fi
-    - cp -rv .tmp/$REPO_NAME/docs/signaling/* developer-docs/controller/
+    ci/clone-repo-controller-enterprise
 
 lint:yaml:
   needs: []

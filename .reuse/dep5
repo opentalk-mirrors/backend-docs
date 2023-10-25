@@ -8,6 +8,8 @@ Files:
  .yarnrc.yml
  README.md
  package.json
+ ci/clone-*
+ ci/**.sh
 Copyright: OpenTalk GmbH <mail@opentalk.eu>
 License: EUPL-1.2
 
