@@ -134,9 +134,6 @@ build:
     paths:
       - build
   script:
-    # TODO: remove echoes when docs have a proper index pages
-    - echo '# Admin Index' > admin-docs/index.md
-    - echo '# Developer Index' > developer-docs/index.md
     - yarn install --immutable
     - yarn build
 

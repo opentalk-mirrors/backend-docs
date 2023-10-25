@@ -27,3 +27,10 @@ api/
 .idea
 
 build/
+
+/developer-docs/controller/signaling/community/*.md
+/developer-docs/controller/signaling/enterprise/*.md
+/admin-docs
+/user-docs
+/i18n
+/openapi

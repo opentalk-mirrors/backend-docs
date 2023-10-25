@@ -38,7 +38,8 @@ const createConfig = async () => {
                 {
                     specs: [
                         {
-                            route: "/rest/",
+                            id: 'controller-rest',
+                            route: "/developer/controller/rest-api/",
                             spec: "openapi/controller.yaml",
                         }
                     ],
