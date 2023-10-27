@@ -30,7 +30,8 @@ build/
 
 /developer-docs/controller/signaling/community/*.md
 /developer-docs/controller/signaling/enterprise/*.md
-/admin-docs
+/admin-docs/controller
+/admin-docs/recorder
 /user-docs
 /i18n
 /openapi

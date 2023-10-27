@@ -10,6 +10,7 @@ Files:
  package.json
  ci/clone-*
  ci/**.sh
+ admin-docs/**.mdx
  developer-docs/**.mdx
 Copyright: OpenTalk GmbH <mail@opentalk.eu>
 License: EUPL-1.2
