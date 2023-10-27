@@ -7,10 +7,10 @@ Files:
  yarn.lock
  .yarnrc.yml
  README.md
- api/README.md
  package.json
- docs/**.md
- api/**.yaml
+ ci/clone-*
+ ci/**.sh
+ developer-docs/**.mdx
 Copyright: OpenTalk GmbH <mail@opentalk.eu>
 License: EUPL-1.2
 
@@ -25,8 +25,8 @@ Files:
  docusaurus.config.js
  sidebars.js
  tsconfig.json
- src/components/HomepageFeatures/index.tsx
- src/components/HomepageFeatures/styles.module.css
+ src/theme/NavbarItem/DocsVersionDropdownNavbarItem.js
+ src/theme/NavbarItem/LocaleDropdownNavbarItem/index.js
  src/css/custom.css
  src/pages/index.tsx
  src/pages/index.module.css

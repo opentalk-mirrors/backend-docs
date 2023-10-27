@@ -16,6 +16,28 @@ cache: &global_cache
     - .yarn
   policy: pull-push
 
+clone:support:
+  needs: []
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_PIPELINE_SOURCE == 'schedule'
+    - if: $CI_PIPELINE_SOURCE == 'pipeline'
+    - if: $CI_COMMIT_TAG != null
+  stage: clone
+  image: bitnami/git:latest
+  variables:
+    REPO_BASE: https://gitlab-ci-token:${CI_JOB_TOKEN}@git.opentalk.dev
+  cache:
+    <<: *global_cache
+  artifacts:
+    name: $CI_JOB_NAME
+    paths:
+      - i18n
+      - user-docs
+  script:
+    - ci/clone-repo-support
+
 clone:controller:
   needs: []
   rules:
@@ -27,29 +49,17 @@ clone:controller:
   stage: clone
   image: bitnami/git:latest
   variables:
-    REPO_NAME: controller
-    REPO_SOURCE: https://gitlab-ci-token:${CI_JOB_TOKEN}@git.opentalk.dev/opentalk/backend/services/$REPO_NAME.git
+    REPO_BASE: https://gitlab-ci-token:${CI_JOB_TOKEN}@git.opentalk.dev
   cache:
     <<: *global_cache
   artifacts:
     name: $CI_JOB_NAME
     paths:
-      - docs
-      - api
+      - developer-docs
+      - admin-docs
+      - openapi
   script:
-    - mkdir -p .tmp api docs
-    - rm -rf ".tmp/$REPO_NAME"
-    - >
-      if [[ -d .tmp/$REPO_NAME ]]; then
-        git -C ".tmp/$REPO_NAME" remote set-url origin "$REPO_SOURCE";
-        git -C ".tmp/$REPO_NAME" pull --recurse-submodules;
-        git -C ".tmp/$REPO_NAME" checkout ${GIT_REF_EXT:=main};
-      else
-        git clone --recurse-submodules --depth=1 --shallow-submodules --no-single-branch \
-            --branch ${GIT_REF_EXT:=main} $REPO_SOURCE ".tmp/$REPO_NAME";
-      fi
-    - cp -rv .tmp/$REPO_NAME/docs/* docs/
-    - cp -rv .tmp/$REPO_NAME/api/* api/
+    ci/clone-repo-controller
 
 clone:controller-enterprise:
   needs: []
@@ -62,28 +72,16 @@ clone:controller-enterprise:
   stage: clone
   image: bitnami/git:latest
   variables:
-    REPO_NAME: controller-enterprise
-    REPO_SOURCE: https://gitlab-ci-token:${CI_JOB_TOKEN}@git.opentalk.dev/opentalk/backend/services/$REPO_NAME.git
+    REPO_BASE: https://gitlab-ci-token:${CI_JOB_TOKEN}@git.opentalk.dev
   cache:
     <<: *global_cache
   artifacts:
     name: $CI_JOB_NAME
     paths:
-      - docs
-      - api
+      - developer-docs
+      - admin-docs
   script:
-    - mkdir -p .tmp api docs
-    - rm -rf ".tmp/$REPO_NAME"
-    - >
-      if [[ -d .tmp/$REPO_NAME ]]; then
-        git -C ".tmp/$REPO_NAME" remote set-url origin "$REPO_SOURCE";
-        git -C ".tmp/$REPO_NAME" pull --recurse-submodules;
-        git -C ".tmp/$REPO_NAME" checkout ${GIT_REF_EXT:=main};
-      else
-        git clone --recurse-submodules --depth=1 --shallow-submodules --no-single-branch \
-            --branch ${GIT_REF_EXT:=main} $REPO_SOURCE ".tmp/$REPO_NAME";
-      fi
-    - cp -rv .tmp/$REPO_NAME/docs/* docs/
+    ci/clone-repo-controller-enterprise
 
 lint:yaml:
   needs: []
@@ -119,7 +117,7 @@ lint:licensing:
     - reuse lint
 
 build:
-  needs: [clone:controller, clone:controller-enterprise]
+  needs: [clone:support, clone:controller, clone:controller-enterprise]
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
