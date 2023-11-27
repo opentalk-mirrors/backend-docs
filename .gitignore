@@ -32,6 +32,7 @@ build/
 /developer-docs/controller/signaling/enterprise/*.md
 /admin-docs/controller
 /admin-docs/recorder
+/admin-docs/smtp-mailer
 /user-docs
 /i18n
 /openapi

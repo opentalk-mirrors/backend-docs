@@ -159,7 +159,7 @@ lint:licensing:
     - reuse lint
 
 build:
-  needs: [clone:support, clone:controller, clone:controller-enterprise, clone:recorder]
+  needs: [clone:support, clone:controller, clone:controller-enterprise, clone:recorder, clone:smtp-mailer]
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
