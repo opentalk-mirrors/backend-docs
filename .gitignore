@@ -28,10 +28,12 @@ api/
 
 build/
 
+/admin-docs/controller
+/admin-docs/obelisk
+/admin-docs/recorder
+/admin-docs/smtp-mailer
 /developer-docs/controller/signaling/community/*.md
 /developer-docs/controller/signaling/enterprise/*.md
-/admin-docs/controller
-/admin-docs/recorder
-/user-docs
 /i18n
 /openapi
+/user-docs
