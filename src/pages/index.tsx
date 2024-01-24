@@ -36,6 +36,14 @@ function HomepageHeader() {
               Developer
             </Link>
           </div>
+          <div className={styles.buttons}>
+            <Link
+              className="button button--secondary button--lg"
+              to="/releases/"
+            >
+              Releases
+            </Link>
+          </div>
         </div>
       </header>
   );

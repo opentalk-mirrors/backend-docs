@@ -1,0 +1,47 @@
+#!/bin/bash
+
+set -xe
+
+SCRIPT_DIR=$(dirname "$0")
+# shellcheck source=ci/include/clone.sh
+. "$SCRIPT_DIR"/include/clone.sh
+REPO_NAME=${REPO_NAME_PRODUCT_RELEASES:-opentalk/product-releases}
+REPO_BRANCH=${REPO_BRANCH_PRODUCT_RELEASES:-main}
+
+RETOKI=${RETOKI:-retoki}
+
+clone_repo "$REPO_NAME" "$REPO_BRANCH"
+
+mkdir -p \
+  releases-docs
+
+cat .tmp/$REPO_NAME/releases.yml | sed \
+  -e "s/gitlab_url: https:\/\/git\.opentalk\.dev\/opentalk\/frontend\/web\/web-app/gitlab_url: https:\/\/gitlab.opencode.de\/opentalk\/web-frontend/" \
+  -e "s/gitlab_url: https:\/\/git\.opentalk\.dev\/opentalk\/backend\/services\/controller-enterprise/gitlab_url: ''/" \
+  -e "s/gitlab_url: https:\/\/git\.opentalk\.dev\/opentalk\/backend\/services\/controller/gitlab_url: https:\/\/gitlab.opencode.de\/opentalk\/controller/" \
+  -e "s/gitlab_url: https:\/\/git\.opentalk\.dev\/opentalk\/backend\/services\/recorder/gitlab_url: https:\/\/gitlab.opencode.de\/opentalk\/recorder/" \
+  -e "s/gitlab_url: https:\/\/git\.opentalk\.dev\/opentalk\/backend\/services\/obelisk/gitlab_url: https:\/\/gitlab.opencode.de\/opentalk\/obelisk/" \
+  -e "s/gitlab_url: https:\/\/git\.opentalk\.dev\/opentalk\/backend\/services\/smtp-mailer/gitlab_url: https:\/\/gitlab.opencode.de\/opentalk\/smtp-mailer/" \
+  -e "s/gitlab_url: https:\/\/git\.opentalk\.dev\/opentalk\/opentalk-devops\/ot-setup/gitlab_url: https:\/\/gitlab.opencode.de\/opentalk\/ot-setup/" \
+  > .tmp/$REPO_NAME/releases.stripped.yml
+
+$RETOKI \
+  --release-file .tmp/$REPO_NAME/releases.stripped.yml \
+  generate \
+  --without-prereleases \
+  --without-readme-gantt-chart \
+  --without-gitlab-release-links \
+  --with-md-header \
+  --target-dir .tmp/$REPO_NAME/output
+
+cat << EOF > ".tmp/$REPO_NAME/output/releases/_category_.yml"
+position: 100
+label: Versions
+EOF
+
+cat << EOF > ".tmp/$REPO_NAME/output/components/_category_.yml"
+position: 200
+label: Components
+EOF
+
+deploy_to releases-docs ".tmp/$REPO_NAME/output/*"
