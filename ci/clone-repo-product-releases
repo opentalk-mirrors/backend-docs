@@ -31,6 +31,7 @@ $RETOKI \
   --without-prereleases \
   --without-readme-gantt-chart \
   --without-gitlab-release-links \
+  --without-release-series-codenames \
   --with-md-header \
   --target-dir .tmp/$REPO_NAME/output
 
