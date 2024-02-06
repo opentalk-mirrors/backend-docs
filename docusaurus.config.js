@@ -14,7 +14,7 @@ const createConfig = async () => {
         tagline: "Documentation",
         favicon: "img/favicon.ico",
 
-        url: "https://opentalk.eu",
+        url: "https://docs.opentalk.eu",
         baseUrl: baseUrl,
 
         onBrokenLinks: "warn", // TODO: Re-enable me when all broken markdown links are fixed
