@@ -16,6 +16,7 @@ const createConfig = async () => {
 
         url: "https://docs.opentalk.eu",
         baseUrl: baseUrl,
+        trailingSlash: true,
 
         onBrokenLinks: "warn", // TODO: Re-enable me when all broken markdown links are fixed
         onBrokenMarkdownLinks: "warn",

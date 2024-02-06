@@ -12,6 +12,7 @@ Files:
  ci/**.sh
  admin-docs/**.mdx
  developer-docs/**.mdx
+ nginx/conf.d/default.conf
 Copyright: OpenTalk GmbH <mail@opentalk.eu>
 License: EUPL-1.2
 
