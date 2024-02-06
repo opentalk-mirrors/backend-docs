@@ -5,3 +5,4 @@
 FROM nginx:stable-alpine as deploy
 
 COPY --chown=nginx:nginx build /usr/share/nginx/html/
+COPY nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf
