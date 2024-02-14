@@ -1,8 +1,7 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-const lightCodeTheme = require("prism-react-renderer/themes/github");
-const darkCodeTheme = require("prism-react-renderer/themes/dracula");
+import { themes } from "prism-react-renderer"
 
 const baseUrl = process.env.BASE_URL ?? "/";
 
@@ -76,7 +75,7 @@ const createConfig = async () => {
                     path: 'user-docs',
 
                     sidebarPath: require.resolve('./sidebars.js'),
-                    remarkPlugins: [mdxMermaid.default],
+                    remarkPlugins: mdxMermaid.default,
                 }
             ],
             [
@@ -86,7 +85,7 @@ const createConfig = async () => {
                     routeBasePath: 'admin',
                     path: 'admin-docs',
                     sidebarPath: require.resolve('./sidebars.js'),
-                    remarkPlugins: [mdxMermaid.default],
+                    remarkPlugins: mdxMermaid.default,
                 }
             ],
             [
@@ -96,7 +95,7 @@ const createConfig = async () => {
                     routeBasePath: 'developer',
                     path: 'developer-docs',
                     sidebarPath: require.resolve('./sidebars.js'),
-                    remarkPlugins: [mdxMermaid.default],
+                    remarkPlugins: mdxMermaid.default,
                 }
             ],
             [
@@ -106,7 +105,7 @@ const createConfig = async () => {
                     routeBasePath: 'releases',
                     path: 'releases-docs',
                     sidebarPath: require.resolve('./sidebars.js'),
-                    remarkPlugins: [mdxMermaid.default],
+                    remarkPlugins: mdxMermaid.default,
                 }
             ],
             [
@@ -232,8 +231,8 @@ const createConfig = async () => {
                     copyright: `Copyright © ${new Date().getFullYear()} OpenTalk GmbH. Built with Docusaurus.`,
                 },
                 prism: {
-                    theme: lightCodeTheme,
-                    darkTheme: darkCodeTheme,
+                    theme: themes.github,
+                    darkTheme: themes.dracula,
                 },
             }),
     };
