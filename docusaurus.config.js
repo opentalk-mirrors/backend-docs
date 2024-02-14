@@ -20,6 +20,8 @@ const createConfig = async () => {
         onBrokenLinks: "warn", // TODO: Re-enable me when all broken markdown links are fixed
         onBrokenMarkdownLinks: "warn",
 
+        markdown: { format: "mdx" },
+
         i18n: {
             defaultLocale: 'en',
             locales: ['en', 'de'],
