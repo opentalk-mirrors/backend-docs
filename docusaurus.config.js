@@ -229,6 +229,32 @@ const createConfig = async () => {
                                 },
                             ],
                         },
+                        {
+                            title: "Community",
+                            items: [
+                                {
+                                    label: 'Fediverse',
+                                    href: 'https://social.opentalk.eu/@OpenTalkMeeting',
+                                },
+                                {
+                                    label: 'LinkedIn',
+                                    href: 'https://de.linkedin.com/company/opentalk-video-conferencing',
+                                },
+                            ],
+                        },
+                        {
+                            title: "Legal",
+                            items: [
+                                {
+                                    label: 'Imprint',
+                                    href: 'https://opentalk.eu/en/imprint',
+                                },
+                                {
+                                    label: 'Impressum',
+                                    href: 'https://opentalk.eu/de/impressum',
+                                },
+                            ],
+                        },
                     ],
                     copyright: `Copyright © ${new Date().getFullYear()} OpenTalk GmbH. Built with Docusaurus.`,
                 },
