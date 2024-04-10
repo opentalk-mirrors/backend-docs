@@ -32,6 +32,7 @@ build/
 /admin-docs/obelisk
 /admin-docs/recorder
 /admin-docs/smtp-mailer
+/architecture-docs
 /developer-docs/controller/signaling/community/*.md
 /developer-docs/controller/signaling/enterprise/*.md
 /i18n
