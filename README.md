@@ -15,6 +15,7 @@ Building the site required the following folders to be present:
 - `admin-docs/` containing the english admin documentation
 - `developer-docs/` containing the english developer documentation
 - `releases-docs/` containing the english release documentation
+- `architecture-docs/` containing the english architecture documentation
 - `i18n/de/docusaurus-plugin-content-docs-user/current/` containing the german version of the user docs
   content ([why the long weird path?](https://docusaurus.io/docs/i18n/introduction#translation-files-location))
 - `i18n/de/docusaurus-plugin-content-docs-admin/current/` A copy of the admin-docs folder

@@ -111,6 +111,16 @@ const createConfig = async () => {
                 }
             ],
             [
+                '@docusaurus/plugin-content-docs',
+                {
+                    id: 'architecture',
+                    routeBasePath: 'architecture',
+                    path: 'architecture-docs',
+                    sidebarPath: require.resolve('./sidebars.js'),
+                    remarkPlugins: mdxMermaid.default,
+                }
+            ],
+            [
                 '@docusaurus/plugin-sitemap',
                 {
                     changefreq: 'weekly',
@@ -166,7 +176,7 @@ const createConfig = async () => {
                             docsPluginId: 'releases',
                         },
 
-                        // Adding a version dropdown for every docs-instance (user, admin and developer)
+                        // Adding a version dropdown for every docs-instance (user, admin, developer, releases and architecture)
                         // See https://github.com/facebook/docusaurus/issues/4389#issuecomment-1500319377
                         {
                             type: 'docsVersionDropdown',
@@ -182,6 +192,16 @@ const createConfig = async () => {
                             type: 'docsVersionDropdown',
                             position: 'right',
                             docsPluginId: 'developer',
+                        },
+                        {
+                            type: 'docsVersionDropdown',
+                            position: 'right',
+                            docsPluginId: 'releases',
+                        },
+                        {
+                            type: 'docsVersionDropdown',
+                            position: 'right',
+                            docsPluginId: 'architecture',
                         },
 
                         // This component is being swizzled in src/theme/NavbarItem/LocaleDropdownNavbarItem to only show it
