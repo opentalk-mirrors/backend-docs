@@ -13,10 +13,12 @@ clone_repo "$REPO_NAME" "$REPO_BRANCH"
 mkdir -p \
   openapi \
   developer-docs/controller/signaling/community \
+  developer-docs/controller/database/community \
   admin-docs/controller \
   i18n/de/docusaurus-plugin-content-docs-admin/current/ \
   i18n/de/docusaurus-plugin-content-docs-developer/current/
 
-deploy_to developer-docs/controller/signaling/community ".tmp/$REPO_NAME/docs/signaling/*"
+deploy_to developer-docs/controller/signaling/community ".tmp/$REPO_NAME/docs/developer/signaling/*"
+deploy_to developer-docs/controller/database/index.md ".tmp/$REPO_NAME/docs/developer/database.md"
 deploy_to admin-docs/controller ".tmp/$REPO_NAME/docs/admin/*"
 deploy_to openapi/controller.yaml ".tmp/$REPO_NAME/api/controller/frontend_api.yaml"
