@@ -20,7 +20,7 @@ const createConfig = async () => {
         onBrokenLinks: "warn", // TODO: Re-enable me when all broken markdown links are fixed
         onBrokenMarkdownLinks: "warn",
 
-        markdown: { format: "mdx" },
+        markdown: { format: "mdx", mermaid: true },
 
         i18n: {
             defaultLocale: 'en',
@@ -47,13 +47,13 @@ const createConfig = async () => {
                     ],
                     theme: {
                         primaryColor: "#1890ff",
-                        redocOptions: {hideDownloadButton: false},
+                        redocOptions: { hideDownloadButton: false },
                     },
                 },
             ],
         ],
 
-        themes: [],
+        themes: ['@docusaurus/theme-mermaid'],
 
         plugins: [
             [
@@ -138,7 +138,7 @@ const createConfig = async () => {
             ]
         ],
         themeConfig:
-        /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
+            /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
             ({
                 navbar: {
                     title: "OpenTalk Docs",
@@ -282,6 +282,17 @@ const createConfig = async () => {
                     theme: themes.github,
                     darkTheme: themes.dracula,
                 },
+                mermaid: {
+                    options: {
+                        er: {
+                            layoutDirection: "LR",
+                        },
+                        themeVariables: {
+                            primaryColor: "#25c2a0",
+                        }
+                    },
+                    theme: { light: 'base', dark: 'forest' },
+                }
             }),
     };
 };

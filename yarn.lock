@@ -3344,6 +3344,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@docusaurus/theme-mermaid@npm:3.1":
+  version: 3.1.1
+  resolution: "@docusaurus/theme-mermaid@npm:3.1.1"
+  dependencies:
+    "@docusaurus/core": 3.1.1
+    "@docusaurus/module-type-aliases": 3.1.1
+    "@docusaurus/theme-common": 3.1.1
+    "@docusaurus/types": 3.1.1
+    "@docusaurus/utils-validation": 3.1.1
+    mermaid: ^10.4.0
+    tslib: ^2.6.0
+  peerDependencies:
+    react: ^18.0.0
+    react-dom: ^18.0.0
+  checksum: aa7fb7b57cd8860bad9b11fc4cc99185f22a28fc5e8e4896d0706b244e5a644fc79fe79d423098c114a6009fa80025511767fe7169fc50daf52c29a023622774
+  languageName: node
+  linkType: hard
+
 "@docusaurus/theme-search-algolia@npm:3.1.1":
   version: 3.1.1
   resolution: "@docusaurus/theme-search-algolia@npm:3.1.1"
@@ -9550,6 +9568,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"katex@npm:^0.16.9":
+  version: 0.16.10
+  resolution: "katex@npm:0.16.10"
+  dependencies:
+    commander: ^8.3.0
+  bin:
+    katex: cli.js
+  checksum: 108e9d810e17840c43eef8d46171096f4cc97852bfd1e2dd1890d9b3435846816e3e98678a31d38bd064eb97eea83b18ff224cb65d5f9511b54ce7ff4359b591
+  languageName: node
+  linkType: hard
+
 "keyv@npm:^4.5.3":
   version: 4.5.4
   resolution: "keyv@npm:4.5.4"
@@ -10307,6 +10336,34 @@ __metadata:
   version: 1.4.1
   resolution: "merge2@npm:1.4.1"
   checksum: 7268db63ed5169466540b6fb947aec313200bcf6d40c5ab722c22e242f651994619bcd85601602972d3c85bd2cc45a358a4c61937e9f11a061919a1da569b0c2
+  languageName: node
+  linkType: hard
+
+"mermaid@npm:^10.4.0":
+  version: 10.9.0
+  resolution: "mermaid@npm:10.9.0"
+  dependencies:
+    "@braintree/sanitize-url": ^6.0.1
+    "@types/d3-scale": ^4.0.3
+    "@types/d3-scale-chromatic": ^3.0.0
+    cytoscape: ^3.28.1
+    cytoscape-cose-bilkent: ^4.1.0
+    d3: ^7.4.0
+    d3-sankey: ^0.12.3
+    dagre-d3-es: 7.0.10
+    dayjs: ^1.11.7
+    dompurify: ^3.0.5
+    elkjs: ^0.9.0
+    katex: ^0.16.9
+    khroma: ^2.0.0
+    lodash-es: ^4.17.21
+    mdast-util-from-markdown: ^1.3.0
+    non-layered-tidy-tree-layout: ^2.0.2
+    stylis: ^4.1.3
+    ts-dedent: ^2.2.0
+    uuid: ^9.0.0
+    web-worker: ^1.2.0
+  checksum: 73ee57b365fbfba8ad72b2ce611a2703753dc155884db3bec4a47951326b9061b31926f84fc0ad67ca203067b62db636f1543fa6f633a6afa24cd4c754b96cf0
   languageName: node
   linkType: hard
 
@@ -11868,6 +11925,7 @@ __metadata:
     "@docusaurus/core": 3.1
     "@docusaurus/module-type-aliases": 3.1
     "@docusaurus/preset-classic": 3.1
+    "@docusaurus/theme-mermaid": 3.1
     "@mdx-js/react": ^3.0
     clsx: ^2.1
     mdx-mermaid: ^2.0
