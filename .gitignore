@@ -34,6 +34,7 @@ build/
 /admin-docs/smtp-mailer
 /architecture-docs
 /developer-docs/controller/database/*.md
+/developer-docs/controller/mail_worker_protocol/*.md
 /developer-docs/controller/signaling/community/*.md
 /developer-docs/controller/signaling/enterprise/*.md
 /i18n
