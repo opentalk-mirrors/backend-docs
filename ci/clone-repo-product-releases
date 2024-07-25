@@ -13,7 +13,10 @@ RETOKI=${RETOKI:-retoki}
 clone_repo "$REPO_NAME" "$REPO_BRANCH"
 
 mkdir -p \
-  releases-docs
+  releases-docs \
+  .tmp/"$REPO_NAME"/output
+
+cp .tmp/"$REPO_NAME"/*.md .tmp/"$REPO_NAME"/output
 
 cat .tmp/"$REPO_NAME"/releases.yml | sed \
   -e "s/gitlab_url: https:\/\/git\.opentalk\.dev\/opentalk\/frontend\/web\/web-app/gitlab_url: https:\/\/gitlab.opencode.de\/opentalk\/web-frontend/" \
