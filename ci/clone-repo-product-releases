@@ -31,10 +31,10 @@ cat .tmp/"$REPO_NAME"/releases.yml | sed \
 $RETOKI \
   --release-file .tmp/"$REPO_NAME"/releases.stripped.yml \
   generate \
+  --profile opencode \
   --without-prereleases \
   --without-readme-gantt-chart \
   --without-gitlab-release-links \
-  --without-release-series-codenames \
   --with-md-header \
   --target-dir .tmp/"$REPO_NAME"/output
 
