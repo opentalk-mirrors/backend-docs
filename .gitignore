@@ -31,6 +31,7 @@ build/
 /admin-docs/controller
 /admin-docs/obelisk
 /admin-docs/recorder
+/admin-docs/roomserver
 /admin-docs/smtp-mailer
 /architecture-docs
 /developer-docs/controller/database/*.md
