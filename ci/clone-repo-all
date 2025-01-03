@@ -12,3 +12,4 @@ SCRIPT_DIR=$(dirname "$0")
 "$SCRIPT_DIR"/clone-repo-obelisk
 "$SCRIPT_DIR"/clone-repo-product-releases
 "$SCRIPT_DIR"/clone-repo-architecture
+"$SCRIPT_DIR"/clone-repo-roomserver
