@@ -5,8 +5,8 @@ set -xe
 SCRIPT_DIR=$(dirname "$0")
 # shellcheck source=ci/include/clone.sh
 . "$SCRIPT_DIR"/include/clone.sh
-REPO_NAME=${REPO_NAME_CONTROLLER:-opentalk/backend/libs/opentalk-types}
-REPO_BRANCH=${REPO_BRANCH_CONTROLLER:-main}
+REPO_NAME=${REPO_NAME_TYPES:-opentalk/backend/libs/opentalk-types}
+REPO_BRANCH=${REPO_BRANCH_TYPES:-main}
 
 clone_repo "$REPO_NAME" "$REPO_BRANCH"
 
