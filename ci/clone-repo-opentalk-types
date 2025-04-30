@@ -11,6 +11,6 @@ REPO_BRANCH=${REPO_BRANCH_TYPES:-main}
 clone_repo "$REPO_NAME" "$REPO_BRANCH"
 
 mkdir -p \
-  developer-docs/controller/signaling/community
+  developer-docs/controller/signaling
 
-deploy_to developer-docs/controller/signaling/community ".tmp/$REPO_NAME/docs/signaling/*"
+deploy_to developer-docs/controller/signaling ".tmp/$REPO_NAME/docs/signaling/*"
