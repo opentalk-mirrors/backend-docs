@@ -82,28 +82,6 @@ clone:opentalk-types:
   script:
     ci/clone-repo-opentalk-types
 
-clone:controller-enterprise:
-  needs: []
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-    - if: $CI_PIPELINE_SOURCE == 'schedule'
-    - if: $CI_PIPELINE_SOURCE == 'pipeline'
-    - if: $CI_COMMIT_TAG != null
-  stage: clone
-  image: bitnami/git:latest
-  variables:
-    REPO_BASE: https://gitlab-ci-token:${CI_JOB_TOKEN}@git.opentalk.dev
-  cache:
-    <<: *global_cache
-  artifacts:
-    name: $CI_JOB_NAME
-    paths:
-      - developer-docs
-      - admin-docs
-  script:
-    ci/clone-repo-controller-enterprise
-
 clone:recorder:
   needs: []
   rules:
@@ -250,7 +228,6 @@ build:
   needs: [
     clone:support,
     clone:controller,
-    clone:controller-enterprise,
     clone:opentalk-types,
     clone:recorder,
     clone:smtp-mailer,
