@@ -341,7 +341,7 @@ container:production:
       when: manual
   stage: container
   image:
-    name: debian:bookworm
+    name: debian:trixie
   before_script:
     - apt-get update && apt-get install -y skopeo ca-certificates
   script:
