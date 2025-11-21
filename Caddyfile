@@ -1,0 +1,127 @@
+# SPDX-FileCopyrightText: OpenTalk GmbH <mail@opentalk.eu>
+# SPDX-License-Identifier: EUPL-1.2
+#
+# Refer to the Caddy docs for more information:
+# https://caddyserver.com/docs/caddyfile
+
+:80 {
+    root * /usr/share/caddy
+    file_server
+
+    handle_errors {
+        @404 {
+            expression {http.error.status_code} == 404
+        }
+        rewrite @404 /404.html
+        file_server
+    }
+
+    # This stanza can be used for debugging purposes during development.
+    # log {
+    #     level debug
+    # }
+
+    # redirections for compatibility with previous versions of the docs page
+    redir /de/redocusaurus/controller-rest.yaml /latest/developer/controller/api.yaml permanent
+    redir /de/user/FAQ* /latest/user/de/FAQ/ permanent
+    redir "/de/user/Handbuch/Abstimmungen und Umfragen mit OpenTalk*" /latest/user/de/guide/votings-and-polls/ permanent
+    redir "/de/user/Handbuch/Aufnahmefunktion*" /latest/user/de/guide/recording/ permanent
+    redir "/de/user/Handbuch/Breakout-Räume in OpenTalk*" /latest/user/de/guide/breakout-rooms/ permanent
+    redir "/de/user/Handbuch/Das Whiteboard*" /latest/user/de/guide/whiteboard/ permanent
+    redir "/de/user/Handbuch/Der OpenTalk Speed-Test*" /latest/user/de/guide/speedtest/ permanent
+    redir "/de/user/Handbuch/Der OpenTalk Videoraum*" /latest/user/de/guide/video-room/ permanent
+    redir "/de/user/Handbuch/Der Redestab*" /latest/user/de/guide/talking-stick/ permanent
+    redir "/de/user/Handbuch/Der Warteraum*" /latest/user/de/guide/waiting-room/ permanent
+    redir "/de/user/Handbuch/Die OpenTalk Einstellungen*" /latest/user/de/guide/settings/ permanent
+    redir "/de/user/Handbuch/Die Protokoll Funktion*" /latest/user/de/guide/meeting-minutes/ permanent
+    redir "/de/user/Handbuch/Kaffeepause*" /latest/user/de/guide/coffee-break/ permanent
+    redir "/de/user/Handbuch/Meetings erstellen, starten und planen*" /latest/user/de/guide/create-start-plan-meetings/ permanent
+    redir "/de/user/Handbuch/Moderations Funktionen*" /latest/user/de/guide/moderation/ permanent
+    redir "/de/user/Handbuch/Outlook*" /latest/user/de/guide/outlook/ permanent
+    redir "/de/user/Handbuch/Serientermine*" /latest/user/de/guide/recurring-meetings/ permanent
+    redir "/de/user/Handbuch/Stoppuhr*" /latest/user/de/guide/timer/ permanent
+    redir "/de/user/Handbuch/Vorwort*" /latest/user/de/guide/ permanent
+    redir "/de/user/Handbuch/*" /latest/user/de/guide/ permanent
+    redir "/de/user/Technische Dokumentation/API Fehler*" /latest/user/de/technical-documentation/api-errors/ permanent
+    redir "/de/user/Technische Dokumentation/Browser Konsole*" /latest/user/de/technical-documentation/browser-console/ permanent
+    redir "/de/user/Technische Dokumentation/Innovaphone Intergration*" /latest/user/de/technical-documentation/integration-innovaphone/ permanent
+    redir "/de/user/Technische Dokumentation/Installation*" /latest/user/de/technical-documentation/installation/ permanent
+    redir "/de/user/Technische Dokumentation/Links*" /latest/user/de/technical-documentation/links/ permanent
+    redir "/de/user/Technische Dokumentation/Outlook Installation*" /latest/user/de/technical-documentation/opentalk-installation/ permanent
+    redir "/de/user/Technische Dokumentation/Rest API*" /latest/user/de/technical-documentation/rest-api/ permanent
+    redir "/de/user/Technische Dokumentation/UCS Integration*" /latest/user/de/technical-documentation/integration-univention-ucs/ permanent
+    redir "/de/user/Technische Dokumentation/WebRTC Logs*" /latest/user/de/technical-documentation/webrtc-logs/ permanent
+    redir "/de/user/Technische Dokumentation/*" /latest/user/de/technical-documentation/ permanent
+    redir "/de/user/Troubleshooting/Absturz*" /latest/user/de/troubleshooting/crash/ permanent
+    redir "/de/user/Troubleshooting/Audioprobleme*" /latest/user/de/troubleshooting/audio-problems/ permanent
+    redir "/de/user/Troubleshooting/Bandbreite*" /latest/user/de/troubleshooting/bandwidth-issues/ permanent
+    redir "/de/user/Troubleshooting/Bild- oder Tonprobleme in der Videokonferenz*" /latest/user/de/troubleshooting/picture-sound-issues/ permanent
+    redir "/de/user/Troubleshooting/Echo*" /latest/user/de/troubleshooting/echo/ permanent
+    redir "/de/user/Troubleshooting/Fehler WebRTC navigator.mediaDevices*" /latest/user/de/troubleshooting/error-navigator-is-undefined/ permanent
+    redir "/de/user/Troubleshooting/Hintergrundgeräusche*" /latest/user/de/troubleshooting/background-noises/ permanent
+    redir "/de/user/Troubleshooting/Support kontaktieren*" /latest/user/de/troubleshooting/contact-support/ permanent
+    redir "/de/user/Troubleshooting/Verzögerungen*" /latest/user/de/troubleshooting/delays/ permanent
+    redir "/de/user/Troubleshooting/Videoqualität*" /latest/user/de/troubleshooting/video-quality/ permanent
+    redir "/de/user/Troubleshooting/*" /latest/user/de/troubleshooting/ permanent
+    redir /de/user* /latest/user/de/ permanent
+
+    redir /redocusaurus/controller-rest.yaml /latest/developer/controller/api.yaml permanent
+    redir /user/FAQ* /latest/user/en/FAQ/ permanent
+    redir "/user/Handbuch/Abstimmungen und Umfragen mit OpenTalk*" /latest/user/en/guide/votings-and-polls/ permanent
+    redir "/user/Handbuch/Aufnahmefunktion*" /latest/user/en/guide/recording/ permanent
+    redir "/user/Handbuch/Breakout-Räume in OpenTalk*" /latest/user/en/guide/breakout-rooms/ permanent
+    redir "/user/Handbuch/Das Whiteboard*" /latest/user/en/guide/whiteboard/ permanent
+    redir "/user/Handbuch/Der OpenTalk Speed-Test*" /latest/user/en/guide/speedtest/ permanent
+    redir "/user/Handbuch/Der OpenTalk Videoraum*" /latest/user/en/guide/video-room/ permanent
+    redir "/user/Handbuch/Der Redestab*" /latest/user/en/guide/talking-stick/ permanent
+    redir "/user/Handbuch/Der Warteraum*" /latest/user/en/guide/waiting-room/ permanent
+    redir "/user/Handbuch/Die OpenTalk Einstellungen*" /latest/user/en/guide/settings/ permanent
+    redir "/user/Handbuch/Die Protokoll Funktion*" /latest/user/en/guide/meeting-minutes/ permanent
+    redir "/user/Handbuch/Kaffeepause*" /latest/user/en/guide/coffee-break/ permanent
+    redir "/user/Handbuch/Meetings erstellen, starten und planen*" /latest/user/en/guide/create-start-plan-meetings/ permanent
+    redir "/user/Handbuch/Moderations Funktionen*" /latest/user/en/guide/moderation/ permanent
+    redir "/user/Handbuch/Outlook*" /latest/user/en/guide/outlook/ permanent
+    redir "/user/Handbuch/Serientermine*" /latest/user/en/guide/recurring-meetings/ permanent
+    redir "/user/Handbuch/Stoppuhr*" /latest/user/en/guide/timer/ permanent
+    redir "/user/Handbuch/Vorwort*" /latest/user/en/guide/ permanent
+    redir "/user/Handbuch/*" /latest/user/en/guide/ permanent
+    redir "/user/Technische Dokumentation/API Fehler*" /latest/user/en/technical-documentation/api-errors/ permanent
+    redir "/user/Technische Dokumentation/Browser Konsole*" /latest/user/en/technical-documentation/browser-console/ permanent
+    redir "/user/Technische Dokumentation/Innovaphone Intergration*" /latest/user/en/technical-documentation/integration-innovaphone/ permanent
+    redir "/user/Technische Dokumentation/Installation*" /latest/user/en/technical-documentation/installation/ permanent
+    redir "/user/Technische Dokumentation/Links*" /latest/user/en/technical-documentation/links/ permanent
+    redir "/user/Technische Dokumentation/Outlook Installation*" /latest/user/en/technical-documentation/opentalk-installation/ permanent
+    redir "/user/Technische Dokumentation/Rest API*" /latest/user/en/technical-documentation/rest-api/ permanent
+    redir "/user/Technische Dokumentation/UCS Integration*" /latest/user/en/technical-documentation/integration-univention-ucs/ permanent
+    redir "/user/Technische Dokumentation/WebRTC Logs*" /latest/user/en/technical-documentation/webrtc-logs/ permanent
+    redir "/user/Technische Dokumentation/*" /latest/user/en/technical-documentation/ permanent
+    redir "/user/Troubleshooting/Absturz*" /latest/user/en/troubleshooting/crash/ permanent
+    redir "/user/Troubleshooting/Audioprobleme*" /latest/user/en/troubleshooting/audio-problems/ permanent
+    redir "/user/Troubleshooting/Bandbreite*" /latest/user/en/troubleshooting/bandwidth-issues/ permanent
+    redir "/user/Troubleshooting/Bild- oder Tonprobleme in der Videokonferenz*" /latest/user/en/troubleshooting/picture-sound-issues/ permanent
+    redir "/user/Troubleshooting/Echo*" /latest/user/en/troubleshooting/echo/ permanent
+    redir "/user/Troubleshooting/Fehler WebRTC navigator.mediaDevices*" /latest/user/en/troubleshooting/error-navigator-is-undefined/ permanent
+    redir "/user/Troubleshooting/Hintergrundgeräusche*" /latest/user/en/troubleshooting/background-noises/ permanent
+    redir "/user/Troubleshooting/Support kontaktieren*" /latest/user/en/troubleshooting/contact-support/ permanent
+    redir "/user/Troubleshooting/Verzögerungen*" /latest/user/en/troubleshooting/delays/ permanent
+    redir "/user/Troubleshooting/Videoqualität*" /latest/user/en/troubleshooting/video-quality/ permanent
+    redir "/user/Troubleshooting/*" /latest/user/en/troubleshooting/ permanent
+
+    @latest path_regexp /latest/(.*)$
+    redir @latest /25.3/{re.1}
+
+    @user_de {
+        path_regexp /([0-9]+\.[0-9]+)/user\/?$
+        header Accept-Language de*
+    }
+    redir @user_de /{re.1}/user/de
+
+    @user_general path_regexp /([0-9]+\.[0-9]+)/user\/?$
+    redir @user_general /{re.1}/user/en
+
+    @old_releases_path path_regexp /releases/releases/([0-9]+\.[0-9]+\.[0-9]+)\/?$
+    redir @old_releases_path /releases/{re.1} permanent
+
+    @old_de path_regexp ^/de/(.*)$
+    redir @old_de /{re.1} permanent
+}

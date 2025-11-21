@@ -8,6 +8,9 @@ all
 # Markdown tables cant have breaks in them thus this is set to the largest table.
 rule 'MD013', :line_length => 790
 
+# We want to allow a few specific HTML tags
+rule 'MD033', :allowed_elements => 'center, div, span, br'
+
 # Disable duplicate heading check
 exclude_rule 'MD024'
 
