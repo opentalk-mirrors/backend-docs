@@ -2,42 +2,37 @@
 #
 # SPDX-License-Identifier: EUPL-1.2
 
-/node_modules
-/build
+/.cache
+/.tmp/
+/site
 
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
+# It appears gitignore doesn't understand full regex, but only character ranges.
+# We're matching a permutation of all combinations from 1 to 3 digits before and
+# after the dot, that should be sufficient.
+docs/1.*
+docs/24.*
+docs/25.0
+docs/25.1
 
-# Swap the comments on the following lines if you don't wish to use zero-installs
-# Documentation here: https://yarnpkg.com/features/zero-installs
-#!.yarn/cache
-.pnp.*
+docs/25.2/navigation.md
+docs/25.2/README.md
+docs/25.2/admin/*
+!docs/25.2/admin/README.md
+docs/25.2/developer/*
+!docs/25.2/developer/README.md
+docs/25.2/user/
 
-.tmp/
-docs/
-api/
+docs/25.3/navigation.md
+docs/25.3/README.md
+docs/25.3/admin/*
+!docs/25.3/admin/README.md
+docs/25.3/developer/*
+!docs/25.3/developer/README.md
+docs/25.3/user/
+docs/25.3/architecture/
 
-.docusaurus
+docs/releases/*
+
 .editorconfig
 .vscode
 .idea
-
-build/
-
-/admin-docs/controller
-/admin-docs/obelisk
-/admin-docs/recorder
-/admin-docs/roomserver
-/admin-docs/smtp-mailer
-/architecture-docs
-/developer-docs/controller/database/*.md
-/developer-docs/controller/mail_worker_protocol/*.md
-/developer-docs/controller/signaling/*.md
-/i18n
-/openapi
-/user-docs
-/releases-docs

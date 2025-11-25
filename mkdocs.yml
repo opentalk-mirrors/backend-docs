@@ -1,0 +1,120 @@
+# SPDX-FileCopyrightText: OpenTalk GmbH <mail@opentalk.eu>
+#
+# SPDX-License-Identifier: EUPL-1.2
+
+---
+
+site_name: OpenTalk Documentation
+site_url: !ENV [SITE_URL, https://docs.opentalk.eu/]
+docs_dir: docs
+use_directory_urls: true
+theme:
+  name: material
+  language: en
+  palette:
+    # palette toggle for automatic mode
+    - media: (prefers-color-scheme)
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to bright mode
+
+    # palette toggle for light mode
+    - media: '(prefers-color-scheme: light)'
+      scheme: default
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # palette toggle for dark mode
+    - media: '(prefers-color-scheme: dark)'
+      scheme: slate
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/brightness-4
+        name: Switch to auto mode
+  features:
+    - navigation.indexes
+    - navigation.prune
+    - navigation.tabs
+    - navigation.expand
+  logo: assets/logo.svg
+  favicon: assets/favicon.ico
+  custom_dir: overrides
+  static_templates:
+    - 404.html
+markdown_extensions:
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - attr_list
+  - md_in_html
+  - admonition
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.blocks.caption
+  - footnotes
+  - meta
+plugins:
+  - offline:
+      enabled: !ENV [OFFLINE, false]
+  - privacy
+  - literate-nav:
+      nav_file: navigation.md
+      implicit_index: true
+  - search
+  - macros
+  - social
+  - redirects:
+      redirect_maps:
+        'user/README.md': latest/user/README.md
+        'admin/README.md': latest/admin/README.md
+        'developer/README.md': latest/developer/README.md
+        'latest/README.md': 25.3/README.md
+        'latest/user/README.md': 25.3/user/README.md
+        'latest/admin/README.md': 25.3/admin/README.md
+        'latest/developer/README.md': 25.3/developer/README.md
+        'latest/architecture/README.md': 25.3/architecture/README.md
+  - swagger-ui-tag
+extra:
+  # These are used by the macros plugin to replace text in the markdown files
+  product_name: OpenTalk
+  # Regular configuration that should not clash with the macros
+  social:
+    - icon: material/web
+      name: Website
+      link: https://opentalk.eu/
+    - icon: fontawesome/brands/gitlab
+      name: OpenCoDE
+      link: https://gitlab.opencode.de/opentalk/
+    - icon: fontawesome/brands/mastodon
+      link: https://social.opentalk.eu/@OpenTalkMeeting
+    - icon: fontawesome/brands/linkedin
+      link: https://de.linkedin.com/company/opentalk-video-conferencing
+    - icon: octicons/law-16
+      name: Imprint
+      link: https://opentalk.eu/en/imprint
+extra_css:
+  - stylesheets/extra.css
+exclude_docs: |
+  navigation.md
+validation:
+  nav:
+    omitted_files: warn
+    not_found: warn
+    absolute_links: warn
+  links:
+    not_found: warn
+    anchors: warn
+    absolute_links: warn
+    unrecognized_links: warn

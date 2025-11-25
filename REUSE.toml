@@ -1,0 +1,19 @@
+# SPDX-FileCopyrightText: OpenTalk GmbH <mail@opentalk.eu>
+# SPDX-License-Identifier: EUPL-1.2
+
+SPDX-PackageDownloadLocation = "https://git.opentalk.dev/opentalk/backend/docs"
+SPDX-PackageName = "OpenTalk Documentation"
+SPDX-PackageSupplier = "OpenTalk GmbH <mail@opentalk.eu>"
+version = 1
+
+[[annotations]]
+SPDX-FileCopyrightText = "OpenTalk GmbH <mail@opentalk.eu>"
+SPDX-License-Identifier = "EUPL-1.2"
+path = ["README.md", "docs/**/*.md", "overrides/404.html"]
+precedence = "aggregate"
+
+[[annotations]]
+SPDX-FileCopyrightText = "OpenTalk GmbH <mail@opentalk.eu>"
+SPDX-License-Identifier = "CC-BY-NC-ND-4.0"
+path = ["docs/assets/favicon.ico", "docs/assets/logo.svg"]
+precedence = "aggregate"

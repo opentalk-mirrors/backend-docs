@@ -1,0 +1,39 @@
+/*
+SPDX-FileCopyrightText: OpenTalk GmbH <mail@opentalk.eu>
+SPDX-License-Identifier: EUPL-1.2
+*/
+
+:root > * {
+  --md-primary-fg-color: #20434f;
+  --md-primary-fg-color--light: #20434f;
+  --md-primary-fg-color--dark: #20434f;
+  --md-accent-fg-color: #20434f;
+  --md-accent-fg-color--transparent: #20434f;
+  --md-accent-fg-color--light: #20434f;
+  --md-accent-fg-color--dark: #20434f;
+}
+
+center.startpage div.grid.cards a.md-button {
+  width: 100%;
+  font-size: 120%;
+}
+
+center.startpage div.grid.cards a.md-button span.buttonicon {
+  font-size: 250%;
+}
+
+center.startpage div.grid.cards > ul > li {
+  border: 0px;
+  padding: .4rem;
+}
+
+center div.grid.cards {
+  --grid-layout-gap: .4rem;
+  --grid-column-count: 2;
+  --grid-item--min-width: 20em;
+  --gap-count: calc(var(--grid-column-count) - 1);
+  --total-gap-width: calc(var(--gap-count) * var(--grid-layout-gap));
+  --grid-item-max-width: calc((100% - var(--total-gap-width)) / var(--grid-column-count));
+  grid-template-columns: repeat(auto-fill, minmax(max(var(--grid-item--min-width), var(--grid-item-max-width)), 1fr));
+  grid-gap: var(--grid-layout-gap);
+}
