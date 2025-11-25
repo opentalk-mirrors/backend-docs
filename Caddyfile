@@ -24,6 +24,7 @@
     # redirections for compatibility with previous versions of the docs page
     redir /de/redocusaurus/controller-rest.yaml /latest/developer/controller/api.yaml permanent
     redir /de/user/FAQ* /latest/user/de/FAQ/ permanent
+    redir /de/user/manual* /latest/user/de/guide permanent
     redir "/de/user/Handbuch/Abstimmungen und Umfragen mit OpenTalk*" /latest/user/de/guide/votings-and-polls/ permanent
     redir "/de/user/Handbuch/Aufnahmefunktion*" /latest/user/de/guide/recording/ permanent
     redir "/de/user/Handbuch/Breakout-Räume in OpenTalk*" /latest/user/de/guide/breakout-rooms/ permanent
@@ -67,6 +68,7 @@
 
     redir /redocusaurus/controller-rest.yaml /latest/developer/controller/api.yaml permanent
     redir /user/FAQ* /latest/user/en/FAQ/ permanent
+    redir /user/manual* /latest/user/en/guide permanent
     redir "/user/Handbuch/Abstimmungen und Umfragen mit OpenTalk*" /latest/user/en/guide/votings-and-polls/ permanent
     redir "/user/Handbuch/Aufnahmefunktion*" /latest/user/en/guide/recording/ permanent
     redir "/user/Handbuch/Breakout-Räume in OpenTalk*" /latest/user/en/guide/breakout-rooms/ permanent
@@ -106,6 +108,14 @@
     redir "/user/Troubleshooting/Verzögerungen*" /latest/user/en/troubleshooting/delays/ permanent
     redir "/user/Troubleshooting/Videoqualität*" /latest/user/en/troubleshooting/video-quality/ permanent
     redir "/user/Troubleshooting/*" /latest/user/en/troubleshooting/ permanent
+
+    redir /developer/controller/rest/ /latest/developer/controller/api
+
+    @old_admin path_regexp ^/admin/(.*)$
+    redir @old_admin /latest/admin/{re.1}
+
+    @old_developer path_regexp ^/developer/(.*)$
+    redir @old_developer /latest/developer/{re.1}
 
     @latest path_regexp /latest/(.*)$
     redir @latest /25.3/{re.1}
