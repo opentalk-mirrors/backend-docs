@@ -31,6 +31,15 @@ docs/25.3/developer/*
 docs/25.3/user/
 docs/25.3/architecture/
 
+docs/25.4/navigation.md
+docs/25.4/README.md
+docs/25.4/admin/*
+!docs/25.4/admin/README.md
+docs/25.4/developer/*
+!docs/25.4/developer/README.md
+docs/25.4/user/
+docs/25.4/architecture/
+
 docs/releases/*
 
 .editorconfig

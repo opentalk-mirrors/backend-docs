@@ -286,10 +286,12 @@ update-product-releases: _check-retoki _fetch-product-releases
     #!/usr/bin/env bash
     set -xe
 
-    rm -rf "{{ DOCS_DIR }}/releases"
-    mkdir "{{ DOCS_DIR }}/releases"
-    cp "{{ REPO_PATH_PRODUCT_RELEASES }}"/*.md "{{ DOCS_DIR }}/releases/"
-    retoki generate --without-prereleases --without-readme-gantt-chart --without-gitlab-release-links --with-md-header --with-relative-documentation-base-path ../ --target-dir "{{ DOCS_DIR }}/releases"
+    DEST_DIR="{{ DOCS_DIR }}/releases"
+    EXTRACTOR="{{ EXTRACTORS_DIR }}/releases"
+
+    rm -rf "$DEST_DIR"
+    mkdir "$DEST_DIR"
+    "$EXTRACTOR" "{{ REPO_PATH_PRODUCT_RELEASES }}" "$DEST_DIR"
 
 update-user SERIES: _check-retoki _fetch-product-releases _fetch-user
     #!/usr/bin/env bash
@@ -381,6 +383,11 @@ clean:
         -not -path 'docs/25.3/admin/README.md' \
         -not -path 'docs/25.3/developer' \
         -not -path 'docs/25.3/developer/README.md' \
+        -not -path 'docs/25.4' \
+        -not -path 'docs/25.4/admin' \
+        -not -path 'docs/25.4/admin/README.md' \
+        -not -path 'docs/25.4/developer' \
+        -not -path 'docs/25.4/developer/README.md' \
         -delete
 
     rm -rf \

@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# 
+# SPDX-FileCopyrightText: OpenTalk GmbH <mail@opentalk.eu>
+# SPDX-License-Identifier: EUPL-1.2
+
+set -xe
+
+SOURCE="$1"
+DESTINATION="$2"
+
+cp "$SOURCE"/*.md "$DESTINATION/"
+
+find "$SOURCE" -name "*.png" -printf '%P\n' | rsync -avvv --files-from - "$SOURCE" "$DESTINATION"
+
+retoki generate \
+  --without-prereleases \
+  --without-readme-gantt-chart \
+  --without-gitlab-release-links \
+  --with-md-header \
+  --with-relative-documentation-base-path ../ \
+  --target-dir "$DESTINATION"

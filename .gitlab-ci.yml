@@ -32,6 +32,8 @@ clone:fetch-repos:
     name: $CI_JOB_NAME
     paths:
       - docs
+  before_script:
+    - apt-get --update install -y rsync
   script:
     - export PATH=/root/.cargo/bin:$PATH
     - just update-all
