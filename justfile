@@ -49,6 +49,12 @@ REPO_VERSION_BRANCH_SUFFIX_SMTP_MAILER := env('REPO_VERSION_BRANCH_SUFFIX_SMTP_M
 REPO_URL_SMTP_MAILER := env('REPO_URL_SMTP_MAILER', REPO_BASE + '/' + REPO_NAME_SMTP_MAILER + '.git')
 REPO_PATH_SMTP_MAILER := REPO_TEMP_DIR + '/' + REPO_NAME_SMTP_MAILER
 
+REPO_NAME_ROOMSERVER := env('REPO_NAME_ROOMSERVER', 'opentalk/backend/services/roomserver')
+REPO_VERSION_BRANCH_PREFIX_ROOMSERVER := env('REPO_VERSION_BRANCH_PREFIX_ROOMSERVER', 'origin/release/v')
+REPO_VERSION_BRANCH_SUFFIX_ROOMSERVER := env('REPO_VERSION_BRANCH_SUFFIX_ROOMSERVER', '.x')
+REPO_URL_ROOMSERVER := env('REPO_URL_ROOMSERVER', REPO_BASE + '/' + REPO_NAME_ROOMSERVER + '.git')
+REPO_PATH_ROOMSERVER := REPO_TEMP_DIR + '/' + REPO_NAME_ROOMSERVER
+
 export RETOKI_RELEASE_FILE := REPO_PATH_PRODUCT_RELEASES + '/releases.yml'
 export RETOKI_PROFILE := 'opencode'
 
@@ -110,6 +116,8 @@ _fetch-obelisk BRANCH: (_fetch_repo REPO_URL_OBELISK BRANCH REPO_NAME_OBELISK)
 _fetch-recorder BRANCH: (_fetch_repo REPO_URL_RECORDER BRANCH REPO_NAME_RECORDER)
 
 _fetch-smtp-mailer BRANCH: (_fetch_repo REPO_URL_SMTP_MAILER BRANCH REPO_NAME_SMTP_MAILER)
+
+_fetch-roomserver BRANCH: (_fetch_repo REPO_URL_ROOMSERVER BRANCH REPO_NAME_ROOMSERVER)
 
 # Update everything
 #
@@ -355,6 +363,15 @@ update-admin-smtp-mailer SERIES SMTP_MAILER_SERIES: (_fetch-smtp-mailer REPO_VER
         rm -rf "{{ DOCS_DIR }}/{{ SERIES }}/admin/smtp-mailer"
         mkdir -p "{{ DOCS_DIR }}/{{ SERIES }}/admin/smtp-mailer"
         "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/smtp-mailer" "{{ REPO_PATH_SMTP_MAILER }}" "{{ DOCS_DIR }}/{{ SERIES }}/admin/smtp-mailer"
+    fi
+
+update-admin-roomserver SERIES ROOMSERVER_SERIES: (_fetch-roomserver REPO_VERSION_BRANCH_PREFIX_ROOMSERVER + ROOMSERVER_SERIES + REPO_VERSION_BRANCH_SUFFIX_ROOMSERVER)
+    #!/usr/bin/env bash
+    set -xe
+    if [ -x "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/roomserver" ]; then
+        rm -rf "{{ DOCS_DIR }}/{{ SERIES }}/admin/roomserver"
+        mkdir -p "{{ DOCS_DIR }}/{{ SERIES }}/admin/roomserver"
+        "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/roomserver" "{{ REPO_PATH_ROOMSERVER }}" "{{ DOCS_DIR }}/{{ SERIES }}/admin/roomserver"
     fi
 
 update-developer-controller SERIES CONTROLLER_SERIES: (_fetch-controller REPO_VERSION_BRANCH_PREFIX_CONTROLLER + CONTROLLER_SERIES + REPO_VERSION_BRANCH_SUFFIX_CONTROLLER)
