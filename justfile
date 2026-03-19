@@ -15,6 +15,12 @@ REPO_BRANCH_PRODUCT_RELEASES := env('REPO_BRANCH_PRODUCT_RELEASES', 'main')
 REPO_URL_PRODUCT_RELEASES := env('REPO_URL_PRODUCT_RELEASES', REPO_BASE + '/' + REPO_NAME_PRODUCT_RELEASES + '.git')
 REPO_PATH_PRODUCT_RELEASES := REPO_TEMP_DIR + '/' + REPO_NAME_PRODUCT_RELEASES
 
+REPO_NAME_OPENTALK_COMPOSE := env('REPO_NAME_OPENTALK_COMPOSE', 'opentalk/opentalk-devops/opentalk-compose')
+REPO_VERSION_BRANCH_PREFIX_OPENTALK_COMPOSE := env('REPO_VERSION_BRANCH_PREFIX_OPENTALK_COMPOSE', 'origin/release/v')
+REPO_VERSION_BRANCH_SUFFIX_OPENTALK_COMPOSE := env('REPO_VERSION_BRANCH_SUFFIX_OPENTALK_COMPOSE', '.x')
+REPO_URL_OPENTALK_COMPOSE := env('REPO_URL_OPENTALK_COMPOSE', REPO_BASE + '/' + REPO_NAME_OPENTALK_COMPOSE + '.git')
+REPO_PATH_OPENTALK_COMPOSE := REPO_TEMP_DIR + '/' + REPO_NAME_OPENTALK_COMPOSE
+
 REPO_NAME_USER := env('REPO_NAME_USER', 'opentalk/support')
 REPO_BRANCH_USER := env('REPO_BRANCH_USER', 'main')
 REPO_URL_USER := env('REPO_URL_USER', REPO_BASE + '/' + REPO_NAME_USER + '.git')
@@ -108,6 +114,8 @@ _fetch-product-releases: (_fetch_repo REPO_URL_PRODUCT_RELEASES REPO_BRANCH_PROD
 _fetch-user: (_fetch_repo REPO_URL_USER REPO_BRANCH_USER REPO_NAME_USER)
 
 _fetch-architecture: (_fetch_repo REPO_URL_ARCHITECTURE REPO_BRANCH_ARCHITECTURE REPO_NAME_ARCHITECTURE)
+
+_fetch-opentalk-compose BRANCH: (_fetch_repo REPO_URL_OPENTALK_COMPOSE BRANCH REPO_NAME_OPENTALK_COMPOSE)
 
 _fetch-controller BRANCH: (_fetch_repo REPO_URL_CONTROLLER BRANCH REPO_NAME_CONTROLLER)
 
@@ -230,6 +238,16 @@ _populate-release-series SERIES_NUMBER:
     # TODO: re-enable architecture
     # just --justfile "{{ justfile() }}" update-architecture {{ SERIES_NUMBER }}
 
+    OPENTALK_COMPOSE_EXTRACTOR="{{ EXTRACTORS_DIR }}/{{ SERIES_NUMBER }}/admin/deployment/opentalk-compose"
+    if [ -f "$OPENTALK_COMPOSE_EXTRACTOR" ]; then
+        OPENTALK_COMPOSE_VERSION=$(echo "$INFO" | jq --arg "key_name" "opentalk-compose" -r '.highest_release_components.[$key_name]')
+        OPENTALK_COMPOSE_RELEASE_SERIES=$(echo "$OPENTALK_COMPOSE_VERSION" | grep --extended-regexp --only-matching '^[0-9]+\.[0-9]+')
+        echo "OPENTALK_COMPOSE_RELEASE_SERIES=$OPENTALK_COMPOSE_RELEASE_SERIES"
+        just --justfile "{{ justfile() }}" update-admin-opentalk-compose {{ SERIES_NUMBER }} "$OPENTALK_COMPOSE_RELEASE_SERIES"
+        echo "* [Deployment](deployment/)" >> "$ADMIN_NAVIGATION_FILE"
+        echo "  * [OpenTalk Compose](deployment/opentalk-compose/)" >> "$ADMIN_NAVIGATION_FILE"
+    fi
+
     CONTROLLER_VERSION=$(echo "$INFO" | jq --arg "key_name" "controller" -r '.highest_release_components.[$key_name]')
     CONTROLLER_RELEASE_SERIES=$(echo "$CONTROLLER_VERSION" | grep --extended-regexp --only-matching '^[0-9]+\.[0-9]+')
     just --justfile "{{ justfile() }}" update-admin-controller {{ SERIES_NUMBER }} "$CONTROLLER_RELEASE_SERIES"
@@ -329,6 +347,15 @@ update-architecture SERIES: _fetch-product-releases _fetch-architecture
         "$EXTRACTOR" "{{ REPO_PATH_ARCHITECTURE }}" "$DEST_DIR"
     fi
 
+update-admin-opentalk-compose SERIES OPENTALK_COMPOSE_SERIES: (_fetch-opentalk-compose REPO_VERSION_BRANCH_PREFIX_OPENTALK_COMPOSE + OPENTALK_COMPOSE_SERIES + REPO_VERSION_BRANCH_SUFFIX_OPENTALK_COMPOSE)
+    #!/usr/bin/env bash
+    set -xe
+    if [ -x "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/deployment/opentalk-compose" ]; then
+        rm -rf "{{ DOCS_DIR }}/{{ SERIES }}/admin/deployment/opentalk-compose"
+        mkdir -p "{{ DOCS_DIR }}/{{ SERIES }}/admin/deployment/opentalk-compose"
+        "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/deployment/opentalk-compose" "{{ REPO_PATH_OPENTALK_COMPOSE }}" "{{ DOCS_DIR }}/{{ SERIES }}/admin/deployment/opentalk-compose"
+    fi
+
 update-admin-controller SERIES CONTROLLER_SERIES: (_fetch-controller REPO_VERSION_BRANCH_PREFIX_CONTROLLER + CONTROLLER_SERIES + REPO_VERSION_BRANCH_SUFFIX_CONTROLLER)
     #!/usr/bin/env bash
     set -xe
@@ -405,6 +432,11 @@ clean:
         -not -path 'docs/25.4/admin/README.md' \
         -not -path 'docs/25.4/developer' \
         -not -path 'docs/25.4/developer/README.md' \
+        -not -path 'docs/26.1' \
+        -not -path 'docs/26.1/admin' \
+        -not -path 'docs/26.1/admin/README.md' \
+        -not -path 'docs/26.1/developer' \
+        -not -path 'docs/26.1/developer/README.md' \
         -delete
 
     rm -rf \
