@@ -80,11 +80,11 @@ plugins:
         'user/README.md': latest/user/README.md
         'admin/README.md': latest/admin/README.md
         'developer/README.md': latest/developer/README.md
-        'latest/README.md': 25.4/README.md
-        'latest/user/README.md': 25.4/user/README.md
-        'latest/admin/README.md': 25.4/admin/README.md
-        'latest/developer/README.md': 25.4/developer/README.md
-        'latest/architecture/README.md': 25.4/architecture/README.md
+        'latest/README.md': 26.1/README.md
+        'latest/user/README.md': 26.1/user/README.md
+        'latest/admin/README.md': 26.1/admin/README.md
+        'latest/developer/README.md': 26.1/developer/README.md
+        'latest/architecture/README.md': 26.1/architecture/README.md
   - swagger-ui-tag
   - glightbox
 extra:
