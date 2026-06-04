@@ -40,6 +40,16 @@ docs/25.4/developer/*
 docs/25.4/user/
 docs/25.4/architecture/
 
+docs/26.1/navigation.md
+docs/26.1/README.md
+docs/26.1/admin/*
+!docs/26.1/admin/README.md
+docs/26.1/developer/*
+!docs/26.1/developer/README.md
+docs/26.1/user/
+docs/26.1/architecture/
+
+
 docs/releases/*
 
 .editorconfig
