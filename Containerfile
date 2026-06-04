@@ -5,4 +5,5 @@
 FROM caddy:2-alpine as deploy
 
 COPY Caddyfile /etc/caddy/Caddyfile
+COPY Caddyfile.redirects /etc/caddy/Caddyfile.redirects
 COPY site /usr/share/caddy

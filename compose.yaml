@@ -1,0 +1,30 @@
+# SPDX-FileCopyrightText: OpenTalk GmbH <mail@opentalk.eu>
+# SPDX-License-Identifier: EUPL-1.2
+#
+# Local docs preview that mirrors the production setup:
+# Caddy (reverse proxy with redirects) -> mkdocs-material (live preview).
+#
+# Usage:
+#   docker compose up
+#   open http://localhost:8080
+
+---
+services:
+  mkdocs:
+    image: git.opentalk.dev:5050/opentalk/backend/containers/mkdocs-material:latest
+    command: [serve, --dev-addr=0.0.0.0:8000]
+    working_dir: /docs
+    volumes:
+      - ./:/docs
+    ports:
+      - 127.0.0.1:8000:8000
+
+  caddy:
+    image: caddy:2-alpine
+    depends_on:
+      - mkdocs
+    ports:
+      - 127.0.0.1:8080:80
+    volumes:
+      - ./Caddyfile.dev:/etc/caddy/Caddyfile:ro
+      - ./Caddyfile.redirects:/etc/caddy/Caddyfile.redirects:ro

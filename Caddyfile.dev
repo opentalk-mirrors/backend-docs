@@ -1,0 +1,12 @@
+# SPDX-FileCopyrightText: OpenTalk GmbH <mail@opentalk.eu>
+# SPDX-License-Identifier: EUPL-1.2
+#
+# Dev variant of Caddyfile used by compose.yaml.
+# Mirrors the production redirects, but proxies to the live mkdocs server
+# instead of serving the pre-built static site.
+
+:80 {
+    reverse_proxy mkdocs:8000
+
+    import Caddyfile.redirects
+}
