@@ -177,13 +177,13 @@ _populate-release-series-eol SERIES_NUMBER EOL_DATE:
     read -d '' MDSTRING << EOF || true
     # OpenTalk Release Series {{ SERIES_NUMBER }}
 
-    !!! warning
+    ::: warning
+    The OpenTalk **{{ SERIES_NUMBER }}** release series is no longer supported.
 
-        The OpenTalk **{{ SERIES_NUMBER }}** release series is no longer supported.
+    It is end-of-life since **{{ EOL_DATE }}**, please use a newer version instead.
 
-        It is end-of-life since **{{ EOL_DATE }}**, please use a newer version instead.
-
-        [Latest version]($LATEST_LINK){ .md-button .md-button--primary }
+    [Latest version]($LATEST_LINK){ .md-button .md-button--primary }
+    :::
     EOF
 
         DESTDIR="$SERIES_DIR/$DEST"
