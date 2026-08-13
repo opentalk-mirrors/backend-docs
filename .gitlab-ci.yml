@@ -122,22 +122,37 @@ build-offline-archive:
   script:
     - mkdocs build
 
+.buildah:
+  image: quay.io/buildah/stable:latest
+  variables:
+    STORAGE_DRIVER: vfs
+    BUILDAH_FORMAT: docker
+  before_script:
+    # Pull docker.io images through GitLab's Dependency Proxy to avoid Docker Hub
+    - mkdir -p /etc/containers/registries.conf.d
+    - |
+      cat > /etc/containers/registries.conf.d/docker-mirror.conf <<EOF
+      [[registry]]
+      prefix = "docker.io"
+      location = "docker.io"
+      [[registry.mirror]]
+      location = "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}"
+      EOF
+    - >
+      echo "$CI_DEPENDENCY_PROXY_PASSWORD" |
+      buildah login -u "$CI_DEPENDENCY_PROXY_USER"
+      --password-stdin "$CI_DEPENDENCY_PROXY_SERVER"
+    - echo "$CI_REGISTRY_PASSWORD" | buildah login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+
 container:mr:
+  extends: .buildah
   needs: [build]
   rules:
     - if: $CI_PIPELINE_SOURCE == "pipeline"
       when: never
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
   stage: container
-  image:
-    name: gcr.io/kaniko-project/executor:debug
-    entrypoint: ['']
   script:
-    - mkdir -p /kaniko/.docker
-    - >
-      echo
-      "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$(echo -n ${CI_REGISTRY_USER}:${CI_REGISTRY_PASSWORD} | base64)\"}}}" >
-      /kaniko/.docker/config.json
     # According to https://docs.docker.com/engine/reference/commandline/tag/
     # the tag may contain lowercase and uppercase letters, digits, underscores,
     # periods, and hyphens, so we replace everything else by '_'. It cannot start
@@ -152,41 +167,20 @@ container:mr:
           sed 's/^[.-]/_/' |
           cut -c -128
       )
-    - >
-      /kaniko/executor
-      --registry-mirror=mirror.gcr.io
-      --context $CI_PROJECT_DIR
-      --dockerfile $CI_PROJECT_DIR/Containerfile
-      --cache=true
-      --cache-ttl=24h
-      --destination $CI_REGISTRY_IMAGE:$IMAGE_TAG
-      --force
+    - buildah build -f "$CI_PROJECT_DIR/Containerfile" -t "$CI_REGISTRY_IMAGE:$IMAGE_TAG" "$CI_PROJECT_DIR"
+    - buildah push "$CI_REGISTRY_IMAGE:$IMAGE_TAG"
 
 container:latest:
+  extends: .buildah
   needs: [build]
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
     - if: $CI_PIPELINE_SOURCE == 'schedule'
     - if: $CI_PIPELINE_SOURCE == 'pipeline' && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   stage: container
-  image:
-    name: gcr.io/kaniko-project/executor:debug
-    entrypoint: ['']
   script:
-    - mkdir -p /kaniko/.docker
-    - >
-      echo
-      "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$(echo -n ${CI_REGISTRY_USER}:${CI_REGISTRY_PASSWORD} | base64)\"}}}" >
-      /kaniko/.docker/config.json
-    - >
-      /kaniko/executor
-      --registry-mirror=mirror.gcr.io
-      --context $CI_PROJECT_DIR
-      --dockerfile $CI_PROJECT_DIR/Containerfile
-      --cache=true
-      --cache-ttl=24h
-      --destination $CI_REGISTRY_IMAGE:latest
-      --force
+    - buildah build -f "$CI_PROJECT_DIR/Containerfile" -t "$CI_REGISTRY_IMAGE:latest" "$CI_PROJECT_DIR"
+    - buildah push "$CI_REGISTRY_IMAGE:latest"
 
 container:production:
   needs: [container:latest]
@@ -199,6 +193,6 @@ container:production:
   before_script:
     - apt-get update && apt-get install -y skopeo ca-certificates
   script:
-    - skopeo login --username "$CI_REGISTRY_USER" --password "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+    - echo "$CI_REGISTRY_PASSWORD" | skopeo login --username "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
     - skopeo inspect docker://$CI_REGISTRY_IMAGE:latest
     - skopeo copy docker://$CI_REGISTRY_IMAGE:latest docker://$CI_REGISTRY_IMAGE:public
