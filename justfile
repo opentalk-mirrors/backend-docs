@@ -74,6 +74,7 @@ REPO_PATH_MONOREPO := REPO_TEMP_DIR + '/' + REPO_NAME_MONOREPO
 # Subdirectories of the individual services within the monorepo.
 REPO_SUBPATH_CONTROLLER := env('REPO_SUBPATH_CONTROLLER', 'controller')
 REPO_SUBPATH_OBELISK := env('REPO_SUBPATH_OBELISK', 'obelisk')
+REPO_SUBPATH_RECORDER := env('REPO_SUBPATH_RECORDER', 'recorder')
 
 export RETOKI_RELEASE_FILE := REPO_PATH_PRODUCT_RELEASES + '/releases.yml'
 export RETOKI_PROFILE := 'gitlab'
@@ -268,6 +269,8 @@ _populate-release-series SERIES_NUMBER:
         just --justfile "{{ justfile() }}" update-developer-controller {{ SERIES_NUMBER }}
 
         just --justfile "{{ justfile() }}" update-admin-obelisk {{ SERIES_NUMBER }}
+
+        just --justfile "{{ justfile() }}" update-admin-recorder {{ SERIES_NUMBER }}
     else
         CONTROLLER_VERSION=$(echo "$INFO" | jq --arg "key_name" "controller" -r '.highest_release_components.[$key_name]')
         CONTROLLER_RELEASE_SERIES=$(echo "$CONTROLLER_VERSION" | grep --extended-regexp --only-matching '^[0-9]+\.[0-9]+')
@@ -277,6 +280,10 @@ _populate-release-series SERIES_NUMBER:
         OBELISK_VERSION=$(echo "$INFO" | jq --arg "key_name" "obelisk" -r '.highest_release_components.[$key_name]')
         OBELISK_RELEASE_SERIES=$(echo "$OBELISK_VERSION" | grep --extended-regexp --only-matching '^[0-9]+\.[0-9]+')
         just --justfile "{{ justfile() }}" update-admin-obelisk-legacy {{ SERIES_NUMBER }} "$OBELISK_RELEASE_SERIES"
+
+        RECORDER_VERSION=$(echo "$INFO" | jq --arg "key_name" "recorder" -r '.highest_release_components.[$key_name]')
+        RECORDER_RELEASE_SERIES=$(echo "$RECORDER_VERSION" | grep --extended-regexp --only-matching '^[0-9]+\.[0-9]+')
+        just --justfile "{{ justfile() }}" update-admin-recorder-legacy {{ SERIES_NUMBER }} "$RECORDER_RELEASE_SERIES"
     fi
 
     echo "* [Controller](controller/)" >> "$ADMIN_NAVIGATION_FILE"
@@ -284,9 +291,6 @@ _populate-release-series SERIES_NUMBER:
 
     echo "* [Obelisk](obelisk/)" >> "$ADMIN_NAVIGATION_FILE"
 
-    RECORDER_VERSION=$(echo "$INFO" | jq --arg "key_name" "recorder" -r '.highest_release_components.[$key_name]')
-    RECORDER_RELEASE_SERIES=$(echo "$RECORDER_VERSION" | grep --extended-regexp --only-matching '^[0-9]+\.[0-9]+')
-    just --justfile "{{ justfile() }}" update-admin-recorder {{ SERIES_NUMBER }} "$RECORDER_RELEASE_SERIES"
     echo "* [Recorder](recorder/)" >> "$ADMIN_NAVIGATION_FILE"
 
     SMTP_MAILER_VERSION=$(echo "$INFO" | jq --arg "key_name" "smtp-mailer" -r '.highest_release_components.[$key_name]')
@@ -416,7 +420,16 @@ update-admin-obelisk-legacy SERIES OBELISK_SERIES: (_fetch-obelisk REPO_VERSION_
         "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/obelisk" "{{ REPO_PATH_OBELISK }}" "{{ DOCS_DIR }}/{{ SERIES }}/admin/obelisk"
     fi
 
-update-admin-recorder SERIES RECORDER_SERIES: (_fetch-recorder REPO_VERSION_BRANCH_PREFIX_RECORDER + RECORDER_SERIES + REPO_VERSION_BRANCH_SUFFIX_RECORDER)
+update-admin-recorder SERIES: (_fetch-monorepo REPO_VERSION_BRANCH_PREFIX_MONOREPO + SERIES + REPO_VERSION_BRANCH_SUFFIX_MONOREPO)
+    #!/usr/bin/env bash
+    set -xe
+    if [ -x "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/recorder" ]; then
+        rm -rf "{{ DOCS_DIR }}/{{ SERIES }}/admin/recorder"
+        mkdir -p "{{ DOCS_DIR }}/{{ SERIES }}/admin/recorder"
+        "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/recorder" "{{ REPO_PATH_MONOREPO }}/{{ REPO_SUBPATH_RECORDER }}" "{{ DOCS_DIR }}/{{ SERIES }}/admin/recorder"
+    fi
+
+update-admin-recorder-legacy SERIES RECORDER_SERIES: (_fetch-recorder REPO_VERSION_BRANCH_PREFIX_RECORDER + RECORDER_SERIES + REPO_VERSION_BRANCH_SUFFIX_RECORDER)
     #!/usr/bin/env bash
     set -xe
     if [ -x "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/recorder" ]; then
