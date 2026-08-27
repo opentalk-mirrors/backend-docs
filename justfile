@@ -76,6 +76,7 @@ REPO_SUBPATH_CONTROLLER := env('REPO_SUBPATH_CONTROLLER', 'controller')
 REPO_SUBPATH_OBELISK := env('REPO_SUBPATH_OBELISK', 'obelisk')
 REPO_SUBPATH_RECORDER := env('REPO_SUBPATH_RECORDER', 'recorder')
 REPO_SUBPATH_SMTP_MAILER := env('REPO_SUBPATH_SMTP_MAILER', 'smtp-mailer')
+REPO_SUBPATH_ROOMSERVER := env('REPO_SUBPATH_ROOMSERVER', 'roomserver')
 
 export RETOKI_RELEASE_FILE := REPO_PATH_PRODUCT_RELEASES + '/releases.yml'
 export RETOKI_PROFILE := 'gitlab'
@@ -460,7 +461,16 @@ update-admin-smtp-mailer-legacy SERIES SMTP_MAILER_SERIES: (_fetch-smtp-mailer R
         "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/smtp-mailer" "{{ REPO_PATH_SMTP_MAILER }}" "{{ DOCS_DIR }}/{{ SERIES }}/admin/smtp-mailer"
     fi
 
-update-admin-roomserver SERIES ROOMSERVER_SERIES: (_fetch-roomserver REPO_VERSION_BRANCH_PREFIX_ROOMSERVER + ROOMSERVER_SERIES + REPO_VERSION_BRANCH_SUFFIX_ROOMSERVER)
+update-admin-roomserver SERIES: (_fetch-monorepo REPO_VERSION_BRANCH_PREFIX_MONOREPO + SERIES + REPO_VERSION_BRANCH_SUFFIX_MONOREPO)
+    #!/usr/bin/env bash
+    set -xe
+    if [ -x "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/roomserver" ]; then
+        rm -rf "{{ DOCS_DIR }}/{{ SERIES }}/admin/roomserver"
+        mkdir -p "{{ DOCS_DIR }}/{{ SERIES }}/admin/roomserver"
+        "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/roomserver" "{{ REPO_PATH_MONOREPO }}/{{ REPO_SUBPATH_ROOMSERVER }}" "{{ DOCS_DIR }}/{{ SERIES }}/admin/roomserver"
+    fi
+
+update-admin-roomserver-legacy SERIES ROOMSERVER_SERIES: (_fetch-roomserver REPO_VERSION_BRANCH_PREFIX_ROOMSERVER + ROOMSERVER_SERIES + REPO_VERSION_BRANCH_SUFFIX_ROOMSERVER)
     #!/usr/bin/env bash
     set -xe
     if [ -x "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/roomserver" ]; then
