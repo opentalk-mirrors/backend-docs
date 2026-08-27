@@ -75,6 +75,7 @@ REPO_PATH_MONOREPO := REPO_TEMP_DIR + '/' + REPO_NAME_MONOREPO
 REPO_SUBPATH_CONTROLLER := env('REPO_SUBPATH_CONTROLLER', 'controller')
 REPO_SUBPATH_OBELISK := env('REPO_SUBPATH_OBELISK', 'obelisk')
 REPO_SUBPATH_RECORDER := env('REPO_SUBPATH_RECORDER', 'recorder')
+REPO_SUBPATH_SMTP_MAILER := env('REPO_SUBPATH_SMTP_MAILER', 'smtp-mailer')
 
 export RETOKI_RELEASE_FILE := REPO_PATH_PRODUCT_RELEASES + '/releases.yml'
 export RETOKI_PROFILE := 'gitlab'
@@ -271,6 +272,8 @@ _populate-release-series SERIES_NUMBER:
         just --justfile "{{ justfile() }}" update-admin-obelisk {{ SERIES_NUMBER }}
 
         just --justfile "{{ justfile() }}" update-admin-recorder {{ SERIES_NUMBER }}
+
+        just --justfile "{{ justfile() }}" update-admin-smtp-mailer {{ SERIES_NUMBER }}
     else
         CONTROLLER_VERSION=$(echo "$INFO" | jq --arg "key_name" "controller" -r '.highest_release_components.[$key_name]')
         CONTROLLER_RELEASE_SERIES=$(echo "$CONTROLLER_VERSION" | grep --extended-regexp --only-matching '^[0-9]+\.[0-9]+')
@@ -284,6 +287,10 @@ _populate-release-series SERIES_NUMBER:
         RECORDER_VERSION=$(echo "$INFO" | jq --arg "key_name" "recorder" -r '.highest_release_components.[$key_name]')
         RECORDER_RELEASE_SERIES=$(echo "$RECORDER_VERSION" | grep --extended-regexp --only-matching '^[0-9]+\.[0-9]+')
         just --justfile "{{ justfile() }}" update-admin-recorder-legacy {{ SERIES_NUMBER }} "$RECORDER_RELEASE_SERIES"
+
+        SMTP_MAILER_VERSION=$(echo "$INFO" | jq --arg "key_name" "smtp-mailer" -r '.highest_release_components.[$key_name]')
+        SMTP_MAILER_RELEASE_SERIES=$(echo "$SMTP_MAILER_VERSION" | grep --extended-regexp --only-matching '^[0-9]+\.[0-9]+')
+        just --justfile "{{ justfile() }}" update-admin-smtp-mailer-legacy {{ SERIES_NUMBER }} "$SMTP_MAILER_RELEASE_SERIES"
     fi
 
     echo "* [Controller](controller/)" >> "$ADMIN_NAVIGATION_FILE"
@@ -293,9 +300,6 @@ _populate-release-series SERIES_NUMBER:
 
     echo "* [Recorder](recorder/)" >> "$ADMIN_NAVIGATION_FILE"
 
-    SMTP_MAILER_VERSION=$(echo "$INFO" | jq --arg "key_name" "smtp-mailer" -r '.highest_release_components.[$key_name]')
-    SMTP_MAILER_RELEASE_SERIES=$(echo "$SMTP_MAILER_VERSION" | grep --extended-regexp --only-matching '^[0-9]+\.[0-9]+')
-    just --justfile "{{ justfile() }}" update-admin-smtp-mailer {{ SERIES_NUMBER }} "$SMTP_MAILER_RELEASE_SERIES"
     echo "* [SMTP-Mailer](smtp-mailer/)" >> "$ADMIN_NAVIGATION_FILE"
 
     cat << EOF >> $README_FILE
@@ -438,7 +442,16 @@ update-admin-recorder-legacy SERIES RECORDER_SERIES: (_fetch-recorder REPO_VERSI
         "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/recorder" "{{ REPO_PATH_RECORDER }}" "{{ DOCS_DIR }}/{{ SERIES }}/admin/recorder"
     fi
 
-update-admin-smtp-mailer SERIES SMTP_MAILER_SERIES: (_fetch-smtp-mailer REPO_VERSION_BRANCH_PREFIX_SMTP_MAILER + SMTP_MAILER_SERIES + REPO_VERSION_BRANCH_SUFFIX_SMTP_MAILER)
+update-admin-smtp-mailer SERIES: (_fetch-monorepo REPO_VERSION_BRANCH_PREFIX_MONOREPO + SERIES + REPO_VERSION_BRANCH_SUFFIX_MONOREPO)
+    #!/usr/bin/env bash
+    set -xe
+    if [ -x "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/smtp-mailer" ]; then
+        rm -rf "{{ DOCS_DIR }}/{{ SERIES }}/admin/smtp-mailer"
+        mkdir -p "{{ DOCS_DIR }}/{{ SERIES }}/admin/smtp-mailer"
+        "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/smtp-mailer" "{{ REPO_PATH_MONOREPO }}/{{ REPO_SUBPATH_SMTP_MAILER }}" "{{ DOCS_DIR }}/{{ SERIES }}/admin/smtp-mailer"
+    fi
+
+update-admin-smtp-mailer-legacy SERIES SMTP_MAILER_SERIES: (_fetch-smtp-mailer REPO_VERSION_BRANCH_PREFIX_SMTP_MAILER + SMTP_MAILER_SERIES + REPO_VERSION_BRANCH_SUFFIX_SMTP_MAILER)
     #!/usr/bin/env bash
     set -xe
     if [ -x "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/smtp-mailer" ]; then
