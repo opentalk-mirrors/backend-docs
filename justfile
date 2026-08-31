@@ -303,6 +303,19 @@ _populate-release-series SERIES_NUMBER:
 
     echo "* [SMTP-Mailer](smtp-mailer/)" >> "$ADMIN_NAVIGATION_FILE"
 
+    ROOMSERVER_EXTRACTOR="{{ EXTRACTORS_DIR }}/{{ SERIES_NUMBER }}/admin/roomserver"
+    if [ -f "$ROOMSERVER_EXTRACTOR" ]; then
+        if series_ge "{{ SERIES_NUMBER }}" "{{ MONOREPO_SINCE_SERIES }}"; then
+            just --justfile "{{ justfile() }}" update-admin-roomserver {{ SERIES_NUMBER }}
+        else
+
+            ROOMSERVER_VERSION=$(echo "$INFO" | jq --arg "key_name" "roomserver" -r '.highest_release_components.[$key_name]')
+            ROOMSERVER_RELEASE_SERIES=$(echo "$ROOMSERVER_VERSION" | grep --extended-regexp --only-matching '^[0-9]+\.[0-9]+')
+            just --justfile "{{ justfile() }}" update-admin-roomserver-legacy {{ SERIES_NUMBER }} "$ROOMSERVER_RELEASE_SERIES"
+        fi
+        echo "* [RoomServer](roomserver/)" >> "$ADMIN_NAVIGATION_FILE"
+    fi
+
     cat << EOF >> $README_FILE
     ---
     title: 📚 OpenTalk {{ SERIES_NUMBER }} Documentation
@@ -327,7 +340,7 @@ _populate-release-series SERIES_NUMBER:
     fi
     if [ -d "$SERIES_DIR"/developer ]; then
         echo "* [👷 Developer](developer/)" >> "$NAVIGATION_FILE"
-        echo '- [<span class="buttonicon">👷‍♂️</span><br />Developer](developer/README.md){ .md-button .md-button--primary }' >> "$README_FILE"
+        echo '- [<span class="buttonicon">👷</span><br />Developer](developer/README.md){ .md-button .md-button--primary }' >> "$README_FILE"
     fi
     if [ -d "$SERIES_DIR"/architecture ]; then
         echo "* [🏛️ Architecture](architecture/)" >> "$NAVIGATION_FILE"
