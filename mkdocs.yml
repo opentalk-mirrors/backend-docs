@@ -96,8 +96,8 @@ extra:
       name: Website
       link: https://opentalk.eu/
     - icon: fontawesome/brands/gitlab
-      name: OpenCoDE
-      link: https://gitlab.opencode.de/opentalk/
+      name: GitLab
+      link: https://git.opentalk.dev
     - icon: fontawesome/brands/mastodon
       link: https://social.opentalk.eu/@OpenTalkMeeting
     - icon: fontawesome/brands/linkedin

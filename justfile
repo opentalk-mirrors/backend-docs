@@ -62,7 +62,7 @@ REPO_URL_ROOMSERVER := env('REPO_URL_ROOMSERVER', REPO_BASE + '/' + REPO_NAME_RO
 REPO_PATH_ROOMSERVER := REPO_TEMP_DIR + '/' + REPO_NAME_ROOMSERVER
 
 export RETOKI_RELEASE_FILE := REPO_PATH_PRODUCT_RELEASES + '/releases.yml'
-export RETOKI_PROFILE := 'opencode'
+export RETOKI_PROFILE := 'gitlab'
 
 _default:
     just --justfile "{{ justfile() }}" --list
