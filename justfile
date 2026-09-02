@@ -265,6 +265,8 @@ _populate-release-series SERIES_NUMBER:
 
     series_ge() { [ "$(printf '%s\n%s\n' "$2" "$1" | sort -V | head -n1)" = "$2" ]; }
 
+    ROOMSERVER_EXTRACTOR="{{ EXTRACTORS_DIR }}/{{ SERIES_NUMBER }}/admin/roomserver"
+
     if series_ge "{{ SERIES_NUMBER }}" "{{ MONOREPO_SINCE_SERIES }}"; then
         # The monorepo is released in lockstep with the OpenTalk product, so all its services share the global release series
         just --justfile "{{ justfile() }}" update-admin-controller {{ SERIES_NUMBER }}
@@ -275,6 +277,8 @@ _populate-release-series SERIES_NUMBER:
         just --justfile "{{ justfile() }}" update-admin-recorder {{ SERIES_NUMBER }}
 
         just --justfile "{{ justfile() }}" update-admin-smtp-mailer {{ SERIES_NUMBER }}
+
+        [[ -f "$ROOMSERVER_EXTRACTOR" ]] && just --justfile "{{ justfile() }}" update-admin-roomserver {{ SERIES_NUMBER }}
     else
         CONTROLLER_VERSION=$(echo "$INFO" | jq --arg "key_name" "controller" -r '.highest_release_components.[$key_name]')
         CONTROLLER_RELEASE_SERIES=$(echo "$CONTROLLER_VERSION" | grep --extended-regexp --only-matching '^[0-9]+\.[0-9]+')
@@ -292,6 +296,12 @@ _populate-release-series SERIES_NUMBER:
         SMTP_MAILER_VERSION=$(echo "$INFO" | jq --arg "key_name" "smtp-mailer" -r '.highest_release_components.[$key_name]')
         SMTP_MAILER_RELEASE_SERIES=$(echo "$SMTP_MAILER_VERSION" | grep --extended-regexp --only-matching '^[0-9]+\.[0-9]+')
         just --justfile "{{ justfile() }}" update-admin-smtp-mailer-legacy {{ SERIES_NUMBER }} "$SMTP_MAILER_RELEASE_SERIES"
+
+        if [ -f "$ROOMSERVER_EXTRACTOR" ]; then
+            ROOMSERVER_VERSION=$(echo "$INFO" | jq --arg "key_name" "roomserver" -r '.highest_release_components.[$key_name]')
+            ROOMSERVER_RELEASE_SERIES=$(echo "$ROOMSERVER_VERSION" | grep --extended-regexp --only-matching '^[0-9]+\.[0-9]+')
+            just --justfile "{{ justfile() }}" update-admin-roomserver-legacy {{ SERIES_NUMBER }} "$ROOMSERVER_RELEASE_SERIES"
+        fi
     fi
 
     echo "* [Controller](controller/)" >> "$ADMIN_NAVIGATION_FILE"
@@ -303,18 +313,7 @@ _populate-release-series SERIES_NUMBER:
 
     echo "* [SMTP-Mailer](smtp-mailer/)" >> "$ADMIN_NAVIGATION_FILE"
 
-    ROOMSERVER_EXTRACTOR="{{ EXTRACTORS_DIR }}/{{ SERIES_NUMBER }}/admin/roomserver"
-    if [ -f "$ROOMSERVER_EXTRACTOR" ]; then
-        if series_ge "{{ SERIES_NUMBER }}" "{{ MONOREPO_SINCE_SERIES }}"; then
-            just --justfile "{{ justfile() }}" update-admin-roomserver {{ SERIES_NUMBER }}
-        else
-
-            ROOMSERVER_VERSION=$(echo "$INFO" | jq --arg "key_name" "roomserver" -r '.highest_release_components.[$key_name]')
-            ROOMSERVER_RELEASE_SERIES=$(echo "$ROOMSERVER_VERSION" | grep --extended-regexp --only-matching '^[0-9]+\.[0-9]+')
-            just --justfile "{{ justfile() }}" update-admin-roomserver-legacy {{ SERIES_NUMBER }} "$ROOMSERVER_RELEASE_SERIES"
-        fi
-        echo "* [RoomServer](roomserver/)" >> "$ADMIN_NAVIGATION_FILE"
-    fi
+    [[ -f "$ROOMSERVER_EXTRACTOR" ]] && echo "* [RoomServer](roomserver/)" >> "$ADMIN_NAVIGATION_FILE"
 
     cat << EOF >> $README_FILE
     ---
