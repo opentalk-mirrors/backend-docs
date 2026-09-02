@@ -49,6 +49,14 @@ docs/26.1/developer/*
 docs/26.1/user/
 docs/26.1/architecture/
 
+docs/26.2/navigation.md
+docs/26.2/README.md
+docs/26.2/admin/*
+!docs/26.2/admin/README.md
+docs/26.2/developer/*
+!docs/26.2/developer/README.md
+docs/26.2/user/
+docs/26.2/architecture/
 
 docs/releases/*
 
