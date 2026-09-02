@@ -101,7 +101,7 @@ redir @old_admin /latest/admin/{re.1}
 redir @old_developer /latest/developer/{re.1}
 
 @latest path_regexp /latest/(.*)$
-redir @latest /26.1/{re.1}
+redir @latest /26.2/{re.1}
 
 @user_de {
     path_regexp /([0-9]+\.[0-9]+)/user\/?$
