@@ -316,6 +316,8 @@ _populate-release-series SERIES_NUMBER:
         fi
     fi
 
+    [[ -f "$SERIES_DIR/admin/migration.md" ]] && echo "* [Migration](migration.md)" >> "$ADMIN_NAVIGATION_FILE"
+
     echo "* [Controller](controller/)" >> "$ADMIN_NAVIGATION_FILE"
     echo "* [Controller](controller/)" >> "$DEVELOPER_NAVIGATION_FILE"
 
