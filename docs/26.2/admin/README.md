@@ -4,13 +4,14 @@ OpenTalk consists of several components that provide different services, some
 mandatory, some optional. Each of these services is documented in a separate
 section.
 
-| Component                                     | Required | Description                                                                       |
-| --------------------------------------------- | -------- | --------------------------------------------------------------------------------- |
-| [OpenTalk Controller](controller/README.md)   | Yes      | Web API which is accessed by the frontend                                         |
-| [OpenTalk Obelisk](obelisk/README.md)         | No       | Service for participating in a meeting through call-in services, e.g. through SIP |
-| [OpenTalk Recorder](recorder/README.md)       | No       | Service for recording and streaming meetings                                      |
-| [OpenTalk RoomServer](roomserver/README.md)   | No       | Signaling API which is accessed by the frontend                                   |
-| [OpenTalk SMTP Mailer](smtp-mailer/README.md) | No       | Service for sending out invitation and other notification mails to participants   |
+| Component                                       | Required | Description                                                                       |
+| ----------------------------------------------- | -------- | --------------------------------------------------------------------------------- |
+| [OpenTalk Controller](controller/README.md)     | Yes      | Web API which is accessed by the frontend                                         |
+| [OpenTalk Obelisk](obelisk/README.md)           | No       | Service for participating in a meeting through call-in services, e.g. through SIP |
+| [OpenTalk Orchestrator](orchestrator/README.md) | No       | Service to scale other {{ product_name }} services                                |
+| [OpenTalk Recorder](recorder/README.md)         | No       | Service for recording and streaming meetings                                      |
+| [OpenTalk RoomServer](roomserver/README.md)     | No       | Signaling API which is accessed by the frontend                                   |
+| [OpenTalk SMTP Mailer](smtp-mailer/README.md)   | No       | Service for sending out invitation and other notification mails to participants   |
 
 ## Deployment
 

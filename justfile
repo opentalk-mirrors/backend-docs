@@ -43,6 +43,12 @@ REPO_VERSION_BRANCH_SUFFIX_OBELISK := env('REPO_VERSION_BRANCH_SUFFIX_OBELISK', 
 REPO_URL_OBELISK := env('REPO_URL_OBELISK', REPO_BASE + '/' + REPO_NAME_OBELISK + '.git')
 REPO_PATH_OBELISK := REPO_TEMP_DIR + '/' + REPO_NAME_OBELISK
 
+REPO_NAME_ORCHESTRATOR := env('REPO_NAME_ORCHESTRATOR', 'opentalk/backend/services/orchestrator')
+REPO_VERSION_BRANCH_PREFIX_ORCHESTRATOR := env('REPO_VERSION_BRANCH_PREFIX_ORCHESTRATOR', 'release/v')
+REPO_VERSION_BRANCH_SUFFIX_ORCHESTRATOR := env('REPO_VERSION_BRANCH_SUFFIX_ORCHESTRATOR', '.x')
+REPO_URL_ORCHESTRATOR := env('REPO_URL_ORCHESTRATOR', REPO_BASE + '/' + REPO_NAME_ORCHESTRATOR + '.git')
+REPO_PATH_ORCHESTRATOR := REPO_TEMP_DIR + '/' + REPO_NAME_ORCHESTRATOR
+
 REPO_NAME_RECORDER := env('REPO_NAME_RECORDER', 'opentalk/backend/services/recorder')
 REPO_VERSION_BRANCH_PREFIX_RECORDER := env('REPO_VERSION_BRANCH_PREFIX_RECORDER', 'release/v')
 REPO_VERSION_BRANCH_SUFFIX_RECORDER := env('REPO_VERSION_BRANCH_SUFFIX_RECORDER', '.x')
@@ -74,11 +80,12 @@ REPO_PATH_MONOREPO := REPO_TEMP_DIR + '/' + REPO_NAME_MONOREPO
 # Subdirectories of the individual services within the monorepo.
 REPO_SUBPATH_CONTROLLER := env('REPO_SUBPATH_CONTROLLER', 'controller')
 REPO_SUBPATH_OBELISK := env('REPO_SUBPATH_OBELISK', 'obelisk')
+REPO_SUBPATH_ORCHESTRATOR := env('REPO_SUBPATH_ORCHESTRATOR', 'orchestrator')
 REPO_SUBPATH_RECORDER := env('REPO_SUBPATH_RECORDER', 'recorder')
 REPO_SUBPATH_SMTP_MAILER := env('REPO_SUBPATH_SMTP_MAILER', 'smtp-mailer')
 REPO_SUBPATH_ROOMSERVER := env('REPO_SUBPATH_ROOMSERVER', 'roomserver')
 
-export RETOKI_RELEASE_FILE := REPO_PATH_PRODUCT_RELEASES + '/releases.yml'
+export RETOKI_RELEASE_FILE := env('RETOKI_RELEASE_FILE', REPO_PATH_PRODUCT_RELEASES + '/releases.yml')
 export RETOKI_PROFILE := 'gitlab'
 
 _default:
@@ -134,6 +141,8 @@ _fetch-opentalk-compose BRANCH: (_fetch_repo REPO_URL_OPENTALK_COMPOSE BRANCH RE
 _fetch-controller BRANCH: (_fetch_repo REPO_URL_CONTROLLER BRANCH REPO_NAME_CONTROLLER)
 
 _fetch-obelisk BRANCH: (_fetch_repo REPO_URL_OBELISK BRANCH REPO_NAME_OBELISK)
+
+_fetch-orchestrator BRANCH: (_fetch_repo REPO_URL_ORCHESTRATOR BRANCH REPO_NAME_ORCHESTRATOR)
 
 _fetch-recorder BRANCH: (_fetch_repo REPO_URL_RECORDER BRANCH REPO_NAME_RECORDER)
 
@@ -266,6 +275,7 @@ _populate-release-series SERIES_NUMBER:
     series_ge() { [ "$(printf '%s\n%s\n' "$2" "$1" | sort -V | head -n1)" = "$2" ]; }
 
     ROOMSERVER_EXTRACTOR="{{ EXTRACTORS_DIR }}/{{ SERIES_NUMBER }}/admin/roomserver"
+    ORCHESTRATOR_EXTRACTOR="{{ EXTRACTORS_DIR }}/{{ SERIES_NUMBER }}/admin/orchestrator"
 
     if series_ge "{{ SERIES_NUMBER }}" "{{ MONOREPO_SINCE_SERIES }}"; then
         # The monorepo is released in lockstep with the OpenTalk product, so all its services share the global release series
@@ -273,6 +283,8 @@ _populate-release-series SERIES_NUMBER:
         just --justfile "{{ justfile() }}" update-developer-controller {{ SERIES_NUMBER }}
 
         just --justfile "{{ justfile() }}" update-admin-obelisk {{ SERIES_NUMBER }}
+
+        [[ -f "$ORCHESTRATOR_EXTRACTOR" ]] && just --justfile "{{ justfile() }}" update-admin-orchestrator {{ SERIES_NUMBER }}
 
         just --justfile "{{ justfile() }}" update-admin-recorder {{ SERIES_NUMBER }}
 
@@ -308,6 +320,8 @@ _populate-release-series SERIES_NUMBER:
     echo "* [Controller](controller/)" >> "$DEVELOPER_NAVIGATION_FILE"
 
     echo "* [Obelisk](obelisk/)" >> "$ADMIN_NAVIGATION_FILE"
+
+    [[ -f "$ORCHESTRATOR_EXTRACTOR" ]] && echo "* [Orchestrator](orchestrator/)" >> "$ADMIN_NAVIGATION_FILE"
 
     echo "* [Recorder](recorder/)" >> "$ADMIN_NAVIGATION_FILE"
 
@@ -435,6 +449,24 @@ update-admin-obelisk-legacy SERIES OBELISK_SERIES: (_fetch-obelisk REPO_VERSION_
         rm -rf "{{ DOCS_DIR }}/{{ SERIES }}/admin/obelisk"
         mkdir -p "{{ DOCS_DIR }}/{{ SERIES }}/admin/obelisk"
         "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/obelisk" "{{ REPO_PATH_OBELISK }}" "{{ DOCS_DIR }}/{{ SERIES }}/admin/obelisk"
+    fi
+
+update-admin-orchestrator SERIES: (_fetch-monorepo REPO_VERSION_BRANCH_PREFIX_MONOREPO + SERIES + REPO_VERSION_BRANCH_SUFFIX_MONOREPO)
+    #!/usr/bin/env bash
+    set -xe
+    if [ -x "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/orchestrator" ]; then
+        rm -rf "{{ DOCS_DIR }}/{{ SERIES }}/admin/orchestrator"
+        mkdir -p "{{ DOCS_DIR }}/{{ SERIES }}/admin/orchestrator"
+        "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/orchestrator" "{{ REPO_PATH_MONOREPO }}/{{ REPO_SUBPATH_ORCHESTRATOR }}" "{{ DOCS_DIR }}/{{ SERIES }}/admin/orchestrator"
+    fi
+
+update-admin-orchestrator-legacy SERIES ORCHESTRATOR_SERIES: (_fetch-orchestrator REPO_VERSION_BRANCH_PREFIX_ORCHESTRATOR + ORCHESTRATOR_SERIES + REPO_VERSION_BRANCH_SUFFIX_ORCHESTRATOR)
+    #!/usr/bin/env bash
+    set -xe
+    if [ -x "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/orchestrator" ]; then
+        rm -rf "{{ DOCS_DIR }}/{{ SERIES }}/admin/orchestrator"
+        mkdir -p "{{ DOCS_DIR }}/{{ SERIES }}/admin/orchestrator"
+        "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/orchestrator" "{{ REPO_PATH_ORCHESTRATOR }}" "{{ DOCS_DIR }}/{{ SERIES }}/admin/orchestrator"
     fi
 
 update-admin-recorder SERIES: (_fetch-monorepo REPO_VERSION_BRANCH_PREFIX_MONOREPO + SERIES + REPO_VERSION_BRANCH_SUFFIX_MONOREPO)
