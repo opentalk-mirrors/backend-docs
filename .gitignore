@@ -53,6 +53,7 @@ docs/26.2/navigation.md
 docs/26.2/README.md
 docs/26.2/admin/*
 !docs/26.2/admin/README.md
+!docs/26.2/admin/migration.md
 docs/26.2/developer/*
 !docs/26.2/developer/README.md
 docs/26.2/user/
