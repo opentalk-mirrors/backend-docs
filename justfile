@@ -86,7 +86,7 @@ REPO_SUBPATH_SMTP_MAILER := env('REPO_SUBPATH_SMTP_MAILER', 'smtp-mailer')
 REPO_SUBPATH_ROOMSERVER := env('REPO_SUBPATH_ROOMSERVER', 'roomserver')
 
 export RETOKI_RELEASE_FILE := env('RETOKI_RELEASE_FILE', REPO_PATH_PRODUCT_RELEASES + '/releases.yml')
-export RETOKI_PROFILE := 'gitlab'
+export RETOKI_PROFILE_PATH := env('RETOKI_PROFILE_PATH', REPO_PATH_PRODUCT_RELEASES + '/retoki-profiles/gitlab.yml')
 
 _default:
     just --justfile "{{ justfile() }}" --list
@@ -375,7 +375,7 @@ _populate-release-series SERIES_NUMBER:
     </center>
     EOF
 
-update-product-releases: _check-retoki _fetch-product-releases
+update-product-releases: _check-retoki _check-jq _fetch-product-releases
     #!/usr/bin/env bash
     set -xe
 
