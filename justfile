@@ -301,6 +301,12 @@ _populate-release-series SERIES_NUMBER:
         OBELISK_RELEASE_SERIES=$(echo "$OBELISK_VERSION" | grep --extended-regexp --only-matching '^[0-9]+\.[0-9]+')
         just --justfile "{{ justfile() }}" update-admin-obelisk-legacy {{ SERIES_NUMBER }} "$OBELISK_RELEASE_SERIES"
 
+        if [ -f "$ORCHESTRATOR_EXTRACTOR" ]; then
+            ORCHESTRATOR_VERSION=$(echo "$INFO" | jq --arg "key_name" "orchestrator" -r '.highest_release_components.[$key_name]')
+            ORCHESTRATOR_RELEASE_SERIES=$(echo "$ORCHESTRATOR_VERSION" | grep --extended-regexp --only-matching '^[0-9]+\.[0-9]+')
+            just --justfile "{{ justfile() }}" update-admin-orchestrator-legacy {{ SERIES_NUMBER }} "$ORCHESTRATOR_RELEASE_SERIES"
+        fi
+
         RECORDER_VERSION=$(echo "$INFO" | jq --arg "key_name" "recorder" -r '.highest_release_components.[$key_name]')
         RECORDER_RELEASE_SERIES=$(echo "$RECORDER_VERSION" | grep --extended-regexp --only-matching '^[0-9]+\.[0-9]+')
         just --justfile "{{ justfile() }}" update-admin-recorder-legacy {{ SERIES_NUMBER }} "$RECORDER_RELEASE_SERIES"
