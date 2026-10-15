@@ -72,7 +72,7 @@ REPO_PATH_ROOMSERVER := REPO_TEMP_DIR + '/' + REPO_NAME_ROOMSERVER
 MONOREPO_SINCE_SERIES := env('MONOREPO_SINCE_SERIES', '26.4')
 # Monorepo containing all backend services
 REPO_NAME_MONOREPO := env('REPO_NAME_MONOREPO', 'opentalk/opentalk')
-REPO_VERSION_BRANCH_PREFIX_MONOREPO := env('REPO_VERSION_BRANCH_PREFIX_MONOREPO', 'origin/release/v')
+REPO_VERSION_BRANCH_PREFIX_MONOREPO := env('REPO_VERSION_BRANCH_PREFIX_MONOREPO', 'release/v')
 REPO_VERSION_BRANCH_SUFFIX_MONOREPO := env('REPO_VERSION_BRANCH_SUFFIX_MONOREPO', '.x')
 REPO_URL_MONOREPO := env('REPO_URL_MONOREPO', REPO_BASE + '/' + REPO_NAME_MONOREPO + '.git')
 REPO_PATH_MONOREPO := REPO_TEMP_DIR + '/' + REPO_NAME_MONOREPO
@@ -300,6 +300,12 @@ _populate-release-series SERIES_NUMBER:
         OBELISK_VERSION=$(echo "$INFO" | jq --arg "key_name" "obelisk" -r '.highest_release_components.[$key_name]')
         OBELISK_RELEASE_SERIES=$(echo "$OBELISK_VERSION" | grep --extended-regexp --only-matching '^[0-9]+\.[0-9]+')
         just --justfile "{{ justfile() }}" update-admin-obelisk-legacy {{ SERIES_NUMBER }} "$OBELISK_RELEASE_SERIES"
+
+        if [ -f "$ORCHESTRATOR_EXTRACTOR" ]; then
+            ORCHESTRATOR_VERSION=$(echo "$INFO" | jq --arg "key_name" "orchestrator" -r '.highest_release_components.[$key_name]')
+            ORCHESTRATOR_RELEASE_SERIES=$(echo "$ORCHESTRATOR_VERSION" | grep --extended-regexp --only-matching '^[0-9]+\.[0-9]+')
+            just --justfile "{{ justfile() }}" update-admin-orchestrator-legacy {{ SERIES_NUMBER }} "$ORCHESTRATOR_RELEASE_SERIES"
+        fi
 
         RECORDER_VERSION=$(echo "$INFO" | jq --arg "key_name" "recorder" -r '.highest_release_components.[$key_name]')
         RECORDER_RELEASE_SERIES=$(echo "$RECORDER_VERSION" | grep --extended-regexp --only-matching '^[0-9]+\.[0-9]+')
