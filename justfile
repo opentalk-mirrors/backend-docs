@@ -77,14 +77,6 @@ REPO_VERSION_BRANCH_SUFFIX_MONOREPO := env('REPO_VERSION_BRANCH_SUFFIX_MONOREPO'
 REPO_URL_MONOREPO := env('REPO_URL_MONOREPO', REPO_BASE + '/' + REPO_NAME_MONOREPO + '.git')
 REPO_PATH_MONOREPO := REPO_TEMP_DIR + '/' + REPO_NAME_MONOREPO
 
-# Subdirectories of the individual services within the monorepo.
-REPO_SUBPATH_CONTROLLER := env('REPO_SUBPATH_CONTROLLER', 'controller')
-REPO_SUBPATH_OBELISK := env('REPO_SUBPATH_OBELISK', 'obelisk')
-REPO_SUBPATH_ORCHESTRATOR := env('REPO_SUBPATH_ORCHESTRATOR', 'orchestrator')
-REPO_SUBPATH_RECORDER := env('REPO_SUBPATH_RECORDER', 'recorder')
-REPO_SUBPATH_SMTP_MAILER := env('REPO_SUBPATH_SMTP_MAILER', 'smtp-mailer')
-REPO_SUBPATH_ROOMSERVER := env('REPO_SUBPATH_ROOMSERVER', 'roomserver')
-
 export RETOKI_RELEASE_FILE := env('RETOKI_RELEASE_FILE', REPO_PATH_PRODUCT_RELEASES + '/releases.yml')
 export RETOKI_PROFILE_PATH := env('RETOKI_PROFILE_PATH', REPO_PATH_PRODUCT_RELEASES + '/retoki-profiles/gitlab.yml')
 
@@ -241,57 +233,16 @@ _populate-release-series SERIES_NUMBER:
     INFO=$(retoki series show "{{ SERIES_NUMBER }}" --format=jsonl)
     SERIES_DIR="{{ DOCS_DIR }}/{{ SERIES_NUMBER }}"
     NAVIGATION_FILE="$SERIES_DIR"/navigation.md
-    ADMIN_NAVIGATION_FILE="$SERIES_DIR"/admin/navigation.md
-    DEVELOPER_NAVIGATION_FILE="$SERIES_DIR"/developer/navigation.md
     README_FILE="$SERIES_DIR"/README.md
-
-    if [ -f "$NAVIGATION_FILE" ]; then
-        truncate --size 0 "$NAVIGATION_FILE"
-    fi
-    if [ -f "$ADMIN_NAVIGATION_FILE" ]; then
-        truncate --size 0 "$ADMIN_NAVIGATION_FILE"
-    fi
-    if [ -f "$DEVELOPER_NAVIGATION_FILE" ]; then
-        truncate --size 0 "$DEVELOPER_NAVIGATION_FILE"
-    fi
-    if [ -f "$README_FILE" ]; then
-        truncate --size 0 "$README_FILE"
-    fi
-
-    just --justfile "{{ justfile() }}" update-user {{ SERIES_NUMBER }}
-    # TODO: re-enable architecture
-    # just --justfile "{{ justfile() }}" update-architecture {{ SERIES_NUMBER }}
-
-    OPENTALK_COMPOSE_EXTRACTOR="{{ EXTRACTORS_DIR }}/{{ SERIES_NUMBER }}/admin/deployment/opentalk-compose"
-    if [ -f "$OPENTALK_COMPOSE_EXTRACTOR" ]; then
-        OPENTALK_COMPOSE_VERSION=$(echo "$INFO" | jq --arg "key_name" "opentalk-compose" -r '.highest_release_components.[$key_name]')
-        OPENTALK_COMPOSE_RELEASE_SERIES=$(echo "$OPENTALK_COMPOSE_VERSION" | grep --extended-regexp --only-matching '^[0-9]+\.[0-9]+')
-        echo "OPENTALK_COMPOSE_RELEASE_SERIES=$OPENTALK_COMPOSE_RELEASE_SERIES"
-        just --justfile "{{ justfile() }}" update-admin-opentalk-compose {{ SERIES_NUMBER }} "$OPENTALK_COMPOSE_RELEASE_SERIES"
-        echo "* [Deployment](deployment/)" >> "$ADMIN_NAVIGATION_FILE"
-        echo "  * [OpenTalk Compose](deployment/opentalk-compose/)" >> "$ADMIN_NAVIGATION_FILE"
-    fi
 
     series_ge() { [ "$(printf '%s\n%s\n' "$2" "$1" | sort -V | head -n1)" = "$2" ]; }
 
-    ROOMSERVER_EXTRACTOR="{{ EXTRACTORS_DIR }}/{{ SERIES_NUMBER }}/admin/roomserver"
-    ORCHESTRATOR_EXTRACTOR="{{ EXTRACTORS_DIR }}/{{ SERIES_NUMBER }}/admin/orchestrator"
-
     if series_ge "{{ SERIES_NUMBER }}" "{{ MONOREPO_SINCE_SERIES }}"; then
-        # The monorepo is released in lockstep with the OpenTalk product, so all its services share the global release series
-        just --justfile "{{ justfile() }}" update-admin-controller {{ SERIES_NUMBER }}
-        just --justfile "{{ justfile() }}" update-developer-controller {{ SERIES_NUMBER }}
-
-        just --justfile "{{ justfile() }}" update-admin-obelisk {{ SERIES_NUMBER }}
-
-        [[ -f "$ORCHESTRATOR_EXTRACTOR" ]] && just --justfile "{{ justfile() }}" update-admin-orchestrator {{ SERIES_NUMBER }}
-
-        just --justfile "{{ justfile() }}" update-admin-recorder {{ SERIES_NUMBER }}
-
-        just --justfile "{{ justfile() }}" update-admin-smtp-mailer {{ SERIES_NUMBER }}
-
-        [[ -f "$ROOMSERVER_EXTRACTOR" ]] && just --justfile "{{ justfile() }}" update-admin-roomserver {{ SERIES_NUMBER }}
+        just --justfile "{{ justfile() }}" update-monorepo {{ SERIES_NUMBER }}
     else
+        ADMIN_NAVIGATION_FILE="$SERIES_DIR"/admin/navigation.md
+        DEVELOPER_NAVIGATION_FILE="$SERIES_DIR"/developer/navigation.md
+
         CONTROLLER_VERSION=$(echo "$INFO" | jq --arg "key_name" "controller" -r '.highest_release_components.[$key_name]')
         CONTROLLER_RELEASE_SERIES=$(echo "$CONTROLLER_VERSION" | grep --extended-regexp --only-matching '^[0-9]+\.[0-9]+')
         just --justfile "{{ justfile() }}" update-admin-controller-legacy {{ SERIES_NUMBER }} "$CONTROLLER_RELEASE_SERIES"
@@ -301,6 +252,7 @@ _populate-release-series SERIES_NUMBER:
         OBELISK_RELEASE_SERIES=$(echo "$OBELISK_VERSION" | grep --extended-regexp --only-matching '^[0-9]+\.[0-9]+')
         just --justfile "{{ justfile() }}" update-admin-obelisk-legacy {{ SERIES_NUMBER }} "$OBELISK_RELEASE_SERIES"
 
+        ORCHESTRATOR_EXTRACTOR="{{ EXTRACTORS_DIR }}/{{ SERIES_NUMBER }}/admin/orchestrator"
         if [ -f "$ORCHESTRATOR_EXTRACTOR" ]; then
             ORCHESTRATOR_VERSION=$(echo "$INFO" | jq --arg "key_name" "orchestrator" -r '.highest_release_components.[$key_name]')
             ORCHESTRATOR_RELEASE_SERIES=$(echo "$ORCHESTRATOR_VERSION" | grep --extended-regexp --only-matching '^[0-9]+\.[0-9]+')
@@ -315,27 +267,57 @@ _populate-release-series SERIES_NUMBER:
         SMTP_MAILER_RELEASE_SERIES=$(echo "$SMTP_MAILER_VERSION" | grep --extended-regexp --only-matching '^[0-9]+\.[0-9]+')
         just --justfile "{{ justfile() }}" update-admin-smtp-mailer-legacy {{ SERIES_NUMBER }} "$SMTP_MAILER_RELEASE_SERIES"
 
+        ROOMSERVER_EXTRACTOR="{{ EXTRACTORS_DIR }}/{{ SERIES_NUMBER }}/admin/roomserver"
         if [ -f "$ROOMSERVER_EXTRACTOR" ]; then
             ROOMSERVER_VERSION=$(echo "$INFO" | jq --arg "key_name" "roomserver" -r '.highest_release_components.[$key_name]')
             ROOMSERVER_RELEASE_SERIES=$(echo "$ROOMSERVER_VERSION" | grep --extended-regexp --only-matching '^[0-9]+\.[0-9]+')
             just --justfile "{{ justfile() }}" update-admin-roomserver-legacy {{ SERIES_NUMBER }} "$ROOMSERVER_RELEASE_SERIES"
         fi
+
+        OPENTALK_COMPOSE_EXTRACTOR="{{ EXTRACTORS_DIR }}/{{ SERIES_NUMBER }}/admin/deployment/opentalk-compose"
+        if [ -f "$OPENTALK_COMPOSE_EXTRACTOR" ]; then
+            OPENTALK_COMPOSE_VERSION=$(echo "$INFO" | jq --arg "key_name" "opentalk-compose" -r '.highest_release_components.[$key_name]')
+            OPENTALK_COMPOSE_RELEASE_SERIES=$(echo "$OPENTALK_COMPOSE_VERSION" | grep --extended-regexp --only-matching '^[0-9]+\.[0-9]+')
+            echo "OPENTALK_COMPOSE_RELEASE_SERIES=$OPENTALK_COMPOSE_RELEASE_SERIES"
+            just --justfile "{{ justfile() }}" update-admin-opentalk-compose {{ SERIES_NUMBER }} "$OPENTALK_COMPOSE_RELEASE_SERIES"
+        fi
+
+        if [ -f "$ADMIN_NAVIGATION_FILE" ]; then
+            truncate --size 0 "$ADMIN_NAVIGATION_FILE"
+        fi
+        if [ -f "$DEVELOPER_NAVIGATION_FILE" ]; then
+            truncate --size 0 "$DEVELOPER_NAVIGATION_FILE"
+        fi
+
+        [[ -d "$SERIES_DIR/admin/deployment/" ]] && echo "* [Deployment](deployment/)" >> "$ADMIN_NAVIGATION_FILE"
+        [[ -d "$SERIES_DIR/admin/deployment/opentalk-compose" ]] && echo "  * [OpenTalk Compose](deployment/opentalk-compose/)" >> "$ADMIN_NAVIGATION_FILE"
+
+        [[ -f "$SERIES_DIR/admin/migration.md" ]] && echo "* [Migration](migration.md)" >> "$ADMIN_NAVIGATION_FILE"
+
+        echo "* [Controller](controller/)" >> "$ADMIN_NAVIGATION_FILE"
+        echo "* [Controller](controller/)" >> "$DEVELOPER_NAVIGATION_FILE"
+
+        echo "* [Obelisk](obelisk/)" >> "$ADMIN_NAVIGATION_FILE"
+
+        [[ -d "$SERIES_DIR/admin/orchestrator" ]] && echo "* [Orchestrator](orchestrator/)" >> "$ADMIN_NAVIGATION_FILE"
+
+        echo "* [Recorder](recorder/)" >> "$ADMIN_NAVIGATION_FILE"
+
+        echo "* [SMTP-Mailer](smtp-mailer/)" >> "$ADMIN_NAVIGATION_FILE"
+
+        [[ -d "$SERIES_DIR/admin/roomserver" ]] && echo "* [RoomServer](roomserver/)" >> "$ADMIN_NAVIGATION_FILE"
     fi
 
-    [[ -f "$SERIES_DIR/admin/migration.md" ]] && echo "* [Migration](migration.md)" >> "$ADMIN_NAVIGATION_FILE"
+    if [ -f "$NAVIGATION_FILE" ]; then
+        truncate --size 0 "$NAVIGATION_FILE"
+    fi
+    if [ -f "$README_FILE" ]; then
+        truncate --size 0 "$README_FILE"
+    fi
 
-    echo "* [Controller](controller/)" >> "$ADMIN_NAVIGATION_FILE"
-    echo "* [Controller](controller/)" >> "$DEVELOPER_NAVIGATION_FILE"
-
-    echo "* [Obelisk](obelisk/)" >> "$ADMIN_NAVIGATION_FILE"
-
-    [[ -f "$ORCHESTRATOR_EXTRACTOR" ]] && echo "* [Orchestrator](orchestrator/)" >> "$ADMIN_NAVIGATION_FILE"
-
-    echo "* [Recorder](recorder/)" >> "$ADMIN_NAVIGATION_FILE"
-
-    echo "* [SMTP-Mailer](smtp-mailer/)" >> "$ADMIN_NAVIGATION_FILE"
-
-    [[ -f "$ROOMSERVER_EXTRACTOR" ]] && echo "* [RoomServer](roomserver/)" >> "$ADMIN_NAVIGATION_FILE"
+    just --justfile "{{ justfile() }}" update-user {{ SERIES_NUMBER }}
+    # TODO: re-enable architecture
+    # just --justfile "{{ justfile() }}" update-architecture {{ SERIES_NUMBER }}
 
     cat << EOF >> $README_FILE
     ---
@@ -385,7 +367,6 @@ update-product-releases: _check-retoki _check-jq _fetch-product-releases
     rm -rf "$DEST_DIR"
     mkdir "$DEST_DIR"
     "$EXTRACTOR" "{{ REPO_PATH_PRODUCT_RELEASES }}" "$DEST_DIR"
-
 update-user SERIES: _check-retoki _fetch-product-releases _fetch-user
     #!/usr/bin/env bash
     set -xe
@@ -399,6 +380,14 @@ update-user SERIES: _check-retoki _fetch-product-releases _fetch-user
         mkdir -p "$DEST_DIR"
         "$EXTRACTOR" "{{ REPO_PATH_USER }}" "$DEST_DIR"
     fi
+
+update-monorepo SERIES: (_fetch-monorepo REPO_VERSION_BRANCH_PREFIX_MONOREPO + SERIES + REPO_VERSION_BRANCH_SUFFIX_MONOREPO)
+    #!/usr/bin/env bash
+    set -xe
+
+    rm -rf "{{ DOCS_DIR }}/{{ SERIES }}"
+    mkdir -p "{{ DOCS_DIR }}/{{ SERIES }}"
+    cp -r "{{ REPO_PATH_MONOREPO }}/{{ DOCS_DIR }}/"* "{{ DOCS_DIR }}/{{ SERIES }}/"
 
 update-architecture SERIES: _fetch-product-releases _fetch-architecture
     #!/usr/bin/env bash
@@ -423,15 +412,6 @@ update-admin-opentalk-compose SERIES OPENTALK_COMPOSE_SERIES: (_fetch-opentalk-c
         "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/deployment/opentalk-compose" "{{ REPO_PATH_OPENTALK_COMPOSE }}" "{{ DOCS_DIR }}/{{ SERIES }}/admin/deployment/opentalk-compose"
     fi
 
-update-admin-controller SERIES: (_fetch-monorepo REPO_VERSION_BRANCH_PREFIX_MONOREPO + SERIES + REPO_VERSION_BRANCH_SUFFIX_MONOREPO)
-    #!/usr/bin/env bash
-    set -xe
-    if [ -x "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/controller" ]; then
-        rm -rf "{{ DOCS_DIR }}/{{ SERIES }}/admin/controller"
-        mkdir -p "{{ DOCS_DIR }}/{{ SERIES }}/admin/controller"
-        "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/controller" "{{ REPO_PATH_MONOREPO }}/{{ REPO_SUBPATH_CONTROLLER }}" "{{ DOCS_DIR }}/{{ SERIES }}/admin/controller"
-    fi
-
 update-admin-controller-legacy SERIES CONTROLLER_SERIES: (_fetch-controller REPO_VERSION_BRANCH_PREFIX_CONTROLLER + CONTROLLER_SERIES + REPO_VERSION_BRANCH_SUFFIX_CONTROLLER)
     #!/usr/bin/env bash
     set -xe
@@ -439,15 +419,6 @@ update-admin-controller-legacy SERIES CONTROLLER_SERIES: (_fetch-controller REPO
         rm -rf "{{ DOCS_DIR }}/{{ SERIES }}/admin/controller"
         mkdir -p "{{ DOCS_DIR }}/{{ SERIES }}/admin/controller"
         "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/controller" "{{ REPO_PATH_CONTROLLER }}" "{{ DOCS_DIR }}/{{ SERIES }}/admin/controller"
-    fi
-
-update-admin-obelisk SERIES: (_fetch-monorepo REPO_VERSION_BRANCH_PREFIX_MONOREPO + SERIES + REPO_VERSION_BRANCH_SUFFIX_MONOREPO)
-    #!/usr/bin/env bash
-    set -xe
-    if [ -x "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/obelisk" ]; then
-        rm -rf "{{ DOCS_DIR }}/{{ SERIES }}/admin/obelisk"
-        mkdir -p "{{ DOCS_DIR }}/{{ SERIES }}/admin/obelisk"
-        "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/obelisk" "{{ REPO_PATH_MONOREPO }}/{{ REPO_SUBPATH_OBELISK }}" "{{ DOCS_DIR }}/{{ SERIES }}/admin/obelisk"
     fi
 
 update-admin-obelisk-legacy SERIES OBELISK_SERIES: (_fetch-obelisk REPO_VERSION_BRANCH_PREFIX_OBELISK + OBELISK_SERIES + REPO_VERSION_BRANCH_SUFFIX_OBELISK)
@@ -459,15 +430,6 @@ update-admin-obelisk-legacy SERIES OBELISK_SERIES: (_fetch-obelisk REPO_VERSION_
         "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/obelisk" "{{ REPO_PATH_OBELISK }}" "{{ DOCS_DIR }}/{{ SERIES }}/admin/obelisk"
     fi
 
-update-admin-orchestrator SERIES: (_fetch-monorepo REPO_VERSION_BRANCH_PREFIX_MONOREPO + SERIES + REPO_VERSION_BRANCH_SUFFIX_MONOREPO)
-    #!/usr/bin/env bash
-    set -xe
-    if [ -x "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/orchestrator" ]; then
-        rm -rf "{{ DOCS_DIR }}/{{ SERIES }}/admin/orchestrator"
-        mkdir -p "{{ DOCS_DIR }}/{{ SERIES }}/admin/orchestrator"
-        "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/orchestrator" "{{ REPO_PATH_MONOREPO }}/{{ REPO_SUBPATH_ORCHESTRATOR }}" "{{ DOCS_DIR }}/{{ SERIES }}/admin/orchestrator"
-    fi
-
 update-admin-orchestrator-legacy SERIES ORCHESTRATOR_SERIES: (_fetch-orchestrator REPO_VERSION_BRANCH_PREFIX_ORCHESTRATOR + ORCHESTRATOR_SERIES + REPO_VERSION_BRANCH_SUFFIX_ORCHESTRATOR)
     #!/usr/bin/env bash
     set -xe
@@ -475,15 +437,6 @@ update-admin-orchestrator-legacy SERIES ORCHESTRATOR_SERIES: (_fetch-orchestrato
         rm -rf "{{ DOCS_DIR }}/{{ SERIES }}/admin/orchestrator"
         mkdir -p "{{ DOCS_DIR }}/{{ SERIES }}/admin/orchestrator"
         "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/orchestrator" "{{ REPO_PATH_ORCHESTRATOR }}" "{{ DOCS_DIR }}/{{ SERIES }}/admin/orchestrator"
-    fi
-
-update-admin-recorder SERIES: (_fetch-monorepo REPO_VERSION_BRANCH_PREFIX_MONOREPO + SERIES + REPO_VERSION_BRANCH_SUFFIX_MONOREPO)
-    #!/usr/bin/env bash
-    set -xe
-    if [ -x "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/recorder" ]; then
-        rm -rf "{{ DOCS_DIR }}/{{ SERIES }}/admin/recorder"
-        mkdir -p "{{ DOCS_DIR }}/{{ SERIES }}/admin/recorder"
-        "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/recorder" "{{ REPO_PATH_MONOREPO }}/{{ REPO_SUBPATH_RECORDER }}" "{{ DOCS_DIR }}/{{ SERIES }}/admin/recorder"
     fi
 
 update-admin-recorder-legacy SERIES RECORDER_SERIES: (_fetch-recorder REPO_VERSION_BRANCH_PREFIX_RECORDER + RECORDER_SERIES + REPO_VERSION_BRANCH_SUFFIX_RECORDER)
@@ -495,15 +448,6 @@ update-admin-recorder-legacy SERIES RECORDER_SERIES: (_fetch-recorder REPO_VERSI
         "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/recorder" "{{ REPO_PATH_RECORDER }}" "{{ DOCS_DIR }}/{{ SERIES }}/admin/recorder"
     fi
 
-update-admin-smtp-mailer SERIES: (_fetch-monorepo REPO_VERSION_BRANCH_PREFIX_MONOREPO + SERIES + REPO_VERSION_BRANCH_SUFFIX_MONOREPO)
-    #!/usr/bin/env bash
-    set -xe
-    if [ -x "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/smtp-mailer" ]; then
-        rm -rf "{{ DOCS_DIR }}/{{ SERIES }}/admin/smtp-mailer"
-        mkdir -p "{{ DOCS_DIR }}/{{ SERIES }}/admin/smtp-mailer"
-        "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/smtp-mailer" "{{ REPO_PATH_MONOREPO }}/{{ REPO_SUBPATH_SMTP_MAILER }}" "{{ DOCS_DIR }}/{{ SERIES }}/admin/smtp-mailer"
-    fi
-
 update-admin-smtp-mailer-legacy SERIES SMTP_MAILER_SERIES: (_fetch-smtp-mailer REPO_VERSION_BRANCH_PREFIX_SMTP_MAILER + SMTP_MAILER_SERIES + REPO_VERSION_BRANCH_SUFFIX_SMTP_MAILER)
     #!/usr/bin/env bash
     set -xe
@@ -513,15 +457,6 @@ update-admin-smtp-mailer-legacy SERIES SMTP_MAILER_SERIES: (_fetch-smtp-mailer R
         "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/smtp-mailer" "{{ REPO_PATH_SMTP_MAILER }}" "{{ DOCS_DIR }}/{{ SERIES }}/admin/smtp-mailer"
     fi
 
-update-admin-roomserver SERIES: (_fetch-monorepo REPO_VERSION_BRANCH_PREFIX_MONOREPO + SERIES + REPO_VERSION_BRANCH_SUFFIX_MONOREPO)
-    #!/usr/bin/env bash
-    set -xe
-    if [ -x "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/roomserver" ]; then
-        rm -rf "{{ DOCS_DIR }}/{{ SERIES }}/admin/roomserver"
-        mkdir -p "{{ DOCS_DIR }}/{{ SERIES }}/admin/roomserver"
-        "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/roomserver" "{{ REPO_PATH_MONOREPO }}/{{ REPO_SUBPATH_ROOMSERVER }}" "{{ DOCS_DIR }}/{{ SERIES }}/admin/roomserver"
-    fi
-
 update-admin-roomserver-legacy SERIES ROOMSERVER_SERIES: (_fetch-roomserver REPO_VERSION_BRANCH_PREFIX_ROOMSERVER + ROOMSERVER_SERIES + REPO_VERSION_BRANCH_SUFFIX_ROOMSERVER)
     #!/usr/bin/env bash
     set -xe
@@ -529,15 +464,6 @@ update-admin-roomserver-legacy SERIES ROOMSERVER_SERIES: (_fetch-roomserver REPO
         rm -rf "{{ DOCS_DIR }}/{{ SERIES }}/admin/roomserver"
         mkdir -p "{{ DOCS_DIR }}/{{ SERIES }}/admin/roomserver"
         "{{ EXTRACTORS_DIR }}/{{ SERIES }}/admin/roomserver" "{{ REPO_PATH_ROOMSERVER }}" "{{ DOCS_DIR }}/{{ SERIES }}/admin/roomserver"
-    fi
-
-update-developer-controller SERIES: (_fetch-monorepo REPO_VERSION_BRANCH_PREFIX_MONOREPO + SERIES + REPO_VERSION_BRANCH_SUFFIX_MONOREPO)
-    #!/usr/bin/env bash
-    set -xe
-    if [ -x "{{ EXTRACTORS_DIR }}/{{ SERIES }}/developer/controller" ]; then
-        rm -rf "{{ DOCS_DIR }}/{{ SERIES }}/developer/controller"
-        mkdir -p "{{ DOCS_DIR }}/{{ SERIES }}/developer/controller"
-        "{{ EXTRACTORS_DIR }}/{{ SERIES }}/developer/controller" "{{ REPO_PATH_MONOREPO }}/{{ REPO_SUBPATH_CONTROLLER }}" "{{ DOCS_DIR }}/{{ SERIES }}/developer/controller"
     fi
 
 update-developer-controller-legacy SERIES CONTROLLER_SERIES: (_fetch-controller REPO_VERSION_BRANCH_PREFIX_CONTROLLER + CONTROLLER_SERIES + REPO_VERSION_BRANCH_SUFFIX_CONTROLLER)
