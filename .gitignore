@@ -59,6 +59,15 @@ docs/26.2/developer/*
 docs/26.2/user/
 docs/26.2/architecture/
 
+docs/26.3/navigation.md
+docs/26.3/README.md
+docs/26.3/admin/*
+!docs/26.3/admin/README.md
+docs/26.3/developer/*
+!docs/26.3/developer/README.md
+docs/26.3/user/
+docs/26.3/architecture/
+
 docs/releases/*
 
 .editorconfig
