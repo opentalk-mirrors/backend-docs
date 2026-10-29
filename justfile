@@ -502,6 +502,17 @@ clean:
         -not -path 'docs/26.1/admin/README.md' \
         -not -path 'docs/26.1/developer' \
         -not -path 'docs/26.1/developer/README.md' \
+        -not -path 'docs/26.2' \
+        -not -path 'docs/26.2/admin' \
+        -not -path 'docs/26.2/admin/README.md' \
+        -not -path 'docs/26.2/admin/migration.md' \
+        -not -path 'docs/26.2/developer' \
+        -not -path 'docs/26.2/developer/README.md' \
+        -not -path 'docs/26.3' \
+        -not -path 'docs/26.3/admin' \
+        -not -path 'docs/26.3/admin/README.md' \
+        -not -path 'docs/26.3/developer' \
+        -not -path 'docs/26.3/developer/README.md' \
         -delete
 
     rm -rf \
